@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Arduino.h"
 
 #define TRACK_COUNT 3

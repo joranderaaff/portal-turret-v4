@@ -1,16 +1,27 @@
 #include "states/StateMachine.h"
 
-void StateMachine::GoToState(BaseState *nextState) {
+void StateMachine::GoToState(StateId nextStateId) {
 
   if (currentState) {
     currentState->OnDeactivate();
   }
 
-  currentState = nextState;
+  currentState = GetState(nextStateId);
 
   if (currentState) {
     currentState->OnActivate();
   }
+}
+
+BaseState *StateMachine::GetState(StateId stateId) {
+  switch (stateId) {
+  case StateId::Booting:
+    return &bootState;
+    break;
+  case StateId::Idle:
+    return &idleState;
+  }
+  return nullptr;
 }
 
 void StateMachine::Update(ulong deltaTime) {

@@ -2,8 +2,9 @@
 #include "Arduino.h"
 #include "pins.h"
 
-Wing::Wing(int servoPinIn, int gunServoPin) : gun(gunServoPin) {
-  servoPin = servoPinIn;
+Wing::Wing(int servoPin, int gunServoPin, int hallSensorPin) : gun(gunServoPin) {
+  servoPin = servoPin;
+  hallSensorPin = hallSensorPin;
 }
 
 void Wing::Initialize() {
@@ -27,7 +28,7 @@ void Wing::Close() {
 }
 
 void Wing::Update(ulong deltaTime) {
-  uint16_t hallValue = analogRead(PIN_HALL_LEFT);
+  uint16_t hallValue = analogRead(hallSensorPin);
 
   if (isOpening && hallValue >= 4096) {
     isOpening = false;
@@ -41,6 +42,4 @@ void Wing::Update(ulong deltaTime) {
   }
 }
 
-bool Wing::IsOpen() {
-  return isOpen;
-}
+bool Wing::IsOpen() { return isOpen; }

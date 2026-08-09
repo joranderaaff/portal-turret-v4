@@ -1,13 +1,15 @@
-#include <Wire.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_ADXL343.h>
+#pragma once
 
-class Motion
-{
+#include <Arduino.h>
+#include <Adafruit_ADXL345_U.h>
+#include <Adafruit_Sensor.h>
+#include <Wire.h>
+
+class Motion {
 public:
-    void Initialize();
-    void Upate(ulong deltaTime);
+  void Initialize();
+  void Update(ulong deltaTime);
 
 private:
-    Adafruit_ADXL343 accel = Adafruit_ADXL343(12345);
-}
+  Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(12345);
+};

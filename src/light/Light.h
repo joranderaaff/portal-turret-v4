@@ -1,8 +1,9 @@
+#pragma once
+
 #include <Arduino.h>
 #include <FastLED.h>
 
-class Light
-{
+class Light {
 public:
   void Initialize();
   void Update(ulong deltaTime);

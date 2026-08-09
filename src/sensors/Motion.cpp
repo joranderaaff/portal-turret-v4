@@ -7,12 +7,9 @@ void Motion::Initialize()
     {
         return;
     }
-
-    /* Set the range to whatever is appropriate for your project */
-    accel.setRange(ADXL343_RANGE_16_G);
 }
 
-void Motion::Upate(ulong deltaTime)
+void Motion::Update(ulong deltaTime)
 {
     sensors_event_t event;
     accel.getEvent(&event);

@@ -8,7 +8,7 @@ void Audio::Initialize() {
                                  (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
                              .sample_rate = SAMPLE_RATE,
                              .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
-                             .channel_format = t,
+                             .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
                              .communication_format = I2S_COMM_FORMAT_STAND_I2S,
                              .intr_alloc_flags = 0,
                              .dma_buf_count = 8,
@@ -47,5 +47,5 @@ void Audio::Update(ulong deltaTime) {
     }
   }
   size_t bytes_written;
-  i2s_write(I2S_PORT, buffer, sizeof(buffer), &bytes_written, portMAX_DELAY);
+  i2s_write(I2S_PORT, buffer, sizeof(buffer), &bytes_written, 0); //portMAX_DELAY
 }

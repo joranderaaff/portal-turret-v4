@@ -1,7 +1,10 @@
+#include <Arduino.h>
 #include "pins.h"
 #include "states/StateMachine.h"
-#include <Arduino.h>
+#include "light/Light.h"
 #include "motion/Gantry.h"
+#include "sensors/Motion.h"
+#include "sensors/Radar.h"
 
 StateMachine stateMachine;
 Gantry gantry;
@@ -11,6 +14,8 @@ ulong prevTime;
 void setup() {
     prevTime = millis();
     gantry.Initialize();
+
+    stateMachine.GoToState(StateId::Booting);
 }
 
 void loop() {

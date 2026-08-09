@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Arduino.h"
 #include "Wing.h"
 #include <ESP32Servo.h>
