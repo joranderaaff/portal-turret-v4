@@ -9,6 +9,7 @@ public:
   void Open();
   void Close();
   void Update(ulong deltaTime);
+  bool IsOpen();
 
 private:
   bool isOpening;

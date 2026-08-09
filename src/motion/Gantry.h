@@ -7,6 +7,8 @@ public:
   Gantry();
   void Initialize();
   void Update(ulong deltaTime);
+  void SetRotationX(int angle);
+  void SetRotationZ(int angle);
   void OpenWings();
   void CloseWings();
 

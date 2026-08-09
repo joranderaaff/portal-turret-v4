@@ -3,7 +3,7 @@
 #define PIN_WING_LEFT 4  // PWM
 #define PIN_WING_RIGHT 5  // PWM
 #define PIN_ROTATE_X 6  // PWM
-#define PIN_ROTATE_Y 7  // PWM
+#define PIN_ROTATE_Z 7  // PWM
 #define PIN_HALL_LEFT 8  // ADC
 #define PIN_HALL_RIGHT 9  // ADC
 #define PIN_NEOPIXEL_CENTER 14  // PWM

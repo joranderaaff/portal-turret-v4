@@ -18,6 +18,7 @@ void Wing::Open() {
   isClosing = false;
   servo.write(0);
 }
+
 void Wing::Close() {
   isOpening = false;
   isClosing = true;
@@ -38,4 +39,8 @@ void Wing::Update(ulong deltaTime) {
     isClosing = false;
     servo.write(90);
   }
+}
+
+bool Wing::IsOpen() {
+  return isOpen;
 }
