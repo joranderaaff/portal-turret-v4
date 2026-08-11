@@ -1,5 +1,10 @@
 #include "states/StateMachine.h"
 
+void StateMachine::Initialize(Turret &turretIn) {
+  bootState.Initialize(this, turretIn);
+  idleState.Initialize(this, turretIn);
+}
+
 void StateMachine::GoToState(StateId nextStateId) {
 
   if (currentState) {

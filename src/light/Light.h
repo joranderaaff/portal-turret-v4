@@ -13,5 +13,3 @@ private:
   CRGB leftLeds[2];
   CRGB rightLeds[2];
 };
-
-extern Light lights;

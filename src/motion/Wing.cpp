@@ -2,15 +2,19 @@
 #include "Arduino.h"
 #include "pins.h"
 
-Wing::Wing(int servoPin, int gunServoPin, int hallSensorPin) : gun(gunServoPin) {
-  servoPin = servoPin;
-  hallSensorPin = hallSensorPin;
+Wing::Wing(int servoPinIn, int gunServoPinIn, int hallSensorPinIn)
+    : gun(gunServoPinIn) {
+  servoPin = servoPinIn;
+  hallSensorPin = hallSensorPinIn;
 }
 
 void Wing::Initialize() {
   servo.setPeriodHertz(50); // standard 50 hz servo
   servo.attach(servoPin, 500, 2400);
-
+  Serial.print("Connecting wing servo to pin ");
+  Serial.print(servoPin);
+  Serial.print("\n");
+  servo.write(90);
   gun.Initialize();
 }
 
@@ -30,13 +34,13 @@ void Wing::Close() {
 void Wing::Update(ulong deltaTime) {
   uint16_t hallValue = analogRead(hallSensorPin);
 
-  if (isOpening && hallValue >= 4096) {
+  if (isOpening && hallValue >= 3296) {
     isOpening = false;
     isOpen = true;
     servo.write(90);
   }
 
-  if (isClosing && hallValue <= 600) {
+  if (isClosing && hallValue <= 800) {
     isClosing = false;
     servo.write(90);
   }

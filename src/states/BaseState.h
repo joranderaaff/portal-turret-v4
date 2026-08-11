@@ -1,16 +1,18 @@
 #pragma once
 
 #include "Arduino.h"
+#include "Turret.h"
 
-class StateMachine;  // forward declaration
+class StateMachine; // forward declaration
 
 class BaseState {
 public:
-  void Initialize(StateMachine *stateMachine);
-  void OnActivate();
-  void OnDeactivate();
-  void Update(ulong deltaTime);
+  void Initialize(StateMachine *stateMachine, Turret &turret);
+  virtual void OnActivate();
+  virtual void OnDeactivate();
+  virtual void Update(ulong deltaTime);
 
-private:
-  StateMachine *stateMachine;
+protected:
+  StateMachine *stateMachine = nullptr;
+  Turret *turret = nullptr;
 };

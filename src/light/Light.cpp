@@ -13,5 +13,3 @@ void Light::Initialize() {
 }
 
 void Light::Update(ulong deltaTime) {}
-
-Light lights;
