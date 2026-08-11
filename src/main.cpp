@@ -12,9 +12,9 @@ Radar radar;
 Audio audio;
 Light light;
 
-void setup() {
+Turret turret{gantry, motion, radar, audio, light};
 
-  Turret turret{gantry, motion, radar, audio, light};
+void setup() {
 
   Serial.begin(9600);
   delay(1000);
