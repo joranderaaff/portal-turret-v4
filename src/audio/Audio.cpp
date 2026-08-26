@@ -27,14 +27,15 @@ void Audio::Initialize() {
 }
 
 void Audio::Update(ulong deltaTime) {
-  int toneFreq = 440;
+  int toneFreq = 880;
   static float phase = 0;
   const int samples = 256;
 
   int16_t buffer[samples * 2]; // stereo
 
   for (int i = 0; i < samples; i++) {
-    int16_t sample = (int16_t)(sin(phase) * 12000);
+    int16_t sample = (int16_t)(sin(phase) * 1200);
+    // int16_t sample = (int16_t)(sin(phase) * 12000);
 
     // Left and right channels
     buffer[i * 2] = sample;
@@ -47,5 +48,5 @@ void Audio::Update(ulong deltaTime) {
     }
   }
   size_t bytes_written;
-  i2s_write(I2S_PORT, buffer, sizeof(buffer), &bytes_written, 0); //portMAX_DELAY
+  i2s_write(I2S_PORT, buffer, sizeof(buffer), &bytes_written, portMAX_DELAY); //
 }
