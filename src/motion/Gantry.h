@@ -13,6 +13,8 @@ public:
   void SetRotationZ(int angle);
   void OpenWings();
   void CloseWings();
+  Wing& GetWingLeft();
+  Wing& GetWingRight();
 
 private:
   Wing wingLeft;

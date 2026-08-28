@@ -6,7 +6,8 @@ Gantry::Gantry()
     : wingLeft(PIN_WING_LEFT, PIN_GUN_LEFT, PIN_HALL_LEFT),
       wingRight(PIN_WING_RIGHT, PIN_GUN_RIGHT, PIN_HALL_RIGHT) {}
 
-void Gantry::Initialize() {
+void Gantry::Initialize()
+{
 
   ESP32PWM::allocateTimer(0);
   ESP32PWM::allocateTimer(1);
@@ -27,29 +28,44 @@ void Gantry::Initialize() {
   wingRight.Initialize();
 }
 
-void Gantry::SetRotationX(int angle) {
-  //if (wingLeft.IsOpen() && wingRight.IsOpen()) {
-    servoRotateX.write(angle);
+void Gantry::SetRotationX(int angle)
+{
+  // if (wingLeft.IsOpen() && wingRight.IsOpen()) {
+  servoRotateX.write(angle);
   //}
 }
 
-void Gantry::SetRotationZ(int angle) {
-  //if (wingLeft.IsOpen() && wingRight.IsOpen()) {
-    servoRotateZ.write(angle);
+void Gantry::SetRotationZ(int angle)
+{
+  // if (wingLeft.IsOpen() && wingRight.IsOpen()) {
+  servoRotateZ.write(angle);
   //}
 }
 
-void Gantry::Update(ulong deltaTime) {
+void Gantry::Update(ulong deltaTime)
+{
   wingLeft.Update(deltaTime);
   wingRight.Update(deltaTime);
 }
 
-void Gantry::OpenWings() {
+void Gantry::OpenWings()
+{
   wingLeft.Open();
   wingRight.Open();
 }
 
-void Gantry::CloseWings() {
+Wing &Gantry::GetWingLeft()
+{
+  return wingLeft;
+}
+
+Wing &Gantry::GetWingRight()
+{
+  return wingRight;
+}
+
+void Gantry::CloseWings()
+{
   servoRotateX.write(90);
   servoRotateZ.write(90);
   wingLeft.Close();
