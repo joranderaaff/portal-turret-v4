@@ -12,6 +12,7 @@ public:
   void Close();
   void Update(ulong deltaTime);
   bool IsOpen();
+  Gun& GetGun();
 
 private:
   bool isOpening = false;

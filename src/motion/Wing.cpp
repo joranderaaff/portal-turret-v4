@@ -34,13 +34,18 @@ void Wing::Open()
 
 void Wing::Close()
 {
-  isOpening = false;    
+  isOpening = false;
   isClosing = true;
   isOpen = false;
   if (servoPin == PIN_WING_LEFT)
     servo.write(CENTER_ANGLE - 80);
   else
     servo.write(CENTER_ANGLE + 80);
+}
+
+Gun &Wing::GetGun()
+{
+  return gun;
 }
 
 void Wing::Update(ulong deltaTime)

@@ -1,12 +1,13 @@
 #include "states/StateMachine.h"
 
-void StateMachine::Initialize(Turret &turretIn) {
+void StateMachine::Initialize(Turret& turretIn) {
   bootState.Initialize(this, turretIn);
   idleState.Initialize(this, turretIn);
+  activateState.Initialize(this, turretIn);
+  disengageState.Initialize(this, turretIn);
 }
 
 void StateMachine::GoToState(StateId nextStateId) {
-
   if (currentState) {
     currentState->OnDeactivate();
   }
@@ -18,13 +19,19 @@ void StateMachine::GoToState(StateId nextStateId) {
   }
 }
 
-BaseState *StateMachine::GetState(StateId stateId) {
+BaseState* StateMachine::GetState(StateId stateId) {
   switch (stateId) {
-  case StateId::Booting:
-    return &bootState;
-    break;
-  case StateId::Idle:
-    return &idleState;
+    case StateId::Booting:
+      return &bootState;
+      break;
+    case StateId::Activate:
+      return &activateState;
+      break;
+    case StateId::Disengage:
+      return &disengageState;
+      break;
+    case StateId::Idle:
+      return &idleState;
   }
   return nullptr;
 }

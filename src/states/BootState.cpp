@@ -6,6 +6,4 @@ void BootState::OnActivate() {
   turret->gantry.OpenWings();
 }
 
-void BootState::Update(ulong deltaTime) {
-  
-}
+void BootState::Update(ulong deltaTime) {}
