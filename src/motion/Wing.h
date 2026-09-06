@@ -12,6 +12,7 @@ public:
   void Close();
   void Update(ulong deltaTime);
   bool IsOpen();
+  bool IsClosing();
   Gun& GetGun();
 
 private:
@@ -20,6 +21,7 @@ private:
   bool isOpen = false;
   int servoPin;
   int hallSensorPin;
+  ulong timeMoving = 0;
   Servo servo;
   Gun gun;
 };

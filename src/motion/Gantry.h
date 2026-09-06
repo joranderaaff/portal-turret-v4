@@ -17,6 +17,7 @@ public:
   Wing& GetWingRight();
 
 private:
+  static const int ANGLE_OFFSET_X = -15;
   Wing wingLeft;
   Wing wingRight;
   Servo servoRotateX;

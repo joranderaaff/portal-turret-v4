@@ -18,9 +18,13 @@ void Light::Initialize() {
 
 void Light::Update(ulong deltaTime) {
 
-  uint8_t thisHue = beat8(10, 255); // A simple rainbow march.
+  uint8_t t = millis() / 4;
+  uint8_t tri = triwave8(t);
 
-  fill_rainbow(centerLeds, 9, thisHue, 10); // Use FastLED's fill_rainbow routine.
+  fill_solid(leftLeds, 2, HeatColor(tri));
+  fill_solid(rightLeds, 2, HeatColor(tri));
+  fill_solid(centerLeds, 9, CRGB::Red);
+  
   std::swap(centerLeds[8].r, centerLeds[8].g);
   FastLED.show();
   std::swap(centerLeds[8].r, centerLeds[8].g);

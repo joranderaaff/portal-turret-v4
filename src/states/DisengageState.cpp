@@ -1,15 +1,17 @@
 #include "DisengageState.h"
+#include "StateMachine.h"
 
 void DisengageRoutine::Initialize(Turret& _turret) { turret = &_turret; }
 
 int DisengageRoutine::runCoroutine() {
   COROUTINE_BEGIN();
-  turret->gantry.GetWingLeft().GetGun().Extend();
-  turret->gantry.GetWingRight().GetGun().Extend();
+  turret->gantry.GetWingLeft().GetGun().Retract();
+  turret->gantry.GetWingRight().GetGun().Retract();
   COROUTINE_DELAY(500);
   turret->gantry.CloseWings();
-  COROUTINE_AWAIT(!turret->gantry.GetWingLeft().IsOpen() &&
-                  !turret->gantry.GetWingRight().IsOpen());
+  COROUTINE_AWAIT(!turret->gantry.GetWingLeft().IsClosing() &&
+                  !turret->gantry.GetWingRight().IsClosing());
+  COROUTINE_DELAY(500);
   COROUTINE_END();
 }
 
@@ -26,6 +28,6 @@ void DisengageState::OnActivate() {
 void DisengageState::Update(ulong deltaTime) {
   disengageRoutine.runCoroutine();
   if (disengageRoutine.isDone()) {
-    stateMachine->GoToState(StateId::Idle);
+    stateMachine->GoToState(StateId::Activate);
   }
 }
