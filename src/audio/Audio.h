@@ -17,6 +17,10 @@ public:
   void LoopSound();
 
 private:
+  int sampleReadIndex = 0;
+  int loopCounter = 0;
+  bool isLooping = false;
+  uint8_t sampleBuffer[4096];
   I2SStream i2s;
   AudioSourceLittleFS source;
   MP3DecoderHelix decoder;
