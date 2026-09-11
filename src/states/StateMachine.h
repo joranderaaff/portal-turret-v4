@@ -6,6 +6,7 @@
 #include "states/BaseState.h"
 #include "states/BootState.h"
 #include "states/DisengageState.h"
+#include "states/FiringState.h"
 #include "states/ManualState.h"
 #include "states/StateId.h"
 
@@ -22,6 +23,7 @@ private:
   BootState bootState;
   BaseState idleState;
   ActivateState activateState;
+  FiringState firingState;
   DisengageState disengageState;
   ManualState manualState;
 };

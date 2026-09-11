@@ -1,12 +1,11 @@
 #include "AudioLoop.h"
 
-const int TOTAL_SAMPLE_COUNT = 16420;
-
-AudioLoop::AudioLoop(const uint8_t* samplesIn, int loopStartSampleIn,
+AudioLoop::AudioLoop(const uint8_t *samplesIn, int loopStartSampleIn,
                      int loopEndSampleIn) {
   loopStartSample = loopStartSampleIn;
   loopEndSample = loopEndSampleIn;
   samples = samplesIn;
+  totalSampleCount = sizeof(samplesIn) / 2;
 }
 
 void AudioLoop::Begin() {
@@ -16,9 +15,11 @@ void AudioLoop::Begin() {
   sampleReadIndex = 0;
 }
 
+bool AudioLoop::IsPlaying() { return isPlaying; }
+
 void AudioLoop::Stop() { isLooping = false; }
 
-void AudioLoop::Read(uint8_t* buffer, uint8_t len) {
+void AudioLoop::Read(uint8_t *buffer, int len) {
   for (int i = 0; i < len; i += 2) {
     if (!isPlaying) {
       buffer[i + 0] = 0;
@@ -40,7 +41,7 @@ void AudioLoop::Read(uint8_t* buffer, uint8_t len) {
         loopCounter++;
       }
 
-      if (sampleReadIndex >= TOTAL_SAMPLE_COUNT) {
+      if (sampleReadIndex >= totalSampleCount) {
         isPlaying = false;
       }
     }

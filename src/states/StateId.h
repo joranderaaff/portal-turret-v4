@@ -4,6 +4,7 @@ enum class StateId {
   Booting,
   Idle,
   Activate,
+  FiringState,
   Disengage,
   Manual,
 };

@@ -1,5 +1,6 @@
 #include "ActivateState.h"
 #include "StateMachine.h"
+
 void ActivateRoutine::Initialize(Turret &_turret) { turret = &_turret; }
 
 int ActivateRoutine::runCoroutine() {
@@ -9,7 +10,7 @@ int ActivateRoutine::runCoroutine() {
                   turret->gantry.GetWingRight().IsOpen());
   turret->gantry.GetWingLeft().GetGun().Extend();
   turret->gantry.GetWingRight().GetGun().Extend();
-  COROUTINE_DELAY(3000);
+  COROUTINE_DELAY(500);
   COROUTINE_END();
 }
 
@@ -26,6 +27,6 @@ void ActivateState::OnActivate() {
 void ActivateState::Update(ulong deltaTime) {
   activateRoutine.runCoroutine();
   if (activateRoutine.isDone()) {
-    stateMachine->GoToState(StateId::Disengage);
+    stateMachine->GoToState(StateId::FiringState);
   }
 }

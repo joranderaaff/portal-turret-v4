@@ -6,6 +6,7 @@ void StateMachine::Initialize(Turret &turretIn) {
   activateState.Initialize(this, turretIn);
   disengageState.Initialize(this, turretIn);
   manualState.Initialize(this, turretIn);
+  firingState.Initialize(this, turretIn);
 }
 
 void StateMachine::GoToState(StateId nextStateId) {
@@ -29,6 +30,10 @@ BaseState *StateMachine::GetState(StateId stateId) {
   case StateId::Activate:
     Serial.println("ActivateState");
     return &activateState;
+    break;
+  case StateId::FiringState:
+    Serial.println("FiringState");
+    return &firingState;
     break;
   case StateId::Disengage:
     Serial.println("DisengageState");
