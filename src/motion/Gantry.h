@@ -17,7 +17,11 @@ public:
   Wing& GetWingRight();
 
 private:
+  static const float X_AXIS_GEAR_RATIO = 1.0;
+  static const float Z_AXIS_GEAR_RATIO = 1.0;
   static const int ANGLE_OFFSET_X = -15;
+  static const int ANGLE_OFFSET_Z = 0;
+  
   Wing wingLeft;
   Wing wingRight;
   Servo servoRotateX;

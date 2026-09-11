@@ -1,5 +1,4 @@
 #include "Audio.h"
-#include "GunShotAudio.h"
 
 #define I2S_PORT I2S_NUM_0
 #define SAMPLE_RATE 44100
@@ -8,7 +7,7 @@ const int LOOP_START_SAMPLE = 1537;
 const int LOOP_END_SAMPLE = 10102;
 const int TOTAL_SAMPLE_COUNT = 16420;
 
-Audio::Audio() : source("/", ".mp3"), player(source, i2s, decoder) {}
+Audio::Audio() : source("/", ".mp3"), player(source, i2s, decoder), shootAudio(samples, 1537, 10102) {}
 
 void Audio::Initialize() {
 
@@ -28,38 +27,13 @@ void Audio::Initialize() {
   cfg.auto_clear = true;
   cfg.fixed_mclk = 0;
   i2s.begin(cfg);
+
+  shootAudio.Begin();
   // player.begin();
 }
 
 void Audio::Update(ulong deltaTime) {
-  // 16bits samples, so 2 bytes per sample.
   int bytesAvailableForWrite = i2s.availableForWrite();
-
-  for (int i = 0; i < bytesAvailableForWrite; i += 2) {
-
-    int byteReadIndex = sampleReadIndex * 2;
-    sampleBuffer[i + 0] = samples[byteReadIndex + 0];
-    sampleBuffer[i + 1] = samples[byteReadIndex + 1];
-
-    sampleReadIndex++;
-
-    if (!isLooping && loopCounter == 0 && sampleReadIndex >= LOOP_START_SAMPLE) {
-      isLooping = true;
-    }
-
-    if (isLooping && sampleReadIndex >= LOOP_END_SAMPLE) {
-      sampleReadIndex -= LOOP_END_SAMPLE - LOOP_START_SAMPLE;
-      loopCounter++;
-    }
-
-    if (isLooping && loopCounter == 5) {
-      isLooping = false;
-    }
-
-    if (sampleReadIndex >= TOTAL_SAMPLE_COUNT) {
-      sampleReadIndex = 0;
-      loopCounter = 0;
-    }
-  }
+  shootAudio.Read(sampleBuffer, bytesAvailableForWrite);
   i2s.write(sampleBuffer, bytesAvailableForWrite);
 }
