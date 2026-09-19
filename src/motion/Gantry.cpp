@@ -17,24 +17,24 @@ void Gantry::Initialize() {
 
   servoRotateX.setPeriodHertz(50);
   servoRotateX.attach(PIN_ROTATE_X, 500, 2400);
-  SetRotationX(0);
+  SetRotationX(0, true);
 
   servoRotateZ.setPeriodHertz(50);
   servoRotateZ.attach(PIN_ROTATE_Z, 500, 2400);
-  SetRotationZ(0);
+  SetRotationZ(0, true);
 
   wingLeft.Initialize();
   wingRight.Initialize();
 }
 
-void Gantry::SetRotationX(int angle) {
-  if (wingLeft.IsOpen() && wingRight.IsOpen()) {
+void Gantry::SetRotationX(int angle, bool force) {
+  if (force || wingLeft.IsOpen() && wingRight.IsOpen()) {
     servoRotateX.write(round((90 + angle + ANGLE_OFFSET_X) * X_AXIS_GEAR_RATIO));
   }
 }
 
-void Gantry::SetRotationZ(int angle) {
-  if (wingLeft.IsOpen() && wingRight.IsOpen()) {
+void Gantry::SetRotationZ(int angle, bool force) {
+  if (force || wingLeft.IsOpen() && wingRight.IsOpen()) {
     servoRotateZ.write(round((90 + angle) * Z_AXIS_GEAR_RATIO));
   }
 }
@@ -54,8 +54,8 @@ Wing& Gantry::GetWingLeft() { return wingLeft; }
 Wing& Gantry::GetWingRight() { return wingRight; }
 
 void Gantry::CloseWings() {
-  SetRotationX(0);
-  SetRotationZ(0);
+  SetRotationX(0, true);
+  SetRotationZ(0, true);
   wingLeft.Close();
   wingRight.Close();
 }
