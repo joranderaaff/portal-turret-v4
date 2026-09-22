@@ -15,11 +15,12 @@ Radar radar;
 Audio audio;
 Light light;
 Ota ota;
+Settings settings;
 
 AsyncWebServer server(80);
 const char *ssid = "Portal Turret";
 
-Turret turret{gantry, motion, radar, audio, light, server};
+Turret turret{gantry, motion, radar, audio, light, server, settings};
 
 void setup() {
 
@@ -29,15 +30,17 @@ void setup() {
 
   WiFi.softAP(ssid);
 
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "application/json", "{\"status\":\"OK\"}");
-  });
+  // server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+  //   request->send(200, "application/json", "{\"status\":\"OK\"}");
+  // });
   ota.Initialize(server);
   server.begin();
 
   prevTime = millis();
 
-  gantry.Initialize();
+  settings.Initialize();
+
+  gantry.Initialize(settings);
   light.Initialize();
   motion.Initialize();
   radar.Initialize();

@@ -7,13 +7,16 @@
 // without adding its row in Settings.cpp is a compile error.
 enum SettingId {
   AngleOffsetX,
-  AngleOffsetY,
+  AngleOffsetZ,
   Test,
   COUNT
 };
 
 // Scoped, so the enumerators don't collide with Arduino's String class.
-enum class SettingType { Int, Float, Bool, Str };
+enum class SettingType { Int,
+                         Float,
+                         Bool,
+                         Str };
 
 constexpr size_t SETTING_STRING_MAX = 32;
 
@@ -32,18 +35,14 @@ union SettingValue {
 };
 
 class SettingsEntry {
- public:
+public:
   // Numeric settings: min/max bound the value.
-  SettingsEntry(const char *key, const char *label, const char *group,
-                SettingType type, SettingValue defaultValue, SettingValue min,
-                SettingValue max);
+  SettingsEntry(const char *key, const char *label, const char *group, SettingType type, SettingValue defaultValue, SettingValue min, SettingValue max);
   // Bool and string settings: no meaningful range.
-  SettingsEntry(const char *key, const char *label, const char *group,
-                SettingType type, SettingValue defaultValue);
+  SettingsEntry(const char *key, const char *label, const char *group, SettingType type, SettingValue defaultValue);
 
-  const char *key;    // NVS + JSON identity, max 15 chars, never rename
-  const char *label;  // human readable, for the frontend
-  const char *group;  // section the frontend renders it under
+  const char *key;   // NVS + JSON identity, max 15 chars, never rename
+  const char *label; // human readable, for the frontend
   SettingType type;
   SettingValue value;
   SettingValue defaultValue;
@@ -52,8 +51,10 @@ class SettingsEntry {
 };
 
 class Settings {
- public:
+public:
   Settings();
+  
+  SettingsEntry entries[SettingId::COUNT];
 
   // Opens NVS and overwrites values that have been stored before.
   void Initialize();
@@ -73,18 +74,14 @@ class Settings {
   bool SetFromString(SettingId id, const char *text);
   bool FindId(const char *key, SettingId &outId) const;
 
-  // Full list with metadata, for the frontend to render itself from.
-  String ToJson() const;
-
   void ResetToDefaults();
 
- private:
+private:
   const SettingsEntry *Get(SettingId id) const;
   SettingsEntry *Get(SettingId id);
   void Persist(const SettingsEntry &entry);
   void Load();
 
-  SettingsEntry entries[SettingId::COUNT];
   Preferences prefs;
   bool prefsReady;
 };

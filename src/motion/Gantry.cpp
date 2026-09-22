@@ -7,11 +7,16 @@ Gantry::Gantry()
     : wingLeft(PIN_WING_LEFT, PIN_GUN_LEFT, PIN_HALL_LEFT),
       wingRight(PIN_WING_RIGHT, PIN_GUN_RIGHT, PIN_HALL_RIGHT) {}
 
-void Gantry::Initialize() {
+void Gantry::Initialize(Settings &settingsIn) {
   ESP32PWM::allocateTimer(0);
   ESP32PWM::allocateTimer(1);
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
+
+  settings = &settingsIn;
+
+  ANGLE_OFFSET_X = settings->GetInt(SettingId::AngleOffsetX);
+  ANGLE_OFFSET_Z = settings->GetInt(SettingId::AngleOffsetZ);
 
   delay(100);
 
@@ -29,13 +34,13 @@ void Gantry::Initialize() {
 
 void Gantry::SetRotationX(int angle, bool force) {
   if (force || wingLeft.IsOpen() && wingRight.IsOpen()) {
-    servoRotateX.write(round((90 + angle + ANGLE_OFFSET_X) * X_AXIS_GEAR_RATIO));
+    servoRotateX.write(round(90 + (angle + ANGLE_OFFSET_X) * X_AXIS_GEAR_RATIO));
   }
 }
 
 void Gantry::SetRotationZ(int angle, bool force) {
   if (force || wingLeft.IsOpen() && wingRight.IsOpen()) {
-    servoRotateZ.write(round((90 + angle) * Z_AXIS_GEAR_RATIO));
+    servoRotateZ.write(round(90 + (angle +  ANGLE_OFFSET_Z) * Z_AXIS_GEAR_RATIO));
   }
 }
 

@@ -1,97 +1,21 @@
 #include "Settings.h"
 
 namespace {
-
 const char *NVS_NAMESPACE = "turret";
 const size_t NVS_KEY_MAX = 15;
+} // namespace
 
-const char *TypeName(SettingType type) {
-  switch (type) {
-    case SettingType::Int: return "int";
-    case SettingType::Float: return "float";
-    case SettingType::Bool: return "bool";
-    case SettingType::Str: return "string";
-  }
-  return "unknown";
-}
+SettingValue::SettingValue(const char *v) { strlcpy(valueString, v, SETTING_STRING_MAX); }
 
-void AppendEscaped(String &out, const char *text) {
-  out += '"';
-  for (const char *c = text; *c != '\0'; c++) {
-    if (*c == '"' || *c == '\\') {
-      out += '\\';
-      out += *c;
-    } else if (*c == '\n') {
-      out += "\\n";
-    } else {
-      out += *c;
-    }
-  }
-  out += '"';
-}
+SettingsEntry::SettingsEntry(const char *key, const char *label, const char *group, SettingType type, SettingValue defaultValue, SettingValue min, SettingValue max) : key(key), label(label), type(type), value(defaultValue), defaultValue(defaultValue), min(min), max(max) {}
 
-void AppendValue(String &out, SettingType type, const SettingValue &value) {
-  char buffer[24];
-  switch (type) {
-    case SettingType::Int:
-      out += String(value.valueInt);
-      break;
-    case SettingType::Float:
-      snprintf(buffer, sizeof(buffer), "%.6g", value.valueFloat);
-      out += buffer;
-      break;
-    case SettingType::Bool:
-      out += value.valueBool ? "true" : "false";
-      break;
-    case SettingType::Str:
-      AppendEscaped(out, value.valueString);
-      break;
-  }
-}
-
-bool ParseBool(const char *text) {
-  return strcasecmp(text, "true") == 0 || strcasecmp(text, "on") == 0 ||
-         strcmp(text, "1") == 0;
-}
-
-}  // namespace
-
-SettingValue::SettingValue(const char *v) {
-  strlcpy(valueString, v, SETTING_STRING_MAX);
-}
-
-SettingsEntry::SettingsEntry(const char *key, const char *label,
-                             const char *group, SettingType type,
-                             SettingValue defaultValue, SettingValue min,
-                             SettingValue max)
-    : key(key),
-      label(label),
-      group(group),
-      type(type),
-      value(defaultValue),
-      defaultValue(defaultValue),
-      min(min),
-      max(max) {}
-
-SettingsEntry::SettingsEntry(const char *key, const char *label,
-                             const char *group, SettingType type,
-                             SettingValue defaultValue)
-    : key(key),
-      label(label),
-      group(group),
-      type(type),
-      value(defaultValue),
-      defaultValue(defaultValue),
-      min((int32_t)0),
-      max((int32_t)0) {}
+SettingsEntry::SettingsEntry(const char *key, const char *label, const char *group, SettingType type, SettingValue defaultValue) : key(key), label(label), type(type), value(defaultValue), defaultValue(defaultValue), min((int32_t)0), max((int32_t)0) {}
 
 // The rows must stay in the same order as SettingId.
 Settings::Settings()
     : entries{
-          {"AngleOffsetX", "Angle offset X", "Motion", SettingType::Int,
-           (int32_t)0, (int32_t)-90, (int32_t)90},
-          {"AngleOffsetY", "Angle offset Y", "Motion", SettingType::Int,
-           (int32_t)0, (int32_t)-90, (int32_t)90},
+          {"AngleOffsetX", "Angle offset X", "Motion", SettingType::Int, (int32_t)0, (int32_t)-90, (int32_t)90},
+          {"AngleOffsetZ", "Angle offset Z", "Motion", SettingType::Int, (int32_t)0, (int32_t)-90, (int32_t)90},
           {"Test", "Test", "Debug", SettingType::Float, 10.5f, -90.0f, 90.0f},
       },
       prefsReady(false) {}
@@ -119,20 +43,19 @@ void Settings::Load() {
       continue;
     }
     switch (entry.type) {
-      case SettingType::Int:
-        entry.value.valueInt = prefs.getInt(entry.key, entry.value.valueInt);
-        break;
-      case SettingType::Float:
-        entry.value.valueFloat =
-            prefs.getFloat(entry.key, entry.value.valueFloat);
-        break;
-      case SettingType::Bool:
-        entry.value.valueBool = prefs.getBool(entry.key, entry.value.valueBool);
-        break;
-      case SettingType::Str:
-        prefs.getString(entry.key, entry.value.valueString,
-                        SETTING_STRING_MAX);
-        break;
+    case SettingType::Int:
+      entry.value.valueInt = prefs.getInt(entry.key, entry.value.valueInt);
+      break;
+    case SettingType::Float:
+      entry.value.valueFloat =
+          prefs.getFloat(entry.key, entry.value.valueFloat);
+      break;
+    case SettingType::Bool:
+      entry.value.valueBool = prefs.getBool(entry.key, entry.value.valueBool);
+      break;
+    case SettingType::Str:
+      prefs.getString(entry.key, entry.value.valueString, SETTING_STRING_MAX);
+      break;
     }
   }
 }
@@ -142,18 +65,18 @@ void Settings::Persist(const SettingsEntry &entry) {
     return;
   }
   switch (entry.type) {
-    case SettingType::Int:
-      prefs.putInt(entry.key, entry.value.valueInt);
-      break;
-    case SettingType::Float:
-      prefs.putFloat(entry.key, entry.value.valueFloat);
-      break;
-    case SettingType::Bool:
-      prefs.putBool(entry.key, entry.value.valueBool);
-      break;
-    case SettingType::Str:
-      prefs.putString(entry.key, entry.value.valueString);
-      break;
+  case SettingType::Int:
+    prefs.putInt(entry.key, entry.value.valueInt);
+    break;
+  case SettingType::Float:
+    prefs.putFloat(entry.key, entry.value.valueFloat);
+    break;
+  case SettingType::Bool:
+    prefs.putBool(entry.key, entry.value.valueBool);
+    break;
+  case SettingType::Str:
+    prefs.putString(entry.key, entry.value.valueString);
+    break;
   }
 }
 
@@ -299,24 +222,6 @@ bool Settings::Set(SettingId id, const char *value) {
   return true;
 }
 
-bool Settings::SetFromString(SettingId id, const char *text) {
-  const SettingsEntry *entry = Get(id);
-  if (entry == nullptr) {
-    return false;
-  }
-  switch (entry->type) {
-    case SettingType::Int:
-      return Set(id, (int32_t)strtol(text, nullptr, 10));
-    case SettingType::Float:
-      return Set(id, (float)strtod(text, nullptr));
-    case SettingType::Bool:
-      return Set(id, ParseBool(text));
-    case SettingType::Str:
-      return Set(id, text);
-  }
-  return false;
-}
-
 bool Settings::FindId(const char *key, SettingId &outId) const {
   for (int i = 0; i < SettingId::COUNT; i++) {
     if (strcmp(entries[i].key, key) == 0) {
@@ -334,35 +239,4 @@ void Settings::ResetToDefaults() {
     entries[i].value = entries[i].defaultValue;
     Persist(entries[i]);
   }
-}
-
-String Settings::ToJson() const {
-  String json = "[";
-  for (int i = 0; i < SettingId::COUNT; i++) {
-    const SettingsEntry &entry = entries[i];
-    if (i > 0) {
-      json += ',';
-    }
-    json += "{\"key\":";
-    AppendEscaped(json, entry.key);
-    json += ",\"label\":";
-    AppendEscaped(json, entry.label);
-    json += ",\"group\":";
-    AppendEscaped(json, entry.group);
-    json += ",\"type\":";
-    AppendEscaped(json, TypeName(entry.type));
-    json += ",\"value\":";
-    AppendValue(json, entry.type, entry.value);
-    json += ",\"default\":";
-    AppendValue(json, entry.type, entry.defaultValue);
-    if (entry.type == SettingType::Int || entry.type == SettingType::Float) {
-      json += ",\"min\":";
-      AppendValue(json, entry.type, entry.min);
-      json += ",\"max\":";
-      AppendValue(json, entry.type, entry.max);
-    }
-    json += '}';
-  }
-  json += ']';
-  return json;
 }
