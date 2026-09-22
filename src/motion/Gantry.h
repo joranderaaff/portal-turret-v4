@@ -9,17 +9,17 @@ public:
   Gantry();
   void Initialize();
   void Update(ulong deltaTime);
-  void SetRotationX(int angle);
-  void SetRotationZ(int angle);
+  void SetRotationX(int angle, bool force);
+  void SetRotationZ(int angle, bool force);
   void OpenWings();
   void CloseWings();
   Wing& GetWingLeft();
   Wing& GetWingRight();
 
 private:
-  static const float X_AXIS_GEAR_RATIO = 1.0;
-  static const float Z_AXIS_GEAR_RATIO = 1.0;
-  static const int ANGLE_OFFSET_X = -15;
+  float X_AXIS_GEAR_RATIO = 75.0/17.0;
+  float Z_AXIS_GEAR_RATIO = 30.0/15.0;
+  static const int ANGLE_OFFSET_X = 0;
   static const int ANGLE_OFFSET_Z = 0;
   
   Wing wingLeft;

@@ -10,15 +10,14 @@
 #include "pins.h"
 
 class Audio {
- public:
+public:
   Audio();
   void Initialize();
   void Update(ulong deltaTime);
-  void PlaySound();
-  void LoopSound();
 
- private:
-  AudioLoop shootAudio;
+  AudioLoop ShootAudio;
+
+private:
   int sampleReadIndex = 0;
   int loopCounter = 0;
   bool isLooping = false;

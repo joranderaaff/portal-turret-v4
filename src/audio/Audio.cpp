@@ -3,11 +3,9 @@
 #define I2S_PORT I2S_NUM_0
 #define SAMPLE_RATE 44100
 
-const int LOOP_START_SAMPLE = 1537;
-const int LOOP_END_SAMPLE = 10102;
-const int TOTAL_SAMPLE_COUNT = 16420;
-
-Audio::Audio() : source("/", ".mp3"), player(source, i2s, decoder), shootAudio(samples, 1537, 10102) {}
+Audio::Audio()
+    : source("/", ".mp3"), player(source, i2s, decoder),
+      ShootAudio(samples, 1537, 10102) {}
 
 void Audio::Initialize() {
 
@@ -27,13 +25,12 @@ void Audio::Initialize() {
   cfg.auto_clear = true;
   cfg.fixed_mclk = 0;
   i2s.begin(cfg);
-
-  shootAudio.Begin();
-  // player.begin();
 }
 
 void Audio::Update(ulong deltaTime) {
-  int bytesAvailableForWrite = i2s.availableForWrite();
-  shootAudio.Read(sampleBuffer, bytesAvailableForWrite);
-  i2s.write(sampleBuffer, bytesAvailableForWrite);
+  if (ShootAudio.IsPlaying()) {
+    int bytesAvailableForWrite = i2s.availableForWrite();
+    ShootAudio.Read(sampleBuffer, bytesAvailableForWrite);
+    i2s.write(sampleBuffer, bytesAvailableForWrite);
+  }
 }
