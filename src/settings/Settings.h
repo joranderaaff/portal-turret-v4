@@ -63,6 +63,9 @@ public:
   float GetFloat(SettingId id) const;
   bool GetBool(SettingId id) const;
   const char *GetString(SettingId id) const;
+  
+  const SettingsEntry *Get(SettingId id) const;
+  SettingsEntry *Get(SettingId id);
 
   // Clamp to range, store, write to NVS. Returns false on a type mismatch.
   bool Set(SettingId id, int32_t value);
@@ -77,8 +80,6 @@ public:
   void ResetToDefaults();
 
 private:
-  const SettingsEntry *Get(SettingId id) const;
-  SettingsEntry *Get(SettingId id);
   void Persist(const SettingsEntry &entry);
   void Load();
 

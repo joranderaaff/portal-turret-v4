@@ -1,25 +1,26 @@
 #include "TurretWebServer.h"
+
 #include "settings/Settings.h"
 
 namespace {
 
-const char *TypeName(SettingType type) {
+const char* TypeName(SettingType type) {
   switch (type) {
-  case SettingType::Int:
-    return "int";
-  case SettingType::Float:
-    return "float";
-  case SettingType::Bool:
-    return "bool";
-  case SettingType::Str:
-    return "string";
+    case SettingType::Int:
+      return "int";
+    case SettingType::Float:
+      return "float";
+    case SettingType::Bool:
+      return "bool";
+    case SettingType::Str:
+      return "string";
   }
   return "unknown";
 }
 
-void AppendEscaped(String &out, const char *text) {
+void AppendEscaped(String& out, const char* text) {
   out += '"';
-  for (const char *c = text; *c != '\0'; c++) {
+  for (const char* c = text; *c != '\0'; c++) {
     if (*c == '"' || *c == '\\') {
       out += '\\';
       out += *c;
@@ -32,35 +33,54 @@ void AppendEscaped(String &out, const char *text) {
   out += '"';
 }
 
-void AppendValue(String &out, SettingType type, const SettingValue &value) {
+void AppendValue(String& out, SettingType type, const SettingValue& value) {
   char buffer[24];
   switch (type) {
-  case SettingType::Int:
-    out += String(value.valueInt);
-    break;
-  case SettingType::Float:
-    snprintf(buffer, sizeof(buffer), "%.6g", value.valueFloat);
-    out += buffer;
-    break;
-  case SettingType::Bool:
-    out += value.valueBool ? "true" : "false";
-    break;
-  case SettingType::Str:
-    AppendEscaped(out, value.valueString);
-    break;
+    case SettingType::Int:
+      out += String(value.valueInt);
+      break;
+    case SettingType::Float:
+      snprintf(buffer, sizeof(buffer), "%.6g", value.valueFloat);
+      out += buffer;
+      break;
+    case SettingType::Bool:
+      out += value.valueBool ? "true" : "false";
+      break;
+    case SettingType::Str:
+      AppendEscaped(out, value.valueString);
+      break;
   }
 }
 
-bool ParseBool(const char *text) {
-  return strcasecmp(text, "true") == 0 || strcasecmp(text, "on") == 0 || strcmp(text, "1") == 0;
+bool ParseBool(const char* text) {
+  return strcasecmp(text, "true") == 0 || strcasecmp(text, "on") == 0 ||
+         strcmp(text, "1") == 0;
 }
 
-} // namespace
+bool SetFromString(Settings settings, SettingId id, const char *text) {
+  const SettingsEntry *entry = settings.Get(id);
+  if (entry == nullptr) {
+    return false;
+  }
+  switch (entry->type) {
+  case SettingType::Int:
+    return settings.Set(id, (int32_t)strtol(text, nullptr, 10));
+  case SettingType::Float:
+    return settings.Set(id, (float)strtod(text, nullptr));
+  case SettingType::Bool:
+    return settings.Set(id, ParseBool(text));
+  case SettingType::Str:
+    return settings.Set(id, text);
+  }
+  return false;
+}
 
-String ToJson(Settings *settings) {
+}  // namespace
+
+String ToJson(Settings* settings) {
   String json = "[";
   for (int i = 0; i < SettingId::COUNT; i++) {
-    const SettingsEntry &entry = settings->entries[i];
+    const SettingsEntry& entry = settings->entries[i];
     if (i > 0) {
       json += ',';
     }
@@ -86,36 +106,16 @@ String ToJson(Settings *settings) {
   return json;
 }
 
-TurretWebServer::TurretWebServer() : webServer(80) {
-}
+TurretWebServer::TurretWebServer() : webServer(80) {}
 
-void TurretWebServer::Initialize(Settings &settingsIn) {
+void TurretWebServer::Initialize(Settings& settingsIn) {
   settings = &settingsIn;
-  webServer.on("/", HTTP_GET, [this]() { this->HandleRequestRoot(); });
-}
 
-void TurretWebServer::HandleRequestRoot() {
-  webServer.send(200, "text/plain", "Huge Success");
+  webServer.on("/", HTTP_GET, [this](AsyncWebServerRequest* request) {
+    request->send(200, "application/json", "{\"status\":\"OK\"}");
+  });
+  webServer.on("/settings", HTTP_GET, [this](AsyncWebServerRequest* request) {
+    request->send(200, "application/json", ToJson(settings));
+  });
+  webServer.begin();
 }
-
-void TurretWebServer::HandleRequestSettings() {
-  webServer.send(200, "text/json", ToJson(settings));
-}
-
-// bool SetFromString(SettingId id, const char *text) {
-//   const SettingsEntry *entry = Get(id);
-//   if (entry == nullptr) {
-//     return false;
-//   }
-//   switch (entry->type) {
-//   case SettingType::Int:
-//     return Set(id, (int32_t)strtol(text, nullptr, 10));
-//   case SettingType::Float:
-//     return Set(id, (float)strtod(text, nullptr));
-//   case SettingType::Bool:
-//     return Set(id, ParseBool(text));
-//   case SettingType::Str:
-//     return Set(id, text);
-//   }
-//   return false;
-// }

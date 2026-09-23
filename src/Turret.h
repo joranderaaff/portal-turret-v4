@@ -6,7 +6,7 @@
 #include "sensors/Motion.h"
 #include "sensors/Radar.h"
 #include "settings/Settings.h"
-#include <ESPAsyncWebServer.h>
+#include "web/TurretWebServer.h"
 
 struct Turret {
   Gantry &gantry;
@@ -14,6 +14,6 @@ struct Turret {
   Radar &radar;
   Audio &audio;
   Light &light;
-  AsyncWebServer &wifi;
+  TurretWebServer &server;
   Settings &settings;
 };
