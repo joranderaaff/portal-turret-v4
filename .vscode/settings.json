@@ -15,5 +15,7 @@
   // Keeps the enclosing class / #if branch pinned at the top while scrolling
   // the deeply nested library headers.
   "editor.stickyScroll.enabled": true,
-  "editor.stickyScroll.maxLineCount": 6
+  "editor.stickyScroll.maxLineCount": 6,
+  
+  "C_Cpp.clang_format_fallbackStyle": "{ ColumnLimit: 0 }",
 }
