@@ -9,7 +9,7 @@ Rédigé le 24.09.2026. **Mis à jour le 24.09.2026 (2ᵉ session)** : décision
 ## 0. Contexte et sources
 
 - **Firmware** : celui de `src/` (upstream [joranderaaff/portal-turret-v4](https://github.com/joranderaaff/portal-turret-v4)), écrit pour un Wemos LOLIN S3 mini câblé à la main (« V4 »).
-- **Nouvelle carte** : Turret2, carte 4 couches à ESP32-S3-MINI-1-N8 conçue par lo26lo. Sa documentation (README Turret2, `design-plan.md`, `status-and-history.md`) et le projet KiCad **ne sont pas dans ce dépôt** au moment de la rédaction : ce plan en reprend tout ce dont le firmware a besoin (§1), il se suffit à lui-même.
+- **Nouvelle carte** : Turret2, carte 4 couches à ESP32-S3-MINI-1-N8 conçue par lo26lo. Sa documentation est dans le dépôt depuis le 24.09.2026 : [README.md](../README.md), [design-plan.md](design-plan.md) (justification de chaque choix matériel) et [status-and-history.md](status-and-history.md) (état de la carte, historique, pièges KiCad). Le projet KiCad (`hardware/Turret2/`, cité par le README) **n'est pas** dans le dépôt. Ce plan reprend tout ce dont le firmware a besoin (§1) et se suffit à lui-même ; en cas de doute sur un point matériel, la doc matérielle fait foi.
 - Le pinout de `src/pins.h` est **conservé à l'identique** par la carte. Le travail n'est donc pas un remappage, mais :
   1. une **définition de carte** PlatformIO correcte (celle d'aujourd'hui, `lolin_s3_mini`, est dangereuse sur Turret2) ;
   2. le **pilotage des nouveaux signaux** (ampli SD/gain, PWR_FLT, LEDs, boutons, SW1) ;

@@ -13,7 +13,7 @@ Ce journal accompagne [firmware-plan.md](firmware-plan.md). Il contient **tout**
 
 ## État actuel — mis à jour le 24.09.2026 (2ᵉ session)
 
-- **Phase** : plan terminé, **décisions D1 à D7 tranchées** (plan §9), page web de configuration ajoutée au plan (§10, lot 12). **Aucune ligne de firmware modifiée** : `src/` est le firmware upstream intact (commit `020a839`).
+- **Phase** : plan terminé, **décisions D1 à D7 tranchées** (plan §9), page web de configuration ajoutée au plan (§10, lot 12). Documentation matérielle Turret2 ajoutée au dépôt (`README.md`, `docs/design-plan.md`, `docs/status-and-history.md`) ; le projet KiCad n'y est pas. **Aucune ligne de firmware modifiée** : `src/` est le firmware upstream intact (commit `020a839`).
 - **Cible** : Turret2 uniquement (plus de compatibilité Wemos / V4, D2).
 - **Branche de travail** : `claude/admiring-bell-q3hube` (dépôt `lo26lo/portal-turret-v4`).
 - **Prochaine action** : lot 1 du plan (base de build) — installer PlatformIO dans le conteneur, compiler une dernière fois l'env `lolin_s3_mini` tel quel pour avoir la référence (erreurs, tailles), figer les versions. Puis lot 2 (cible Turret2, suppression des envs Wemos).
@@ -53,6 +53,7 @@ Ce journal accompagne [firmware-plan.md](firmware-plan.md). Il contient **tout**
 | 24.09.2026 | D5 eFuse | le firmware gère latch-off et auto-retry sans connaître la variante : détection de boucle de redémarrage (3 resets de suite) → mode réduit | l'utilisateur a laissé le choix (« fais au mieux ») ; datasheet inaccessible d'ici |
 | 24.09.2026 | D6 servos au repos | ailes détachées à l'arrêt ; canons détachés ~500 ms après leur mouvement ; rotation maintenue ailes ouvertes, détachée après `ServoIdleMs` (5 s) en Idle, ré-attachée sur la dernière consigne | l'utilisateur a laissé le choix ; détacher les servos continus supprime le glissement du neutre, et moins de servos alimentés = moins de courant et de bruit pour l'IMU |
 | 24.09.2026 | D7 sécurité | AP en WPA2, mot de passe `ApPassword` (défaut `stillalive`), même mot de passe en HTTP Basic sur l'API et `/update` ; A + B au boot le réinitialise | accepté par l'utilisateur ; défaut connu mais récupérable, avertissement dans la page tant qu'il n'est pas changé |
+| 24.09.2026 | Documentation matérielle (révise la décision « non ajoutée au dépôt » ci-dessus) | ajoutée telle quelle : README Turret2 → `README.md` (le dépôt n'en avait pas), `docs/design-plan.md`, `docs/status-and-history.md`. Aucune modification de leur contenu | demande de l'utilisateur ; emplacements indiqués par le README lui-même |
 | 24.09.2026 | Page web | page de configuration complète embarquée dans le firmware (gzip PROGMEM), générée depuis la liste des réglages, commandes passées à `loop()` par une file | demande de l'utilisateur ; vérifié qu'elle n'existait pas (seulement `GET /` et `GET /settings` en JSON, lecture seule) |
 
 ## Erreurs, impasses et pièges rencontrés
@@ -63,7 +64,7 @@ Ce journal accompagne [firmware-plan.md](firmware-plan.md). Il contient **tout**
 | 24.09.2026 | `api.github.com` refuse les dépôts hors du périmètre de la session | utiliser `raw.githubusercontent.com` (autorisé) pour lire des fichiers de libs publiques |
 | 24.09.2026 | `www.ti.com` bloqué par le proxy (403) | datasheet TPS2595 non consultée → D5 (latch-off ou auto-retry) reste ouverte ; à vérifier par l'utilisateur ou via une autre source |
 | 24.09.2026 | PlatformIO absent du conteneur | rien n'a été compilé ; l'erreur de compilation supposée sur `config.h` (`src/audio/ESP32Downloader.cpp:4`) est à confirmer au lot 1 |
-| 24.09.2026 | La documentation Turret2 citée par le README (`hardware/Turret2/`, `docs/design-plan.md`, `docs/status-and-history.md`) n'existe pas sur la branche distante | travail fait à partir des trois fichiers fournis par l'utilisateur ; le plan §1 en garde tout ce qui concerne le firmware |
+| 24.09.2026 | La documentation Turret2 citée par le README (`hardware/Turret2/`, `docs/design-plan.md`, `docs/status-and-history.md`) n'existe pas sur la branche distante | travail fait à partir des trois fichiers fournis par l'utilisateur ; les deux `docs/` et le README ont été ajoutés en 3ᵉ session ; `hardware/Turret2/` reste absent (les liens du README vers ce dossier sont donc cassés sur GitHub) |
 | 24.09.2026 | Bugs trouvés dans `Settings` en préparant la page web : paramètre `group` ignoré (`Settings.cpp:10,12`), `Settings::SetFromString` déclarée sans définition (`Settings.h:77`), copie par valeur de `Settings` dans `TurretWebServer.cpp:60` | ajoutés au plan §5, corrigés au lot 12 |
 | 24.09.2026 | Piège documentaire : le README Turret2 affirme que `getEvent()` est inchangé avec le LSM6DSOX | faux : `Adafruit_LSM6DS::getEvent(accel, gyro, temp)` prend trois pointeurs (vérifié dans `Adafruit_LSM6DS.h`) → plan §2.4, lot 11 |
 
@@ -113,3 +114,17 @@ Ce journal accompagne [firmware-plan.md](firmware-plan.md). Il contient **tout**
 
 **Prochaine étape** : lot 1.
 
+### 24.09.2026 (3ᵉ session) — Documentation matérielle dans le dépôt
+
+**Demande de l'utilisateur** : pousser aussi le README, `status-and-history` et `design-plan`.
+
+**Fait**
+- Copie sans modification des trois fichiers fournis au début de la 1ʳᵉ session : README Turret2 → `README.md` à la racine (il n'y en avait pas), `docs/design-plan.md`, `docs/status-and-history.md` — emplacements donnés par la section « Repository layout » du README.
+- Plan §0 : lien vers ces documents ; la doc matérielle fait foi sur les points matériels.
+- Décision « documentation non ajoutée » de la 1ʳᵉ session révisée (nouvelle ligne dans « Décisions »).
+
+**À savoir**
+- Le README (en anglais) contient encore l'affirmation fausse sur `getEvent()` et une section Firmware antérieure au plan : laissé tel quel, à corriger au lot 11.
+- `hardware/Turret2/` (projet KiCad) n'est pas dans le dépôt : les liens du README vers ce dossier ne mènent nulle part tant que l'utilisateur ne l'a pas poussé.
+
+**Prochaine étape** : lot 1.
