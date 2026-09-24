@@ -7,6 +7,7 @@
 #include "states/BootState.h"
 #include "states/DisengageState.h"
 #include "states/FiringState.h"
+#include "states/IdleState.h"
 #include "states/ManualState.h"
 #include "states/StateId.h"
 
@@ -21,7 +22,7 @@ private:
   BaseState *currentState = nullptr;
 
   BootState bootState;
-  BaseState idleState;
+  IdleState idleState;
   ActivateState activateState;
   FiringState firingState;
   DisengageState disengageState;

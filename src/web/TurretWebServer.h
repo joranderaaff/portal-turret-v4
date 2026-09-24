@@ -10,7 +10,5 @@ public:
     AsyncWebServer webServer;
 
 private:
-    //void HandleRequestRoot();
-    //void HandleRequestSettings();
     Settings *settings;
 };

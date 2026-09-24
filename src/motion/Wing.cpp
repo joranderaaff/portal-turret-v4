@@ -22,6 +22,9 @@ void Wing::Initialize() {
 }
 
 void Wing::Open() {
+  if (isOpen) {
+    return;
+  }
   Serial.println("Opening Wing");
   isOpening = true;
   isClosing = false;
@@ -33,6 +36,9 @@ void Wing::Open() {
 }
 
 void Wing::Close() {
+  if (!isOpen) {
+    return;
+  }
   Serial.println("Closing Wing");
   isOpening = false;
   isClosing = true;

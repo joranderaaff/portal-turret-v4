@@ -6,6 +6,14 @@ void Radar::Initialize() {
 }
 
 void Radar::Update(ulong deltaTime) {
+  UpdateSerialData();
+}
+
+const RadarTarget &Radar::GetTarget(uint8_t index) const {
+  return radarTargets[index % TRACK_COUNT];
+}
+
+void Radar::UpdateSerialData() {
   while (Serial1.available()) {
     int byte = Serial1.read();
 
@@ -107,6 +115,11 @@ void Radar::Update(ulong deltaTime) {
             lastSensorUpdateTime = millis();
           }
 
+          if (previousRadarTargetCount != radarTargetCount) {
+            Serial.print("Radar Target Count Changed: ");
+            Serial.println(radarTargetCount);
+          }
+
           footerIndex = 0;
           headerIndex = 0;
           writeIndex = 0;
@@ -116,4 +129,8 @@ void Radar::Update(ulong deltaTime) {
       }
     }
   }
+}
+
+uint8_t Radar::GetTargetCount() {
+  return radarTargetCount;
 }

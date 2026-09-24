@@ -13,14 +13,19 @@ struct RadarTarget {
   int16_t speed;
   uint16_t resolution;
   bool available;
+  bool isMoving;
 };
 
 class Radar {
 public:
   void Initialize();
   void Update(ulong deltaTime);
+  const RadarTarget& GetTarget(uint8_t index) const;
+  uint8_t GetTargetCount();
 
 private:
+  void UpdateSerialData();
+
   RadarTarget radarTargets[TRACK_COUNT];
   bool readingData = false;
   bool readingAck = false;

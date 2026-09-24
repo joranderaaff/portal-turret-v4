@@ -28,6 +28,6 @@ void DisengageState::OnActivate() {
 void DisengageState::Update(ulong deltaTime) {
   disengageRoutine.runCoroutine();
   if (disengageRoutine.isDone()) {
-    stateMachine->GoToState(StateId::Activate);
+    stateMachine->GoToState(StateId::Idle);
   }
 }

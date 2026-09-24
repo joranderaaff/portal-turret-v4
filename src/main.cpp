@@ -45,7 +45,7 @@ void setup() {
 
   stateMachine.Initialize(turret);
 
-  stateMachine.GoToState(StateId::Manual);
+  stateMachine.GoToState(StateId::Idle);
 }
 
 void loop() {

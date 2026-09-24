@@ -1,6 +1,5 @@
 #include "BootState.h"
 #include <LittleFS.h>
-#include "audio/ESP32Downloader.h"
 
 void BootState::OnActivate() {
   Serial.println("BootState");

@@ -30,6 +30,9 @@ void Gantry::Initialize(Settings &settingsIn) {
 
   wingLeft.Initialize();
   wingRight.Initialize();
+
+  wingLeft.Close();
+  wingRight.Close();
 }
 
 void Gantry::SetRotationX(int angle, bool force) {
