@@ -1,6 +1,6 @@
 # Plan d'adaptation du firmware à la carte Turret2
 
-Rédigé le 24.09.2026. Le suivi de l'exécution (ce qui est fait, en cours, les erreurs) est dans [firmware-journal.md](firmware-journal.md) : **lire le journal avant de reprendre le travail**.
+Rédigé le 24.09.2026. **Mis à jour le 24.09.2026 (2ᵉ session)** : décisions D1 à D7 tranchées (§9), **plus de compatibilité Wemos / V4** (Turret2 uniquement), page web de configuration ajoutée (§10, lot 12). Le suivi de l'exécution (ce qui est fait, en cours, les erreurs) est dans [firmware-journal.md](firmware-journal.md) : **lire le journal avant de reprendre le travail**.
 
 > Dates au format JJ.MM.AAAA. Les références `fichier:ligne` pointent sur le code tel qu'il était au commit `020a839` (firmware upstream de joranderaaff, avant toute modification).
 
@@ -39,7 +39,7 @@ Rédigé le 24.09.2026. Le suivi de l'exécution (ce qui est fait, en cours, les
 |---|---|---|
 | IO0 | BOOT (SW2 à la masse) | strap — ne pas utiliser |
 | IO1 / IO2 | servo canon gauche / droit | *pins.h* |
-| IO3 | SW1 (interrupteur DIP à la masse, pull-up 10 k R9) | strap JTAG_SEL, **sans effet tant que l'eFuse `STRAP_JTAG_SEL` n'est pas brûlé** → lisible comme GPIO. Rôle à décider (§9) |
+| IO3 | SW1 (interrupteur DIP à la masse, pull-up 10 k R9) | strap JTAG_SEL, **sans effet tant que l'eFuse `STRAP_JTAG_SEL` n'est pas brûlé** → lisible comme GPIO. Rôle : **mode banc** (D1, §9) |
 | IO4 / IO5 | servo aile gauche / droite (servos à rotation continue : 90 = arrêt) | *pins.h* |
 | IO6 / IO7 | servo rotation X / Z (positionnels) | *pins.h* |
 | IO8 / IO9 | Hall gauche / droit, ADC1 | *pins.h* — capteurs en 3,3 V |
@@ -174,8 +174,9 @@ Si PWR_FLT passe bas pendant les étapes 11 ou 12 → arrêt de la séquence, é
 - `FastLED.setMaxPowerInVoltsAndMilliamps(5, …)` : les 13 LEDs en blanc consomment ~0,8 A.
 - Gain par défaut 9 dB, volume logiciel en réglage ; l'ampli peut tirer ~1,3 A crête pendant que les canons bougent.
 - PWR_FLT bas (interruption) → délestage immédiat : ailes à l'arrêt, canons détachés, LEDs éteintes, ampli muet, LED rouge, état `Fault` ; reprise après 2 s de FLT haut.
-- Raison du reset BROWNOUT → compteur en NVS, affiché sur la console et sur une page web `/status`.
-- Option : détacher les servos de rotation au repos (moins de bourdonnement, de courant et de bruit pour l'IMU).
+- Raison du reset BROWNOUT → compteur en NVS, affiché sur la console et sur la page web (§10).
+- **Détection de boucle de redémarrage (D5)** : un compteur en NVS est incrémenté au boot et remis à zéro après 60 s de fonctionnement stable. À partir de 3 redémarrages de suite (brownout, POWERON inattendu, panic, watchdog), la carte démarre en **mode réduit** : servos non attachés, LEDs à 10 %, gain 9 dB, LED rouge « 1 clignotement ». Cela couvre le cas d'un eFuse en auto-retry. En latch-off, la carte reste éteinte jusqu'au débranchement : le firmware n'y peut rien, mais le compteur de brownouts le montrera au redémarrage.
+- **Maintien des servos (D6)** : voir §9.
 
 ---
 
@@ -194,6 +195,9 @@ Ils vont se manifester pendant la mise en service et ressembler à des pannes de
 | `src/motion/Wing.cpp:71,79` | seuils Hall 2500 / 1500 codés en dur | ailes arrêtées seulement au timeout de 2 s |
 | `src/motion/Wing.cpp` (`write(90)`) | avec la plage 500–2400 µs, `write(90)` = 1450 µs, pas 1500 | les ailes (servos continus) peuvent glisser → trim de neutre en réglage |
 | `platformio.ini` | plateforme `espressif32` et libs non figées (FastLED, ESPAsyncWebServer, audio-tools en HEAD git) | build qui casse sans prévenir ; AudioTools change de driver I²S selon la version d'IDF |
+| `src/settings/Settings.cpp:10,12` | le paramètre `group` des constructeurs est ignoré (pas de membre `group` dans `SettingsEntry`) | impossible de regrouper les réglages dans la page web (§10) |
+| `src/settings/Settings.h:77` | `Settings::SetFromString` déclarée mais jamais définie | erreur d'édition de liens dès qu'on l'appelle |
+| `src/web/TurretWebServer.cpp:60` | la copie locale `SetFromString(Settings settings, …)` prend `Settings` **par valeur** : la modification s'applique à une copie | réglage « enregistré » mais sans effet jusqu'au reboot ; à supprimer au profit de `Settings::SetFromString` |
 
 ---
 
@@ -202,20 +206,22 @@ Ils vont se manifester pendant la mise en service et ressembler à des pannes de
 ```
 boards/turret2.json                  carte PlatformIO (8 Mo, QIO, sans PSRAM)
 variants/turret2/pins_arduino.h      SDA 35 / SCL 36 / TX 43 / RX 44 / LED_BUILTIN 33
-src/pins.h                           commun + bloc #ifdef BOARD_TURRET2 (IO13, 21, 47, 38, 33, 48, 26, 34, 3, 37)
-src/board/Board.{h,cpp}              état sûr, raison du reset, LEDs d'état, boutons (anti-rebond, appui long), SW1, surveillance PWR_FLT
+src/pins.h                           pinout Turret2 complet (broches upstream + IO13, 21, 47, 38, 33, 48, 26, 34, 3, 37), sans #ifdef
+src/board/Board.{h,cpp}              état sûr, raison du reset, détection de boucle de redémarrage, LEDs d'état, boutons (anti-rebond, appui long), SW1, surveillance PWR_FLT
 src/audio/Amp.{h,cpp}                SD + gain en open-drain, séquences mute/unmute, SafeShutdown()
-src/sensors/Motion.*                 LSM6DSOX (ADXL345 conservé sous #ifdef pour le V4)
-src/motion/Gantry.*                  attache échelonnée, homing, trims
+src/sensors/Motion.*                 LSM6DSOX uniquement (ADXL345 supprimé)
+src/motion/Gantry.*                  attache échelonnée, homing, trims, politique de maintien des servos (D6)
 src/states/BootState, FaultState     boot réel + état de défaut
-src/web/…                            /status (raison du reset, FLT, IMU, radar, Hall, version)
+src/control/Actions.{h,cpp}          actions de test communes à la console série et à la page web (servo, LED, tonalité, gain…)
+src/web/TurretWebServer.*            API JSON + authentification (§10)
+src/web/page/index.html              page de configuration, compilée dans le firmware (gzip, PROGMEM)
 ```
 
-`platformio.ini` : `env:turret2`, `env:turret2_ota`, `env:turret2_bringup` (`CORE_DEBUG_LEVEL=3` + console) ; `env:lolin_s3_mini` conservé pour les V4 (si la double cible est retenue, §9).
+`platformio.ini` : `env:turret2`, `env:turret2_ota`, `env:turret2_bringup` (`CORE_DEBUG_LEVEL=3` + console). **Pas de compatibilité Wemos / V4 (D2)** : les envs `lolin_s3_mini*` et la lib ADXL345 sont supprimés au lot 2.
 
 Partitions `default_8MB.csv` : nvs 20 Ko, app0 / app1 2 × 3,2 Mo (OTA), LittleFS (`spiffs`) 1,5 Mo, coredump 64 Ko.
 
-Nouveaux réglages (clés NVS de 15 caractères maximum, même ordre que l'enum `SettingId`) : `HallOpenL/R`, `HallCloseL/R`, `WingTrimL/R`, `AmpGain` (9 / 12 / 15), `Volume`, `LedBright`, `LedMaxmA`, `ServoStagger`, `ImuUpAxis`.
+Nouveaux réglages (clés NVS de 15 caractères maximum, même ordre que l'enum `SettingId`) : `HallOpenL/R`, `HallCloseL/R`, `WingTrimL/R`, `AmpGain` (9 / 12 / 15), `Volume`, `LedBright`, `LedMaxmA`, `ServoStagger`, `ImuUpAxis`, `ServoIdleMs` (D6), `ApSsid`, `ApPassword` (D7, 8 à 31 caractères : minimum WPA2, maximum imposé par `SETTING_STRING_MAX` = 32). Le réglage d'essai `Test` actuel est supprimé.
 
 ---
 
@@ -223,17 +229,20 @@ Nouveaux réglages (clés NVS de 15 caractères maximum, même ordre que l'enum 
 
 | Lot | Contenu | Critère de fin |
 |---|---|---|
-| 1 | **Base de build** : installer PlatformIO, compiler le code actuel (env `lolin_s3_mini`), corriger ce qui ne compile pas, figer plateforme + libs ; relever flash / RAM | build reproductible, versions figées dans `platformio.ini` |
-| 2 | **Cible Turret2** : `boards/turret2.json`, variant, partitions 8 Mo, envs, `pins.h` | `pio run -e turret2` passe |
+| 1 | **Base de build** : installer PlatformIO, compiler le code actuel une dernière fois avec l'env `lolin_s3_mini` (référence : erreurs existantes, taille flash / RAM), figer plateforme + libs | build reproductible, versions figées dans `platformio.ini` |
+| 2 | **Cible Turret2** : `boards/turret2.json`, variant, partitions 8 Mo, envs `turret2*`, `pins.h` complet ; **suppression des envs `lolin_s3_mini*`** (D2) | `pio run -e turret2` passe |
 | 3 | **Bugs du §5** | chaque bug corrigé, build des deux cibles |
 | 4 | **Module Board** : état sûr, LEDs, boutons, SW1, PWR_FLT, raison du reset | fonctions testables depuis la console |
 | 5 | **Séquence de boot** : réécriture de `setup()` + `BootState` réel selon le §3 | ordre du §3.2 respecté, journalisé à la console |
-| 6 | **IMU LSM6DSOX** (+ `lib_deps`), scan I²C, orientation | lecture accéléro / gyro, contrôle « debout » |
+| 6 | **IMU LSM6DSOX** (+ `lib_deps`, ADXL345 retirée), scan I²C, orientation | lecture accéléro / gyro, contrôle « debout » |
 | 7 | **Audio** : module Amp, gain / volume en réglages, arrêt sûr avant reboot / OTA | pas de plop au boot, au mute, au reboot |
 | 8 | **Mouvement** : attache échelonnée, homing, seuils et trims en réglages, détection Hall incohérent (bloqué à 0 ou 4095, ou aucune variation pendant un mouvement) | cycle ailes / canons fiable |
 | 9 | **Énergie** : délestage sur FLT, plafond LEDs, état `Fault`, compteur brownout, `/status` | défaut simulé (IO38 à la masse) → délestage |
 | 10 | **Console de mise en service** (reprend l'idée commentée de `ManualState`) : `scan`, `imu`, `hall`, `servo <n> <angle\|off>`, `led <canal> <couleur>`, `tone <Hz>`, `gain 9\|12\|15`, `mute`, `flt`, `reset-reason` | utilisable pour le §8 |
 | 11 | **Docs** : section Firmware du README (correction `getEvent`, procédure de flash) | — |
+| 12 | **Page web de configuration** (§10) : correction des bugs `Settings` du §5, API JSON, authentification, page HTML embarquée, OTA depuis la page, mot de passe de l'AP | tous les réglages modifiables depuis un téléphone connecté à l'AP |
+
+Ordre conseillé : 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9, puis 10 et 12 ensemble (la console et la page web appellent la même couche `Actions`), puis 11. La partie « réglages » du lot 12 (API + page, sans les tests matériels) peut être avancée juste après le lot 3 si on veut régler la tourelle plus tôt.
 
 ---
 
@@ -256,16 +265,65 @@ Périphériques branchés un par un ; chaque étape doit passer avant la suivant
 
 ---
 
-## 9. Décisions à prendre
+## 9. Décisions — tranchées le 24.09.2026
 
-| # | Sujet | Proposition |
+| # | Sujet | Décision |
 |---|---|---|
-| D1 | **SW1** (IO3) | mode « banc / maintenance » : fermé au boot → aucun servo attaché, console active, logs verbeux ; ouvert = normal. Ou non monté |
-| D2 | **Double cible** V4 / Turret2 | garder la compatibilité V4 (quelques `#ifdef`) — recommandé |
-| D3 | **Boutons A / B** | A = cycle de démo ; B = mute ; A + B au boot = remise à zéro des réglages ; B appui long = Wi-Fi AP on / off |
-| D4 | **Codes LED** | verte = battement (boucle vivante) ; rouge = nombre de clignotements : 1 brownout au dernier reset, 2 défaut eFuse, 3 IMU absente, 4 radar muet, 5 Hall incohérent, 6 LittleFS |
-| D5 | **eFuse** TPS259573 | confirmer latch-off ou auto-retry dans la datasheet |
-| D6 | **Servos au repos** | maintenir le couple ou détacher |
-| D7 | **Sécurité** | l'AP « Portal Turret » est ouvert et `/update` accepte n'importe quel firmware sans authentification → mot de passe AP ? |
+| D1 | **SW1** (IO3) | **mode banc**, pour usage futur : SW1 fermé au boot → aucun servo attaché automatiquement (on peut en attacher un à la fois depuis la console ou la page web), machine d'états à l'arrêt, console active, logs verbeux. SW1 ouvert = fonctionnement normal. Lu une seule fois au boot. Rappel : ne jamais brûler `STRAP_JTAG_SEL` |
+| D2 | **Compatibilité** | **Turret2 uniquement**, pas de compatibilité Wemos / V4 : pas de `#ifdef` de carte, envs `lolin_s3_mini*` et lib ADXL345 supprimés |
+| D3 | **Boutons A / B** | A = cycle de démo (Activate → Firing → Disengage) ; B = mute / unmute ; A + B maintenus au boot = remise à zéro des réglages (mot de passe de l'AP compris) ; B appui long (3 s) = Wi-Fi AP on / off |
+| D4 | **Codes LED** | verte = battement (boucle vivante), fixe pendant le boot ; rouge = nombre de clignotements répété : 1 brownout / boucle de redémarrage, 2 défaut eFuse, 3 IMU absente, 4 radar muet, 5 Hall incohérent, 6 LittleFS. Priorité au plus petit numéro si plusieurs défauts |
+| D5 | **eFuse latch-off ou auto-retry** | « au mieux » : le firmware gère les deux cas sans connaître la variante — détection de boucle de redémarrage et mode réduit (§4). Vérifier la variante dans la datasheet reste utile, mais ne bloque rien |
+| D6 | **Servos au repos** | « au mieux » : **ailes** (rotation continue) détachées dès qu'elles sont arrêtées — sans impulsion elles s'arrêtent net, ce qui supprime le glissement dû à un neutre mal réglé ; **canons** détachés ~500 ms après la fin de leur mouvement (rentrés ou sortis, rien ne les charge) ; **rotation X / Z** maintenues tant que les ailes sont ouvertes (visée), détachées après `ServoIdleMs` (défaut 5 s) en `Idle` ailes fermées, puis ré-attachées **sur leur dernière consigne** (pas de saut). Ré-attacher un servo passe par le même échelonnement que le boot |
+| D7 | **Sécurité** | **oui** : AP en WPA2 avec mot de passe (`ApPassword`, défaut `stillalive`, la page web affiche un avertissement tant qu'il n'a pas été changé) ; même mot de passe en authentification HTTP Basic sur l'API et sur `/update`. Récupération : A + B au boot remet le mot de passe par défaut. Nom de l'AP réglable (`ApSsid`, défaut « Portal Turret ») |
 
-Les décisions prises sont reportées dans le journal ([firmware-journal.md](firmware-journal.md)), section « Décisions ».
+---
+
+## 10. Page web de configuration (lot 12)
+
+### 10.1 Existant
+
+Il n'y a **pas** de page de configuration : `src/web/TurretWebServer.cpp` ne sert que `GET /` (`{"status":"OK"}`) et `GET /settings` (liste JSON en lecture seule), plus `POST /update` pour l'OTA (`src/web/Ota.cpp`). Aucune écriture de réglage n'est possible, et le code prévu pour (`SetFromString`) est bogué (§5).
+
+### 10.2 Principes
+
+- **Tout est dans le firmware** : une seule page `index.html` (HTML + CSS + JS sans framework), compressée en gzip et embarquée en PROGMEM par un script de pré-compilation PlatformIO (`extra_scripts`). Elle ne dépend donc ni de LittleFS ni d'Internet (l'AP n'a pas d'accès Internet : **aucune ressource externe, aucun CDN**), et elle est toujours à la version du firmware après une OTA. Budget : < 30 Ko gzip.
+- **Générée à partir des réglages** : la page construit ses formulaires depuis `GET /api/settings` (clé, libellé, groupe, type, valeur, défaut, min, max, unité, application immédiate ou au reboot). Ajouter un réglage dans `Settings.cpp` suffit à le faire apparaître dans la page.
+- **Rien de lourd dans les callbacks web** : ESPAsyncWebServer exécute ses callbacks dans la tâche `async_tcp`, sur l'autre cœur. Toucher aux servos, à l'I²S, aux LEDs ou à NVS depuis là crée des accès concurrents avec `loop()`. Les callbacks **déposent une commande dans une file** (FreeRTOS queue) ; `loop()` l'exécute et la réponse est lue par la page à la requête suivante (ou via `/api/status`).
+- **Authentification** HTTP Basic sur tout sauf la page elle-même (identifiant `turret`, mot de passe `ApPassword`).
+- **Téléphone d'abord** : mise en page utilisable à 360 px de large.
+
+### 10.3 API
+
+| Méthode et chemin | Rôle |
+|---|---|
+| `GET /` | la page (gzip) |
+| `GET /api/status` | version, uptime, raison du reset, compteurs brownout et boucle de redémarrage, mode (normal / banc / réduit), PWR_FLT, IMU (présente, accélération), radar (vivant, cibles), Hall bruts G / D, état des ailes, état de la machine d'états, mémoire libre, clients Wi-Fi |
+| `GET /api/settings` | description complète des réglages (§10.2) |
+| `POST /api/settings` | un ou plusieurs `clé=valeur` ; validation, bornage, enregistrement NVS, application immédiate si possible ; renvoie les valeurs effectives |
+| `POST /api/settings/reset` | valeurs par défaut (tout, ou un groupe) |
+| `POST /api/action` | actions de test, les mêmes que la console série (couche `Actions`) : `servo <n> <angle\|off>`, `wings open\|close`, `guns extend\|retract`, `led <canal> <couleur>`, `tone <Hz> <ms>`, `gain 9\|12\|15`, `mute`, `demo` ; la machine d'états passe en `Manual` pendant les tests |
+| `GET /api/log` | les N dernières lignes du journal série (tampon circulaire en RAM) : diagnostic sans câble USB |
+| `POST /api/reboot` | redémarrage avec la séquence d'arrêt du §3.3 |
+| `POST /update` | OTA existante, désormais authentifiée et précédée de la séquence d'arrêt |
+
+### 10.4 Contenu de la page
+
+| Section | Contenu |
+|---|---|
+| **État** | rafraîchi chaque seconde ; défauts actifs en tête (mêmes codes que la LED rouge, D4) |
+| **Réglages** | par groupe : Mouvement (offsets, trims, échelonnement, maintien), Capteurs (seuils Hall, axe IMU), Audio (gain, volume), Lumière (luminosité, plafond mA), Wi-Fi (SSID, mot de passe), Système ; bouton « défaut » par champ, « Enregistrer » par groupe ; mention « appliqué au redémarrage » quand c'est le cas (Wi-Fi) |
+| **Calibration** | Hall : valeurs en direct + boutons « capturer ouvert » / « capturer fermé » qui calculent les seuils ; IMU : « la tourelle est debout, capturer » ; trims des ailes : curseur appliqué en direct, arrêt automatique après 2 s |
+| **Tests** | les actions de `POST /api/action` ; en mode banc, un seul servo attaché à la fois |
+| **Journal** | `GET /api/log` |
+| **Maintenance** | envoi d'un firmware (OTA), redémarrage, remise à zéro des réglages (avec confirmation) |
+
+### 10.5 Pièges
+
+- Modifier `ApSsid` / `ApPassword` coupe la connexion au redémarrage : la page doit l'annoncer et afficher le nouveau nom de réseau avant de redémarrer.
+- `SETTING_STRING_MAX` = 32 : mot de passe de 8 à 31 caractères (WPA2 impose au moins 8).
+- Les réglages sont mis en cache par les modules à l'initialisation (ex. `Gantry::Initialize` lit les offsets une fois) : chaque module doit exposer une méthode de rechargement, sinon « enregistré » ne veut pas dire « appliqué ».
+- Écrire en NVS à chaque mouvement d'un curseur use la flash : n'enregistrer qu'au clic « Enregistrer » ; les curseurs de calibration appliquent en RAM seulement.
+- L'OTA arrive pendant que la tourelle tourne : séquence d'arrêt (§3.3) **avant** d'accepter les données, pas seulement avant le reboot.
+
+Les décisions sont aussi reportées dans le journal ([firmware-journal.md](firmware-journal.md)), section « Décisions ».
