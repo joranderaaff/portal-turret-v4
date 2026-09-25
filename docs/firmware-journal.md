@@ -24,12 +24,12 @@ Documents du dépôt : [firmware-plan.md](firmware-plan.md) (plan firmware), [de
 
 ## État actuel — mis à jour le 25.09.2026
 
-- **Phase** : plan terminé, **décisions D1 à D7 tranchées** (plan §9), page web de configuration ajoutée au plan (§10, lot 12). Documentation matérielle Turret2 dans le dépôt (`README.md`, `docs/design-plan.md`, `docs/status-and-history.md`). **Aucune ligne de firmware modifiée** : `Fork/src/` est le firmware upstream intact (fichiers du commit `020a839`).
-- **Arborescence (depuis le 25.09.2026, commit `8248fcd` de `main`, fusionné dans la branche)** : `Fork/` = projet PlatformIO du firmware (`Fork/src/`, `Fork/platformio.ini`, `Fork/data/`) ; `Turret2_portable/` = projet KiCad ; `Pictures/` = photos ; `docs/`, `README.md`, `CLAUDE.md` à la racine. Dans les entrées de session antérieures au 25.09, `src/…` et `platformio.ini` désignent les mêmes fichiers, aujourd'hui sous `Fork/`.
+- **Phase** : plan terminé, **décisions D1 à D7 tranchées** (plan §9), page web de configuration ajoutée au plan (§10, lot 12). Documentation matérielle Turret2 dans le dépôt (`README.md`, `docs/design-plan.md`, `docs/status-and-history.md`). **Aucune ligne de firmware modifiée** : `Turret_firmware/` vient d'être créé comme copie à l'identique de `Fork/` (firmware upstream, fichiers du commit `020a839`).
+- **Arborescence (depuis le 25.09.2026, commit `8248fcd` de `main`, fusionné dans la branche)** : `Turret_firmware/` = **firmware Turret2, dossier de travail** (D8) ; `Fork/` = firmware d'origine, intact, référence en lecture seule ; `Turret2_portable/` = projet KiCad ; `Pictures/` = photos ; `docs/`, `README.md`, `CLAUDE.md` à la racine. Dans les entrées de session antérieures au 25.09, `src/…` et `platformio.ini` désignent les mêmes fichiers, aujourd'hui sous `Fork/` (original) et copiés dans `Turret_firmware/` (travail).
 - **Cible** : Turret2 uniquement (plus de compatibilité Wemos / V4, D2).
 - **Branche de travail** : `claude/admiring-bell-q3hube` (dépôt `lo26lo/portal-turret-v4`).
-- **Prochaine action** : faire trancher D8 (emplacement du firmware, proposition : `Fork/`), puis lot 1 du plan (base de build) — installer PlatformIO dans le conteneur, compiler depuis `Fork/` une dernière fois l'env `lolin_s3_mini` tel quel pour avoir la référence (erreurs, tailles), figer les versions. Puis lot 2 (cible Turret2, suppression des envs Wemos).
-- **Décisions ouvertes** : D8 (plan §9). Reste à vérifier sans urgence : variante latch-off / auto-retry du TPS259573 (le firmware gère les deux, D5).
+- **Prochaine action** : lot 1 du plan (base de build) — installer PlatformIO dans le conteneur, compiler `Turret_firmware/` (encore identique à l'original) avec l'env `lolin_s3_mini` pour avoir la référence (erreurs, tailles), figer les versions. Puis lot 2 (cible Turret2, suppression des envs Wemos).
+- **Décisions ouvertes** : aucune. Reste à vérifier sans urgence : variante latch-off / auto-retry du TPS259573 (le firmware gère les deux, D5).
 - **Matériel** : la carte Turret2 n'est pas encore fabriquée → la mise en service (plan §8) attend les cartes ; tout le reste peut avancer sans elles.
 - **Blocages** : aucun. Limites connues de l'environnement : voir « Erreurs, impasses et pièges ».
 
@@ -67,7 +67,7 @@ Documents du dépôt : [firmware-plan.md](firmware-plan.md) (plan firmware), [de
 | 24.09.2026 | D7 sécurité | AP en WPA2, mot de passe `ApPassword` (défaut `stillalive`), même mot de passe en HTTP Basic sur l'API et `/update` ; A + B au boot le réinitialise | accepté par l'utilisateur ; défaut connu mais récupérable, avertissement dans la page tant qu'il n'est pas changé |
 | 24.09.2026 | Documentation matérielle (révise la décision « non ajoutée au dépôt » ci-dessus) | ajoutée telle quelle : README Turret2 → `README.md` (le dépôt n'en avait pas), `docs/design-plan.md`, `docs/status-and-history.md`. Aucune modification de leur contenu | demande de l'utilisateur ; emplacements indiqués par le README lui-même |
 | 25.09.2026 | Réorganisation du dépôt par l'utilisateur (`Fork/`, `Turret2_portable/`, `Pictures/`) | fusionnée dans la branche de travail (merge, pas de rebase : la branche est publiée) ; chemins mis à jour dans le plan, `CLAUDE.md` et la section « Repository layout » / chemins du `README.md` (`hardware/Turret2` → `Turret2_portable`, `src/` → `Fork/`) | les docs doivent refléter l'arborescence réelle ; seules des corrections de chemins dans le README, pas de fond |
-| — | D8 emplacement du firmware | ouverte ; proposition `Fork/` | ajoutée par la réorganisation |
+| 25.09.2026 | D8 emplacement du firmware | dossier séparé **`Turret_firmware/`** (copie de départ de `Fork/` sans `3d/` ni `gerber/`) ; `Fork/` n'est plus modifié | choix de l'utilisateur : ce firmware ne s'installera que sur sa carte ; ma proposition (travailler dans `Fork/`) a été refusée. Nom d'abord créé en `Turret2_firmware/`, renommé à sa demande (« on peut enlever le 2 ») |
 | 24.09.2026 | Page web | page de configuration complète embarquée dans le firmware (gzip PROGMEM), générée depuis la liste des réglages, commandes passées à `loop()` par une file | demande de l'utilisateur ; vérifié qu'elle n'existait pas (seulement `GET /` et `GET /settings` en JSON, lecture seule) |
 
 ## Erreurs, impasses et pièges rencontrés
@@ -171,4 +171,17 @@ Documents du dépôt : [firmware-plan.md](firmware-plan.md) (plan firmware), [de
 **Non fait** : toujours aucune compilation.
 
 **Prochaine étape** : réponse sur D8, puis lot 1.
+
+### 25.09.2026 (3ᵉ session) — Dossier séparé pour le firmware Turret2
+
+**Demande de l'utilisateur** : réponse à D8 — ne pas développer dans `Fork/`, mais séparer, puisque ce firmware ne s'installera que sur sa carte ; puis « on peut enlever le 2 » du nom de dossier proposé.
+
+**Fait**
+- Création de `Turret_firmware/` : copie de `Fork/src`, `Fork/data`, `Fork/include`, `Fork/lib`, `Fork/test`, `Fork/platformio.ini` (`diff -r` sur `src/` : identique). `3d/` et `gerber/` non copiés (matériel du V4).
+- Créé d'abord sous le nom `Turret2_firmware/`, renommé `Turret_firmware/` avant tout commit.
+- Plan : §0, références du §5, architecture §6, lot 1 et D8 (§9) pointent vers `Turret_firmware/`. `CLAUDE.md` : `Turret_firmware/` = dossier de travail, `Fork/` en lecture seule. `README.md` : ligne ajoutée dans « Repository layout ».
+
+**À savoir** : les deux arbres sont identiques pour l'instant ; toute modification se fait dans `Turret_firmware/` uniquement.
+
+**Prochaine étape** : lot 1.
 

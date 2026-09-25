@@ -100,7 +100,8 @@ Turret2_portable/          KiCad project (schematic, PCB, custom DRC rules)
 Turret2_portable/library   project-specific symbols, footprints and 3D models
 docs/design-plan.md        full design rationale, section by section
 docs/status-and-history.md current status, decisions and pitfalls, session by session
-Fork/                      upstream firmware (PlatformIO project: src/, platformio.ini, data/ ...)
+Turret_firmware/           Turret2 firmware (PlatformIO project), work in progress — see docs/firmware-plan.md
+Fork/                      upstream firmware, kept unchanged for reference
 Pictures/                  photos and renders
 ```
 

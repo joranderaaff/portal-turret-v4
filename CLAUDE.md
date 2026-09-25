@@ -15,8 +15,10 @@ Le journal est `docs/firmware-journal.md`. Il doit permettre à quelqu'un qui ne
 
 - `docs/firmware-plan.md` : contexte, référence matérielle (GPIO), pièges, ordre de boot, lots de travail, décisions à prendre.
 - `docs/firmware-journal.md` : avancement réel.
-- `Fork/` : le projet PlatformIO du firmware (`Fork/src/`, `Fork/platformio.ini`) ; `Turret2_portable/` : le projet KiCad de la carte ; `Pictures/` : photos.
-- `Fork/src/pins.h` : pinout imposé ; la carte Turret2 est câblée dessus, **ne pas réaffecter ces broches**.
+- `Turret_firmware/` : **le firmware Turret2, là où l'on travaille** (projet PlatformIO : `src/`, `platformio.ini`, `data/`).
+- `Fork/` : firmware d'origine (upstream), **référence en lecture seule, ne jamais le modifier**.
+- `Turret2_portable/` : projet KiCad de la carte ; `Pictures/` : photos.
+- `Turret_firmware/src/pins.h` : pinout imposé ; la carte Turret2 est câblée dessus, **ne pas réaffecter ces broches**.
 
 ## Règles matérielles critiques (détails : plan §2)
 
