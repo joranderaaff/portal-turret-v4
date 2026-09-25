@@ -27,7 +27,7 @@ Documents du dépôt : [firmware-plan.md](firmware-plan.md) (plan firmware), [de
 - **Phase** : plan terminé, **décisions D1 à D7 tranchées** (plan §9), page web de configuration ajoutée au plan (§10, lot 12). Documentation matérielle Turret2 dans le dépôt (`README.md`, `docs/design-plan.md`, `docs/status-and-history.md`). **Aucune ligne de firmware modifiée** : `Turret_firmware/` vient d'être créé comme copie à l'identique de `Fork/` (firmware upstream, fichiers du commit `020a839`).
 - **Arborescence (depuis le 25.09.2026, commit `8248fcd` de `main`, fusionné dans la branche)** : `Turret_firmware/` = **firmware Turret2, dossier de travail** (D8) ; `Fork/` = firmware d'origine, intact, référence en lecture seule ; `Turret2_portable/` = projet KiCad ; `Pictures/` = photos ; `docs/`, `README.md`, `CLAUDE.md` à la racine. Dans les entrées de session antérieures au 25.09, `src/…` et `platformio.ini` désignent les mêmes fichiers, aujourd'hui sous `Fork/` (original) et copiés dans `Turret_firmware/` (travail).
 - **Cible** : Turret2 uniquement (plus de compatibilité Wemos / V4, D2).
-- **Branche de travail** : `claude/admiring-bell-q3hube` (dépôt `lo26lo/portal-turret-v4`).
+- **Branche** : tout est sur **`main`** depuis le 25.09.2026 (avance rapide depuis `claude/admiring-bell-q3hube`, qui est au même commit) — dépôt `lo26lo/portal-turret-v4`.
 - **Prochaine action** : lot 1 du plan (base de build) — installer PlatformIO dans le conteneur, compiler `Turret_firmware/` (encore identique à l'original) avec l'env `lolin_s3_mini` pour avoir la référence (erreurs, tailles), figer les versions. Puis lot 2 (cible Turret2, suppression des envs Wemos).
 - **Décisions ouvertes** : aucune. Reste à vérifier sans urgence : variante latch-off / auto-retry du TPS259573 (le firmware gère les deux, D5).
 - **Matériel** : la carte Turret2 n'est pas encore fabriquée → la mise en service (plan §8) attend les cartes ; tout le reste peut avancer sans elles.
@@ -184,4 +184,14 @@ Documents du dépôt : [firmware-plan.md](firmware-plan.md) (plan firmware), [de
 **À savoir** : les deux arbres sont identiques pour l'instant ; toute modification se fait dans `Turret_firmware/` uniquement.
 
 **Prochaine étape** : lot 1.
+
+### 25.09.2026 (4ᵉ session) — Tout sur `main`
+
+**Demande de l'utilisateur** : « mets tout sur main » (il reprend sous VS Code).
+
+**Fait**
+- Vérifié : arbre propre, branche à jour avec GitHub, `origin/main` (`8248fcd`) ancêtre de la branche → **avance rapide** possible, sans commit de fusion ni réécriture d'historique.
+- Journal mis à jour (ce paragraphe, « État actuel »), commité sur la branche, puis branche poussée et `main` avancé au même commit.
+
+**Prochaine étape** : lot 1, sur `main`.
 
