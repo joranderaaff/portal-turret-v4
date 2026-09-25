@@ -1,0 +1,108 @@
+(version 1)
+
+# ---------------------------------------------------------------
+# Turret2 - regles DRC personnalisees
+# Les netclass fixent les valeurs PAR DEFAUT du routage.
+# Ces regles fixent les MINIMA reellement verifies par le DRC.
+# Voir la section 9.0 du plan.
+# ---------------------------------------------------------------
+
+# --- Largeurs minimales par classe -----------------------------
+
+# Classe Power5V a 0,8 mm (decision du 18.09) : le minimum suit la classe.
+# Le tronc servos se pose a la main en 2,0 mm, l'optimum le rappelle.
+(rule "Largeur 5V"
+	(condition "A.NetClass == 'Power5V'")
+	(constraint track_width (min 0.3mm) (opt 2.0mm)))
+
+(rule "Largeur audio OUT+/OUT-"
+	(condition "A.NetClass == 'Audio'")
+	(constraint track_width (min 0.8mm) (opt 1.5mm)))
+
+# GND et 3V3 vont dans les plans In1/In2 : les pistes ne sont que des
+# courts raccords pastille->via. Le minimum suit les petites pastilles.
+(rule "Largeur GND"
+	(condition "A.NetClass == 'GND'")
+	(constraint track_width (min 0.2mm) (opt 0.5mm)))
+
+(rule "Largeur 3V3"
+	(condition "A.NetClass == 'Power3V3'")
+	(constraint track_width (min 0.2mm) (opt 0.5mm)))
+
+(rule "Largeur servos et LED"
+	(condition "A.NetClass == 'Servo' || A.NetClass == 'LEDData' || A.NetClass == 'Analog'")
+	(constraint track_width (min 0.25mm) (opt 0.3mm)))
+
+# --- Vias -------------------------------------------------------
+
+# Uniquement les VIAS (pas les pastilles des composants, ex. vias
+# thermiques integres a l'empreinte d'IC1), et seulement les nets
+# qui transitent du courant d'une couche a l'autre.
+(rule "Via puissance"
+	(condition "A.Type == 'Via' && (A.NetClass == 'Power5V' || A.NetClass == 'Audio')")
+	(constraint via_diameter (min 0.85mm) (opt 0.9mm))
+	(constraint hole_size (min 0.45mm) (opt 0.5mm)))
+
+# --- Isolements renforces --------------------------------------
+
+(rule "Isolement audio"
+	(condition "A.NetClass == 'Audio'")
+	(constraint clearance (min 0.3mm)))
+
+# Uniquement les sorties Hall : la classe Analog contient aussi l'UART
+# du radar, dont la broche TX jouxte le 5 V sur J5 (pas de 1 mm).
+(rule "Isolement Hall analogique"
+	(condition "(A.NetName == 'HALL_LEFT' || A.NetName == 'HALL_RIGHT') && B.NetClass == 'Power5V'")
+	(constraint clearance (min 0.5mm)))
+
+# --- Reservation des couches internes --------------------------
+
+# L2 : plan de masse plein. Rien d'autre.
+(rule "In1 reservee a GND"
+	(layer "In1.Cu")
+	(condition "A.NetClass != 'GND'")
+	(constraint disallow track))
+
+# L3 : alimentations uniquement. Aucun signal ne doit y passer,
+# sinon il traverse une fente entre deux zones. Liste blanche : toute
+# nouvelle classe de signal est interdite d'office.
+(rule "In2 reservee aux alimentations"
+	(layer "In2.Cu")
+	(condition "A.NetClass != 'Power5V' && A.NetClass != 'Power3V3' && A.NetClass != 'GND'")
+	(constraint disallow track))
+
+# --- USB --------------------------------------------------------
+
+(rule "USB paire differentielle"
+	(condition "A.NetClass == 'USB'")
+	(constraint diff_pair_gap (min 0.12mm) (opt 0.15mm))
+	(constraint track_width (min 0.18mm) (opt 0.2mm)))
+
+# --- Exceptions (placees en dernier : elles l'emportent) ---------
+
+# Boitiers au pas de 0,5 mm (USB-C, eFuse IC1, TPS631000 U1,
+# MAX98357A U9) et USBLC6 D2 : l'ecart entre pastilles voisines est
+# de 0,2 mm par construction. Les isolements 5V (0,25) et audio (0,3)
+# ainsi que les largeurs 5V/audio ne peuvent pas s'y appliquer.
+# Les pistes s'elargissent des qu'elles quittent l'empreinte.
+(rule "Pas fin : largeur"
+	(condition "A.Type == 'Track' && (A.intersectsCourtyard('USBC1') || A.intersectsCourtyard('IC1') || A.intersectsCourtyard('U1') || A.intersectsCourtyard('U9') || A.intersectsCourtyard('D2') || A.intersectsCourtyard('IC2') || A.intersectsCourtyard('U6') || A.intersectsCourtyard('U7'))")
+	(constraint track_width (min 0.2mm)))
+
+(rule "Pas fin : isolement"
+	(condition "(A.intersectsCourtyard('USBC1') || A.intersectsCourtyard('IC1') || A.intersectsCourtyard('U1') || A.intersectsCourtyard('U9') || A.intersectsCourtyard('D2') || A.intersectsCourtyard('IC2') || A.intersectsCourtyard('U6') || A.intersectsCourtyard('U7')) && !(A.NetClass == 'USB' && B.NetClass == 'USB')")
+	(constraint clearance (min 0.2mm))
+	(constraint diff_pair_gap (min 0.2mm)))
+
+# --- 20.09 : la branche servos reste large la ou passe le courant ---
+(rule "Largeur 5V servos"
+(condition "A.NetClass == 'Power5V' && (A.intersectsCourtyard('J3') || A.intersectsCourtyard('J4') || A.intersectsCourtyard('J7') || A.intersectsCourtyard('J8') || A.intersectsCourtyard('J9') || A.intersectsCourtyard('J10') || A.intersectsCourtyard('C9') || A.intersectsCourtyard('C18'))")
+(constraint track_width (min 0.8mm) (opt 2.0mm)))
+
+# --- 24.09 : capteurs Hall J17/J18 ---------------------------------
+# Leur pastille GND tombe contre le couloir GND etroit de In2 : un seul
+# rayon de frein thermique y tient. Sans consequence : la pastille est
+# aussi reliee au plan plein In1 et a une via GND par une piste F.Cu.
+(rule "Hall : un rayon suffit sur In2"
+	(condition "A.Type == 'Pad' && (A.memberOfFootprint('J17') || A.memberOfFootprint('J18')) && A.NetName == 'GND'")
+	(constraint min_resolved_spokes 1))
