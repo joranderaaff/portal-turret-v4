@@ -1,0 +1,13 @@
+(sym_lib_table
+  (lib (name "Turret_Audio")(type "KiCad")(uri "${KIPRJMOD}/library/symbols/Turret_Audio.kicad_sym")(options "")(descr "copie portable"))
+  (lib (name "Turret_Connector")(type "KiCad")(uri "${KIPRJMOD}/library/symbols/Turret_Connector.kicad_sym")(options "")(descr "copie portable"))
+  (lib (name "Turret_Connector_Generic")(type "KiCad")(uri "${KIPRJMOD}/library/symbols/Turret_Connector_Generic.kicad_sym")(options "")(descr "copie portable"))
+  (lib (name "Turret_Connector_Generic_MountingPin")(type "KiCad")(uri "${KIPRJMOD}/library/symbols/Turret_Connector_Generic_MountingPin.kicad_sym")(options "")(descr "copie portable"))
+  (lib (name "Turret_Device")(type "KiCad")(uri "${KIPRJMOD}/library/symbols/Turret_Device.kicad_sym")(options "")(descr "copie portable"))
+  (lib (name "Turret_Diode")(type "KiCad")(uri "${KIPRJMOD}/library/symbols/Turret_Diode.kicad_sym")(options "")(descr "copie portable"))
+  (lib (name "Turret_RF_Module")(type "KiCad")(uri "${KIPRJMOD}/library/symbols/Turret_RF_Module.kicad_sym")(options "")(descr "copie portable"))
+  (lib (name "Turret_SamacSys")(type "KiCad")(uri "${KIPRJMOD}/library/symbols/Turret_SamacSys.kicad_sym")(options "")(descr "copie portable"))
+  (lib (name "Turret_Switch")(type "KiCad")(uri "${KIPRJMOD}/library/symbols/Turret_Switch.kicad_sym")(options "")(descr "copie portable"))
+  (lib (name "Turret_TC2050_IDC")(type "KiCad")(uri "${KIPRJMOD}/library/symbols/Turret_TC2050_IDC.kicad_sym")(options "")(descr "copie portable"))
+  (lib (name "Turret_power")(type "KiCad")(uri "${KIPRJMOD}/library/symbols/Turret_power.kicad_sym")(options "")(descr "copie portable"))
+)

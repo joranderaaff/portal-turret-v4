@@ -2,15 +2,15 @@
 
 Rédigé le 24.09.2026. **Mis à jour le 24.09.2026 (2ᵉ session)** : décisions D1 à D7 tranchées (§9), **plus de compatibilité Wemos / V4** (Turret2 uniquement), page web de configuration ajoutée (§10, lot 12). Le suivi de l'exécution (ce qui est fait, en cours, les erreurs) est dans [firmware-journal.md](firmware-journal.md) : **lire le journal avant de reprendre le travail**.
 
-> Dates au format JJ.MM.AAAA. Les références `fichier:ligne` pointent sur le code tel qu'il était au commit `020a839` (firmware upstream de joranderaaff, avant toute modification).
+> Dates au format JJ.MM.AAAA. Les références `fichier:ligne` pointent sur le code tel qu'il était au commit `020a839` (fichiers identiques, déplacés dans `Fork/` par le commit `8248fcd`) (firmware upstream de joranderaaff, avant toute modification).
 
 ---
 
 ## 0. Contexte et sources
 
-- **Firmware** : celui de `src/` (upstream [joranderaaff/portal-turret-v4](https://github.com/joranderaaff/portal-turret-v4)), écrit pour un Wemos LOLIN S3 mini câblé à la main (« V4 »).
-- **Nouvelle carte** : Turret2, carte 4 couches à ESP32-S3-MINI-1-N8 conçue par lo26lo. Sa documentation est dans le dépôt depuis le 24.09.2026 : [README.md](../README.md), [design-plan.md](design-plan.md) (justification de chaque choix matériel) et [status-and-history.md](status-and-history.md) (état de la carte, historique, pièges KiCad). Le projet KiCad (`hardware/Turret2/`, cité par le README) **n'est pas** dans le dépôt. Ce plan reprend tout ce dont le firmware a besoin (§1) et se suffit à lui-même ; en cas de doute sur un point matériel, la doc matérielle fait foi.
-- Le pinout de `src/pins.h` est **conservé à l'identique** par la carte. Le travail n'est donc pas un remappage, mais :
+- **Firmware** : projet PlatformIO dans `Fork/` (déplacé depuis la racine le 25.09.2026, commit `8248fcd` de `main`) ; code dans `Fork/src/` (upstream [joranderaaff/portal-turret-v4](https://github.com/joranderaaff/portal-turret-v4)), écrit pour un Wemos LOLIN S3 mini câblé à la main (« V4 »).
+- **Nouvelle carte** : Turret2, carte 4 couches à ESP32-S3-MINI-1-N8 conçue par lo26lo. Sa documentation est dans le dépôt depuis le 24.09.2026 : [README.md](../README.md), [design-plan.md](design-plan.md) (justification de chaque choix matériel) et [status-and-history.md](status-and-history.md) (état de la carte, historique, pièges KiCad). Le projet KiCad est dans `Turret2_portable/` (ajouté le 25.09.2026), les photos dans `Pictures/`. Ce plan reprend tout ce dont le firmware a besoin (§1) et se suffit à lui-même ; en cas de doute sur un point matériel, la doc matérielle fait foi.
+- Le pinout de `Fork/src/pins.h` est **conservé à l'identique** par la carte. Le travail n'est donc pas un remappage, mais :
   1. une **définition de carte** PlatformIO correcte (celle d'aujourd'hui, `lolin_s3_mini`, est dangereuse sur Turret2) ;
   2. le **pilotage des nouveaux signaux** (ampli SD/gain, PWR_FLT, LEDs, boutons, SW1) ;
   3. une **séquence de boot ordonnée** (aujourd'hui tout démarre en vrac) ;
@@ -76,7 +76,7 @@ Gain de l'ampli selon IO21 / IO47 :
 ### 2.1 Définition de carte
 
 - **Ne pas garder `board = lolin_s3_mini`.** Elle déclare 4 Mo, ajoute `-DBOARD_HAS_PSRAM`, et son variant (`variants/lolin_s3_mini/pins_arduino.h` d'arduino-esp32) place `LED_BUILTIN` / `RGB_BUILTIN` sur **IO47 = AMP_GAIN_100K**. Le moindre `digitalWrite(LED_BUILTIN, HIGH)` ou `rgbLedWrite(RGB_BUILTIN, …)`, dans une lib ou un exemple, pousse IO47 à 3,3 V : interdit.
-- **Ne pas prendre non plus le variant générique `esp32s3`** (celui d'`esp32-s3-devkitc-1`, pourtant « N8, 8 MB QD, No PSRAM ») : il définit **SDA = 8 et SCL = 9, soit les deux entrées Hall**. Tout `Wire.begin()` sans argument — ce que fait implicitement `accel.begin()` aujourd'hui (`src/sensors/Motion.cpp:6`) — mettrait l'I²C sur IO8 / IO9. Son `RGB_BUILTIN` est sur IO48 (LED rouge : sans danger, mais trompeur).
+- **Ne pas prendre non plus le variant générique `esp32s3`** (celui d'`esp32-s3-devkitc-1`, pourtant « N8, 8 MB QD, No PSRAM ») : il définit **SDA = 8 et SCL = 9, soit les deux entrées Hall**. Tout `Wire.begin()` sans argument — ce que fait implicitement `accel.begin()` aujourd'hui (`Fork/src/sensors/Motion.cpp:6`) — mettrait l'I²C sur IO8 / IO9. Son `RGB_BUILTIN` est sur IO48 (LED rouge : sans danger, mais trompeur).
 - **Solution retenue** :
   - `boards/turret2.json` : copie de `esp32-s3-devkitc-1.json` (8 Mo, `flash_mode qio`, `memory_type qio_qspi`, partitions `default_8MB.csv`), **sans `BOARD_HAS_PSRAM`**, variant `turret2` ;
   - `variants/turret2/pins_arduino.h` : TX 43, RX 44, SDA 35, SCL 36, `LED_BUILTIN` 33, **pas de `RGB_BUILTIN`** ;
@@ -100,7 +100,7 @@ Gain de l'ampli selon IO21 / IO47 :
 
 ### 2.3 Ampli MAX98357A
 
-- **Ne jamais arrêter LRCLK pendant que BCLK tourne** (tension continue en sortie, haut-parleur grillé). Mettre SD à l'état bas **avant** tout `i2s.end()`, tout changement de fréquence d'échantillonnage, tout `ESP.restart()` (y compris celui de l'OTA, `src/web/Ota.cpp`) et tout passage en défaut.
+- **Ne jamais arrêter LRCLK pendant que BCLK tourne** (tension continue en sortie, haut-parleur grillé). Mettre SD à l'état bas **avant** tout `i2s.end()`, tout changement de fréquence d'échantillonnage, tout `ESP.restart()` (y compris celui de l'OTA, `Fork/src/web/Ota.cpp`) et tout passage en défaut.
 - Le gain n'est lu qu'à la sortie du shutdown : SD bas → réglage du gain → 10 ms → SD haut.
 - Fréquences LRCLK autorisées : 8, 16, 32, 44,1, 48, 88,2, 96 kHz ; BCLK = 32, 48 ou 64 × LRCLK. 16 bits stéréo = 32 × fs ✓.
 - Mono : avec SD_MODE à ~3,2 V (3,3 V à travers 2 kΩ contre le pull-down de 100 k), l'ampli joue le **canal gauche**. AudioTools, avec `channels = 1`, duplique l'échantillon dans les deux slots (driver legacy, `channel_format` par défaut `I2S_CHANNEL_FMT_RIGHT_LEFT`) ou le place dans le slot gauche (driver IDF 5). Dans les deux cas c'est bon — à confirmer à l'écoute. Ne pas passer en mode (L+R)/2.
@@ -134,7 +134,7 @@ Gain de l'ampli selon IO21 / IO47 :
 | ~10–15 ms | reset libéré, straps lus : IO0 = 1 → boot flash ; IO3 ignoré ; IO45 / IO46 = 0 | — |
 | → ~300 ms | ROM puis bootloader ; **tous les GPIO en haute impédance** | ampli muet (pull-down interne de SD) ✓ ; gain flottant = 9 dB ✓ ; servos sans impulsion (tressautement possible) ; **entrées de l'AHCT flottantes → LEDs possiblement aléatoires** (vérifier s'il y a des pull-down sur IO14–16) ; le radar démarre |
 
-Conséquence : le firmware doit reprendre la main sur les sorties **dans les premières millisecondes de `setup()`**, avant le `delay(1000)` actuel (`src/main.cpp:28`).
+Conséquence : le firmware doit reprendre la main sur les sorties **dans les premières millisecondes de `setup()`**, avant le `delay(1000)` actuel (`Fork/src/main.cpp:28`).
 
 ### 3.2 Phases firmware
 
@@ -152,7 +152,7 @@ Conséquence : le firmware doit reprendre la main sur les sorties **dans les pre
 | 10 | **Wi-Fi AP + serveur web + OTA** | la calibration RF tire un pic de courant : on le place **avant** les servos pour ne pas cumuler les pics |
 | 11 | **Servos un par un**, ~250 ms d'écart, PWR_FLT vérifié entre chaque : rotation Z → rotation X (au centre) → canon G → canon D (rentrés) → ailes (neutre = arrêt) | quatre servos positionnels qui sautent ensemble à leur consigne tirent 3 à 4 A, soit la limite de l'eFuse |
 | 12 | **Homing** : si le Hall indique « pas fermé » → canons rentrés (déjà fait) → fermeture des ailes avec timeout | la mécanique repart d'un état connu |
-| 13 | Fin de `BootState` : LED rouge éteinte (ou code de défaut), verte en battement → `Idle` | `BootState` devient réel : il n'est jamais activé aujourd'hui (`src/main.cpp:48` passe directement en `Idle`) |
+| 13 | Fin de `BootState` : LED rouge éteinte (ou code de défaut), verte en battement → `Idle` | `BootState` devient réel : il n'est jamais activé aujourd'hui (`Fork/src/main.cpp:48` passe directement en `Idle`) |
 
 Si PWR_FLT passe bas pendant les étapes 11 ou 12 → arrêt de la séquence, état `Fault`.
 
@@ -186,38 +186,38 @@ Ils vont se manifester pendant la mise en service et ressembler à des pannes de
 
 | Où (commit `020a839`) | Problème | Ce qu'on verra sur la carte |
 |---|---|---|
-| `src/audio/AudioLoop.cpp:8` | `sizeof(samplesIn)` = taille d'un pointeur → `totalSampleCount = 2` → la lecture s'arrête après 2 échantillons | **aucun son de tir** → on accusera l'ampli ou SD_MODE |
-| `src/audio/Audio.cpp:32-33` | `availableForWrite()` peut dépasser les 4096 octets de `sampleBuffer` | débordement mémoire, crashs aléatoires |
-| `src/states/BootState.cpp:8-11` | LittleFS n'est monté que dans `BootState`, jamais activé ; formatage automatique si le montage échoue | `fire.mp3` introuvable, ou fichiers effacés silencieusement |
-| `src/audio/ESP32Downloader.cpp:4` | inclut `config.h`, absent du dépôt ; `WiFiClientSecure` sans son include ; fonction jamais appelée | probable erreur de compilation → exclure ou supprimer |
-| `src/sensors/Motion.cpp:6-15` | échec de `begin()` ignoré, puis lecture I²C à chaque tour de boucle | boucle ralentie → audio haché, servos saccadés |
-| `src/states/IdleState.cpp:14-15` | trois prints par tour de boucle | USB CDC saturé, boucle ralentie quand un terminal est ouvert |
-| `src/motion/Wing.cpp:71,79` | seuils Hall 2500 / 1500 codés en dur | ailes arrêtées seulement au timeout de 2 s |
-| `src/motion/Wing.cpp` (`write(90)`) | avec la plage 500–2400 µs, `write(90)` = 1450 µs, pas 1500 | les ailes (servos continus) peuvent glisser → trim de neutre en réglage |
-| `platformio.ini` | plateforme `espressif32` et libs non figées (FastLED, ESPAsyncWebServer, audio-tools en HEAD git) | build qui casse sans prévenir ; AudioTools change de driver I²S selon la version d'IDF |
-| `src/settings/Settings.cpp:10,12` | le paramètre `group` des constructeurs est ignoré (pas de membre `group` dans `SettingsEntry`) | impossible de regrouper les réglages dans la page web (§10) |
-| `src/settings/Settings.h:77` | `Settings::SetFromString` déclarée mais jamais définie | erreur d'édition de liens dès qu'on l'appelle |
-| `src/web/TurretWebServer.cpp:60` | la copie locale `SetFromString(Settings settings, …)` prend `Settings` **par valeur** : la modification s'applique à une copie | réglage « enregistré » mais sans effet jusqu'au reboot ; à supprimer au profit de `Settings::SetFromString` |
+| `Fork/src/audio/AudioLoop.cpp:8` | `sizeof(samplesIn)` = taille d'un pointeur → `totalSampleCount = 2` → la lecture s'arrête après 2 échantillons | **aucun son de tir** → on accusera l'ampli ou SD_MODE |
+| `Fork/src/audio/Audio.cpp:32-33` | `availableForWrite()` peut dépasser les 4096 octets de `sampleBuffer` | débordement mémoire, crashs aléatoires |
+| `Fork/src/states/BootState.cpp:8-11` | LittleFS n'est monté que dans `BootState`, jamais activé ; formatage automatique si le montage échoue | `fire.mp3` introuvable, ou fichiers effacés silencieusement |
+| `Fork/src/audio/ESP32Downloader.cpp:4` | inclut `config.h`, absent du dépôt ; `WiFiClientSecure` sans son include ; fonction jamais appelée | probable erreur de compilation → exclure ou supprimer |
+| `Fork/src/sensors/Motion.cpp:6-15` | échec de `begin()` ignoré, puis lecture I²C à chaque tour de boucle | boucle ralentie → audio haché, servos saccadés |
+| `Fork/src/states/IdleState.cpp:14-15` | trois prints par tour de boucle | USB CDC saturé, boucle ralentie quand un terminal est ouvert |
+| `Fork/src/motion/Wing.cpp:71,79` | seuils Hall 2500 / 1500 codés en dur | ailes arrêtées seulement au timeout de 2 s |
+| `Fork/src/motion/Wing.cpp` (`write(90)`) | avec la plage 500–2400 µs, `write(90)` = 1450 µs, pas 1500 | les ailes (servos continus) peuvent glisser → trim de neutre en réglage |
+| `Fork/platformio.ini` | plateforme `espressif32` et libs non figées (FastLED, ESPAsyncWebServer, audio-tools en HEAD git) | build qui casse sans prévenir ; AudioTools change de driver I²S selon la version d'IDF |
+| `Fork/src/settings/Settings.cpp:10,12` | le paramètre `group` des constructeurs est ignoré (pas de membre `group` dans `SettingsEntry`) | impossible de regrouper les réglages dans la page web (§10) |
+| `Fork/src/settings/Settings.h:77` | `Settings::SetFromString` déclarée mais jamais définie | erreur d'édition de liens dès qu'on l'appelle |
+| `Fork/src/web/TurretWebServer.cpp:60` | la copie locale `SetFromString(Settings settings, …)` prend `Settings` **par valeur** : la modification s'applique à une copie | réglage « enregistré » mais sans effet jusqu'au reboot ; à supprimer au profit de `Settings::SetFromString` |
 
 ---
 
 ## 6. Architecture proposée
 
 ```
-boards/turret2.json                  carte PlatformIO (8 Mo, QIO, sans PSRAM)
-variants/turret2/pins_arduino.h      SDA 35 / SCL 36 / TX 43 / RX 44 / LED_BUILTIN 33
-src/pins.h                           pinout Turret2 complet (broches upstream + IO13, 21, 47, 38, 33, 48, 26, 34, 3, 37), sans #ifdef
-src/board/Board.{h,cpp}              état sûr, raison du reset, détection de boucle de redémarrage, LEDs d'état, boutons (anti-rebond, appui long), SW1, surveillance PWR_FLT
-src/audio/Amp.{h,cpp}                SD + gain en open-drain, séquences mute/unmute, SafeShutdown()
-src/sensors/Motion.*                 LSM6DSOX uniquement (ADXL345 supprimé)
-src/motion/Gantry.*                  attache échelonnée, homing, trims, politique de maintien des servos (D6)
-src/states/BootState, FaultState     boot réel + état de défaut
-src/control/Actions.{h,cpp}          actions de test communes à la console série et à la page web (servo, LED, tonalité, gain…)
-src/web/TurretWebServer.*            API JSON + authentification (§10)
-src/web/page/index.html              page de configuration, compilée dans le firmware (gzip, PROGMEM)
+Fork/boards/turret2.json                  carte PlatformIO (8 Mo, QIO, sans PSRAM)
+Fork/variants/turret2/pins_arduino.h      SDA 35 / SCL 36 / TX 43 / RX 44 / LED_BUILTIN 33
+Fork/src/pins.h                           pinout Turret2 complet (broches upstream + IO13, 21, 47, 38, 33, 48, 26, 34, 3, 37), sans #ifdef
+Fork/src/board/Board.{h,cpp}              état sûr, raison du reset, détection de boucle de redémarrage, LEDs d'état, boutons (anti-rebond, appui long), SW1, surveillance PWR_FLT
+Fork/src/audio/Amp.{h,cpp}                SD + gain en open-drain, séquences mute/unmute, SafeShutdown()
+Fork/src/sensors/Motion.*                 LSM6DSOX uniquement (ADXL345 supprimé)
+Fork/src/motion/Gantry.*                  attache échelonnée, homing, trims, politique de maintien des servos (D6)
+Fork/src/states/BootState, FaultState     boot réel + état de défaut
+Fork/src/control/Actions.{h,cpp}          actions de test communes à la console série et à la page web (servo, LED, tonalité, gain…)
+Fork/src/web/TurretWebServer.*            API JSON + authentification (§10)
+Fork/src/web/page/index.html              page de configuration, compilée dans le firmware (gzip, PROGMEM)
 ```
 
-`platformio.ini` : `env:turret2`, `env:turret2_ota`, `env:turret2_bringup` (`CORE_DEBUG_LEVEL=3` + console). **Pas de compatibilité Wemos / V4 (D2)** : les envs `lolin_s3_mini*` et la lib ADXL345 sont supprimés au lot 2.
+`Fork/platformio.ini` : `env:turret2`, `env:turret2_ota`, `env:turret2_bringup` (`CORE_DEBUG_LEVEL=3` + console). **Pas de compatibilité Wemos / V4 (D2)** : les envs `lolin_s3_mini*` et la lib ADXL345 sont supprimés au lot 2.
 
 Partitions `default_8MB.csv` : nvs 20 Ko, app0 / app1 2 × 3,2 Mo (OTA), LittleFS (`spiffs`) 1,5 Mo, coredump 64 Ko.
 
@@ -229,7 +229,7 @@ Nouveaux réglages (clés NVS de 15 caractères maximum, même ordre que l'enum 
 
 | Lot | Contenu | Critère de fin |
 |---|---|---|
-| 1 | **Base de build** : installer PlatformIO, compiler le code actuel une dernière fois avec l'env `lolin_s3_mini` (référence : erreurs existantes, taille flash / RAM), figer plateforme + libs | build reproductible, versions figées dans `platformio.ini` |
+| 1 | **Base de build** : installer PlatformIO, compiler le code actuel une dernière fois avec l'env `lolin_s3_mini` (référence : erreurs existantes, taille flash / RAM), figer plateforme + libs | build reproductible, versions figées dans `Fork/platformio.ini` |
 | 2 | **Cible Turret2** : `boards/turret2.json`, variant, partitions 8 Mo, envs `turret2*`, `pins.h` complet ; **suppression des envs `lolin_s3_mini*`** (D2) | `pio run -e turret2` passe |
 | 3 | **Bugs du §5** | chaque bug corrigé, build des deux cibles |
 | 4 | **Module Board** : état sûr, LEDs, boutons, SW1, PWR_FLT, raison du reset | fonctions testables depuis la console |
@@ -265,7 +265,7 @@ Périphériques branchés un par un ; chaque étape doit passer avant la suivant
 
 ---
 
-## 9. Décisions — tranchées le 24.09.2026
+## 9. Décisions — D1 à D7 tranchées le 24.09.2026
 
 | # | Sujet | Décision |
 |---|---|---|
@@ -276,6 +276,7 @@ Périphériques branchés un par un ; chaque étape doit passer avant la suivant
 | D5 | **eFuse latch-off ou auto-retry** | « au mieux » : le firmware gère les deux cas sans connaître la variante — détection de boucle de redémarrage et mode réduit (§4). Vérifier la variante dans la datasheet reste utile, mais ne bloque rien |
 | D6 | **Servos au repos** | « au mieux » : **ailes** (rotation continue) détachées dès qu'elles sont arrêtées — sans impulsion elles s'arrêtent net, ce qui supprime le glissement dû à un neutre mal réglé ; **canons** détachés ~500 ms après la fin de leur mouvement (rentrés ou sortis, rien ne les charge) ; **rotation X / Z** maintenues tant que les ailes sont ouvertes (visée), détachées après `ServoIdleMs` (défaut 5 s) en `Idle` ailes fermées, puis ré-attachées **sur leur dernière consigne** (pas de saut). Ré-attacher un servo passe par le même échelonnement que le boot |
 | D7 | **Sécurité** | **oui** : AP en WPA2 avec mot de passe (`ApPassword`, défaut `stillalive`, la page web affiche un avertissement tant qu'il n'a pas été changé) ; même mot de passe en authentification HTTP Basic sur l'API et sur `/update`. Récupération : A + B au boot remet le mot de passe par défaut. Nom de l'AP réglable (`ApSsid`, défaut « Portal Turret ») |
+| D8 | **Emplacement du firmware Turret2** (ajoutée le 25.09.2026, **ouverte**) | proposition : développer directement dans `Fork/` (c'est le projet PlatformIO, et l'historique git garde l'original au commit `020a839`) plutôt que dans une copie, qui doublerait la maintenance. Les chemins du §6 supposent ce choix |
 
 ---
 
@@ -283,7 +284,7 @@ Périphériques branchés un par un ; chaque étape doit passer avant la suivant
 
 ### 10.1 Existant
 
-Il n'y a **pas** de page de configuration : `src/web/TurretWebServer.cpp` ne sert que `GET /` (`{"status":"OK"}`) et `GET /settings` (liste JSON en lecture seule), plus `POST /update` pour l'OTA (`src/web/Ota.cpp`). Aucune écriture de réglage n'est possible, et le code prévu pour (`SetFromString`) est bogué (§5).
+Il n'y a **pas** de page de configuration : `Fork/src/web/TurretWebServer.cpp` ne sert que `GET /` (`{"status":"OK"}`) et `GET /settings` (liste JSON en lecture seule), plus `POST /update` pour l'OTA (`Fork/src/web/Ota.cpp`). Aucune écriture de réglage n'est possible, et le code prévu pour (`SetFromString`) est bogué (§5).
 
 ### 10.2 Principes
 

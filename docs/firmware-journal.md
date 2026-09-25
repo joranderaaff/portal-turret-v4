@@ -24,11 +24,12 @@ Documents du dépôt : [firmware-plan.md](firmware-plan.md) (plan firmware), [de
 
 ## État actuel — mis à jour le 25.09.2026
 
-- **Phase** : plan terminé, **décisions D1 à D7 tranchées** (plan §9), page web de configuration ajoutée au plan (§10, lot 12). Documentation matérielle Turret2 ajoutée au dépôt (`README.md`, `docs/design-plan.md`, `docs/status-and-history.md`) ; le projet KiCad n'y est pas. **Aucune ligne de firmware modifiée** : `src/` est le firmware upstream intact (commit `020a839`).
+- **Phase** : plan terminé, **décisions D1 à D7 tranchées** (plan §9), page web de configuration ajoutée au plan (§10, lot 12). Documentation matérielle Turret2 dans le dépôt (`README.md`, `docs/design-plan.md`, `docs/status-and-history.md`). **Aucune ligne de firmware modifiée** : `Fork/src/` est le firmware upstream intact (fichiers du commit `020a839`).
+- **Arborescence (depuis le 25.09.2026, commit `8248fcd` de `main`, fusionné dans la branche)** : `Fork/` = projet PlatformIO du firmware (`Fork/src/`, `Fork/platformio.ini`, `Fork/data/`) ; `Turret2_portable/` = projet KiCad ; `Pictures/` = photos ; `docs/`, `README.md`, `CLAUDE.md` à la racine. Dans les entrées de session antérieures au 25.09, `src/…` et `platformio.ini` désignent les mêmes fichiers, aujourd'hui sous `Fork/`.
 - **Cible** : Turret2 uniquement (plus de compatibilité Wemos / V4, D2).
 - **Branche de travail** : `claude/admiring-bell-q3hube` (dépôt `lo26lo/portal-turret-v4`).
-- **Prochaine action** : lot 1 du plan (base de build) — installer PlatformIO dans le conteneur, compiler une dernière fois l'env `lolin_s3_mini` tel quel pour avoir la référence (erreurs, tailles), figer les versions. Puis lot 2 (cible Turret2, suppression des envs Wemos).
-- **Décisions ouvertes** : aucune. Reste à vérifier sans urgence : variante latch-off / auto-retry du TPS259573 (le firmware gère les deux, D5).
+- **Prochaine action** : faire trancher D8 (emplacement du firmware, proposition : `Fork/`), puis lot 1 du plan (base de build) — installer PlatformIO dans le conteneur, compiler depuis `Fork/` une dernière fois l'env `lolin_s3_mini` tel quel pour avoir la référence (erreurs, tailles), figer les versions. Puis lot 2 (cible Turret2, suppression des envs Wemos).
+- **Décisions ouvertes** : D8 (plan §9). Reste à vérifier sans urgence : variante latch-off / auto-retry du TPS259573 (le firmware gère les deux, D5).
 - **Matériel** : la carte Turret2 n'est pas encore fabriquée → la mise en service (plan §8) attend les cartes ; tout le reste peut avancer sans elles.
 - **Blocages** : aucun. Limites connues de l'environnement : voir « Erreurs, impasses et pièges ».
 
@@ -65,6 +66,8 @@ Documents du dépôt : [firmware-plan.md](firmware-plan.md) (plan firmware), [de
 | 24.09.2026 | D6 servos au repos | ailes détachées à l'arrêt ; canons détachés ~500 ms après leur mouvement ; rotation maintenue ailes ouvertes, détachée après `ServoIdleMs` (5 s) en Idle, ré-attachée sur la dernière consigne | l'utilisateur a laissé le choix ; détacher les servos continus supprime le glissement du neutre, et moins de servos alimentés = moins de courant et de bruit pour l'IMU |
 | 24.09.2026 | D7 sécurité | AP en WPA2, mot de passe `ApPassword` (défaut `stillalive`), même mot de passe en HTTP Basic sur l'API et `/update` ; A + B au boot le réinitialise | accepté par l'utilisateur ; défaut connu mais récupérable, avertissement dans la page tant qu'il n'est pas changé |
 | 24.09.2026 | Documentation matérielle (révise la décision « non ajoutée au dépôt » ci-dessus) | ajoutée telle quelle : README Turret2 → `README.md` (le dépôt n'en avait pas), `docs/design-plan.md`, `docs/status-and-history.md`. Aucune modification de leur contenu | demande de l'utilisateur ; emplacements indiqués par le README lui-même |
+| 25.09.2026 | Réorganisation du dépôt par l'utilisateur (`Fork/`, `Turret2_portable/`, `Pictures/`) | fusionnée dans la branche de travail (merge, pas de rebase : la branche est publiée) ; chemins mis à jour dans le plan, `CLAUDE.md` et la section « Repository layout » / chemins du `README.md` (`hardware/Turret2` → `Turret2_portable`, `src/` → `Fork/`) | les docs doivent refléter l'arborescence réelle ; seules des corrections de chemins dans le README, pas de fond |
+| — | D8 emplacement du firmware | ouverte ; proposition `Fork/` | ajoutée par la réorganisation |
 | 24.09.2026 | Page web | page de configuration complète embarquée dans le firmware (gzip PROGMEM), générée depuis la liste des réglages, commandes passées à `loop()` par une file | demande de l'utilisateur ; vérifié qu'elle n'existait pas (seulement `GET /` et `GET /settings` en JSON, lecture seule) |
 
 ## Erreurs, impasses et pièges rencontrés
@@ -75,6 +78,7 @@ Documents du dépôt : [firmware-plan.md](firmware-plan.md) (plan firmware), [de
 | 24.09.2026 | `api.github.com` refuse les dépôts hors du périmètre de la session | utiliser `raw.githubusercontent.com` (autorisé) pour lire des fichiers de libs publiques |
 | 24.09.2026 | `www.ti.com` bloqué par le proxy (403) | datasheet TPS2595 non consultée → D5 (latch-off ou auto-retry) reste ouverte ; à vérifier par l'utilisateur ou via une autre source |
 | 24.09.2026 | PlatformIO absent du conteneur | rien n'a été compilé ; l'erreur de compilation supposée sur `config.h` (`src/audio/ESP32Downloader.cpp:4`) est à confirmer au lot 1 |
+| 25.09.2026 | Le README Turret2 annonçait `hardware/Turret2/` ; le projet KiCad est finalement arrivé dans `Turret2_portable/` (commit `8248fcd`) | README corrigé ; l'entrée ci-dessous sur les liens cassés est résolue |
 | 24.09.2026 | La documentation Turret2 citée par le README (`hardware/Turret2/`, `docs/design-plan.md`, `docs/status-and-history.md`) n'existe pas sur la branche distante | travail fait à partir des trois fichiers fournis par l'utilisateur ; les deux `docs/` et le README ont été ajoutés en 3ᵉ session ; `hardware/Turret2/` reste absent (les liens du README vers ce dossier sont donc cassés sur GitHub) |
 | 24.09.2026 | Bugs trouvés dans `Settings` en préparant la page web : paramètre `group` ignoré (`Settings.cpp:10,12`), `Settings::SetFromString` déclarée sans définition (`Settings.h:77`), copie par valeur de `Settings` dans `TurretWebServer.cpp:60` | ajoutés au plan §5, corrigés au lot 12 |
 | 24.09.2026 | Piège documentaire : le README Turret2 affirme que `getEvent()` est inchangé avec le LSM6DSOX | faux : `Adafruit_LSM6DS::getEvent(accel, gyro, temp)` prend trois pointeurs (vérifié dans `Adafruit_LSM6DS.h`) → plan §2.4, lot 11 |
@@ -150,4 +154,21 @@ Documents du dépôt : [firmware-plan.md](firmware-plan.md) (plan firmware), [de
 - Correction : le titre « État actuel » indiquait « 2ᵉ session » alors qu'il avait été mis à jour en 3ᵉ session ; il porte maintenant la date du 25.09.2026.
 
 **Prochaine étape** : lot 1 (inchangée).
+
+### 25.09.2026 (2ᵉ session) — Fusion de la réorganisation de `main`
+
+**Demande de l'utilisateur** : vérifier que `CLAUDE.md` est bien sur GitHub, prendre en compte ce qu'il a poussé sur GitHub, et commiter si tout est bon (il passe sur un autre poste).
+
+**Constat**
+- `CLAUDE.md`, le plan, le journal et la doc matérielle étaient bien sur `origin/claude/admiring-bell-q3hube`, arbre local propre.
+- `origin/main` a reçu le commit `8248fcd` (lo26lo, 25.09.2026) : firmware d'origine déplacé de la racine vers `Fork/` (renommages sans modification), projet KiCad ajouté dans `Turret2_portable/` (avec `library/` et une sauvegarde `Turret2-backups/*.zip`), photo `Pictures/pcb.jpg`.
+
+**Fait**
+- `git merge --no-ff origin/main` dans la branche de travail : aucun conflit (la branche n'avait modifié aucun fichier déplacé).
+- Chemins mis à jour : plan (§0, références `Fork/src/…`, architecture §6 sous `Fork/`), `CLAUDE.md` (section Références), `README.md` (chemins uniquement : `Fork/src/pins.h`, layout, `Turret2_portable/`).
+- Nouvelle décision ouverte D8 (plan §9) : où développer le firmware Turret2 ; proposition `Fork/`.
+
+**Non fait** : toujours aucune compilation.
+
+**Prochaine étape** : réponse sur D8, puis lot 1.
 

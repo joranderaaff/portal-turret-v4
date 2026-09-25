@@ -2,7 +2,7 @@
 
 This fork adds **Turret2**, a custom 4-layer controller PCB for [joranderaaff/portal-turret-v4](https://github.com/joranderaaff/portal-turret-v4). It replaces the Wemos S3 mini and the hand wiring of the original build with a single board that has on-board power protection, audio amplifier, IMU, level shifting for the NeoPixels and keyed connectors for every peripheral.
 
-The board keeps the **exact GPIO mapping of the firmware's `src/pins.h`**, so the upstream firmware runs on it with one small change (the IMU, see [Firmware](#firmware)).
+The board keeps the **exact GPIO mapping of the firmware's `Fork/src/pins.h`**, so the upstream firmware runs on it with one small change (the IMU, see [Firmware](#firmware)).
 
 > **Status: v0.1 — design complete, not yet fabricated or tested.** DRC is clean (0 errors, 0 unconnected items). Use at your own risk until a first batch has been built and validated.
 
@@ -80,7 +80,7 @@ IO39–IO42 are unused (the JTAG header was removed). IO0, IO3, IO45 and IO46 ar
 
 ## Firmware
 
-The upstream firmware in `src/` works with the same pinout. Changes needed:
+The upstream firmware in `Fork/` works with the same pinout. Changes needed:
 
 - **IMU**: the board carries an LSM6DSOX instead of the ADXL345. Change the object type in `Motion.h` and the `lib_deps` entry in `platformio.ini` to the Adafruit LSM6DSOX library; it exposes the same `sensors_event_t` interface through `Adafruit_Sensor`, so `getEvent()` is unchanged.
 - **Optional**: read `PWR_FLT` on IO38 (low = the eFuse cut the power) and drive the debug LEDs on IO33/IO48; set the amplifier gain with IO21/IO47 (never as outputs driven high).
@@ -96,14 +96,15 @@ The upstream firmware in `src/` works with the same pinout. Changes needed:
 ## Repository layout
 
 ```
-hardware/Turret2/          KiCad project (schematic, PCB, custom DRC rules)
-hardware/Turret2/libraries project-specific symbols and footprints
+Turret2_portable/          KiCad project (schematic, PCB, custom DRC rules)
+Turret2_portable/library   project-specific symbols, footprints and 3D models
 docs/design-plan.md        full design rationale, section by section
 docs/status-and-history.md current status, decisions and pitfalls, session by session
-src/, include/, lib/ ...   upstream firmware
+Fork/                      upstream firmware (PlatformIO project: src/, platformio.ini, data/ ...)
+Pictures/                  photos and renders
 ```
 
-Open `hardware/Turret2/Turret2.kicad_pro` with **KiCad 10.0.6 or later**. The PCB embeds all its footprints, so it opens as is. To edit the schematic or run *Update PCB from Schematic*, the project-specific libraries (`samsic` SamacSys imports such as `USB412003C` and `LGA-14_1`, and `TC2050-IDC`) must be available as project libraries.
+Open `Turret2_portable/Turret2.kicad_pro` with **KiCad 10.0.6 or later**. The PCB embeds all its footprints, so it opens as is. To edit the schematic or run *Update PCB from Schematic*, the project-specific libraries (`samsic` SamacSys imports such as `USB412003C` and `LGA-14_1`, and `TC2050-IDC`) must be available as project libraries.
 
 ## Documentation
 
@@ -116,4 +117,4 @@ Open `hardware/Turret2/Turret2.kicad_pro` with **KiCad 10.0.6 or later**. The PC
 - Community feedback from the portal-turret V4 discussions is summarised in design-plan §12b.
 - Turret2 board design: [lo26lo](https://github.com/lo26lo).
 
-The upstream repository does not include a license file at the time of writing; its files remain under their author's terms. The license for the Turret2 hardware files in `hardware/` is still to be added.
+The upstream repository does not include a license file at the time of writing; its files remain under their author's terms. The license for the Turret2 hardware files in `Turret2_portable/` is still to be added.

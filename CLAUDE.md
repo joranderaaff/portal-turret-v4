@@ -1,6 +1,6 @@
 # Instructions pour Claude — firmware de la tourelle Portal, carte Turret2
 
-Ce dépôt contient le firmware (PlatformIO, Arduino, ESP32-S3) de la tourelle Portal V4, en cours d'adaptation à la carte **Turret2**. Langue de travail : **français**. Dates au format JJ.MM.AAAA.
+Ce dépôt contient le firmware (PlatformIO, Arduino, ESP32-S3) de la tourelle Portal V4, en cours d'adaptation à la carte **Turret2**, et le projet KiCad de cette carte. Langue de travail : **français**. Dates au format JJ.MM.AAAA.
 
 ## Journal de bord — obligatoire, à chaque session
 
@@ -15,7 +15,8 @@ Le journal est `docs/firmware-journal.md`. Il doit permettre à quelqu'un qui ne
 
 - `docs/firmware-plan.md` : contexte, référence matérielle (GPIO), pièges, ordre de boot, lots de travail, décisions à prendre.
 - `docs/firmware-journal.md` : avancement réel.
-- `src/pins.h` : pinout imposé ; la carte Turret2 est câblée dessus, **ne pas réaffecter ces broches**.
+- `Fork/` : le projet PlatformIO du firmware (`Fork/src/`, `Fork/platformio.ini`) ; `Turret2_portable/` : le projet KiCad de la carte ; `Pictures/` : photos.
+- `Fork/src/pins.h` : pinout imposé ; la carte Turret2 est câblée dessus, **ne pas réaffecter ces broches**.
 
 ## Règles matérielles critiques (détails : plan §2)
 
