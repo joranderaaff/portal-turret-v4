@@ -3,13 +3,23 @@
 
 void FiringRoutine::Initialize(Turret &_turret) { turret = &_turret; }
 
+const float pi = 3.1415; 
+
 int FiringRoutine::runCoroutine() {
   COROUTINE_BEGIN();
   turret->audio.ShootAudio.Begin();
   shootingStartTime = millis();
-  while (millis() < shootingStartTime + 3000) {
+  
+  while(turret->radar.GetTargetCount() > 0 && millis() < shootingStartTime + 10000) {
+    RadarTarget radarTarget = turret->radar.GetTarget(0);
+    float angle = atan2(radarTarget.y, radarTarget.x) / pi * 180 - 90;
+    turret->gantry.SetRotationZ(angle, false);
     COROUTINE_YIELD();
   }
+
+  // while (millis() < shootingStartTime + 3000) {
+  //   COROUTINE_YIELD();
+  // }
   turret->audio.ShootAudio.Stop();
   COROUTINE_AWAIT(!turret->audio.ShootAudio.IsPlaying());
   COROUTINE_END();

@@ -3,7 +3,7 @@
 #include "pins.h"
 
 #define CENTER_ANGLE 90
-#define SPEED 45
+#define SPEED 70
 
 Wing::Wing(int servoPinIn, int gunServoPinIn, int hallSensorPinIn)
     : gun(gunServoPinIn) {

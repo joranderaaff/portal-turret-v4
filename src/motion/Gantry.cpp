@@ -1,6 +1,7 @@
 #include "motion/Gantry.h"
 
 #include "Arduino.h"
+#include "helpers/Math.h"
 #include "pins.h"
 
 Gantry::Gantry()
@@ -15,8 +16,8 @@ void Gantry::Initialize(Settings &settingsIn) {
 
   settings = &settingsIn;
 
-  ANGLE_OFFSET_X = settings->GetInt(SettingId::AngleOffsetX);
-  ANGLE_OFFSET_Z = settings->GetInt(SettingId::AngleOffsetZ);
+  angleOffsetX = settings->GetInt(SettingId::AngleOffsetX);
+  angleOffsetZ = settings->GetInt(SettingId::AngleOffsetZ);
 
   delay(100);
 
@@ -35,19 +36,33 @@ void Gantry::Initialize(Settings &settingsIn) {
   wingRight.Close();
 }
 
-void Gantry::SetRotationX(int angle, bool force) {
-  if (force || wingLeft.IsOpen() && wingRight.IsOpen()) {
-    servoRotateX.write(round(90 + (angle + ANGLE_OFFSET_X) * X_AXIS_GEAR_RATIO));
+void Gantry::SetRotationX(float angle, bool force) {
+  angle = constrain(angle, -30, 30);
+  targetAngleX = 90 + (angle + angleOffsetX) * X_AXIS_GEAR_RATIO;
+  if (force) {
+    currentAngleX = targetAngleX;
+    servoRotateX.write(currentAngleX);
   }
 }
 
-void Gantry::SetRotationZ(int angle, bool force) {
-  if (force || wingLeft.IsOpen() && wingRight.IsOpen()) {
-    servoRotateZ.write(round(90 + (angle +  ANGLE_OFFSET_Z) * Z_AXIS_GEAR_RATIO));
+void Gantry::SetRotationZ(float angle, bool force) {
+  angle = constrain(angle, -30, 30);
+  targetAngleZ = 90 - (angle + angleOffsetZ) * Z_AXIS_GEAR_RATIO;
+  if (force) {
+    currentAngleZ = targetAngleZ;
+    servoRotateZ.write(currentAngleZ);
   }
 }
 
 void Gantry::Update(ulong deltaTime) {
+  if (wingLeft.IsOpen() && wingRight.IsOpen()) {
+    float deltaTimeSeconds = deltaTime / 1000.0;
+    currentAngleX = Damp(currentAngleX, targetAngleX, 5, deltaTimeSeconds);
+    servoRotateX.write(currentAngleX);
+    currentAngleZ = Damp(currentAngleZ, targetAngleZ, 5, deltaTimeSeconds);
+    servoRotateZ.write(currentAngleZ);
+  }
+
   wingLeft.Update(deltaTime);
   wingRight.Update(deltaTime);
 }
@@ -57,9 +72,9 @@ void Gantry::OpenWings() {
   wingRight.Open();
 }
 
-Wing& Gantry::GetWingLeft() { return wingLeft; }
+Wing &Gantry::GetWingLeft() { return wingLeft; }
 
-Wing& Gantry::GetWingRight() { return wingRight; }
+Wing &Gantry::GetWingRight() { return wingRight; }
 
 void Gantry::CloseWings() {
   SetRotationX(0, true);

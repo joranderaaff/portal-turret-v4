@@ -4,13 +4,10 @@
 #define SAMPLE_RATE 44100
 
 Audio::Audio()
-    : source("/", ".mp3"), player(source, i2s, decoder),
+    : source("/", ".mp3"), decoder(&i2s, &mp3Decoder),
       ShootAudio(samples, 1537, 10102) {}
 
 void Audio::Initialize() {
-
-  source.selectStream("/fire.mp3");
-
   auto cfg = i2s.defaultConfig(TX_MODE);
   cfg.pin_bck = PIN_BCLK;
   cfg.pin_ws = PIN_LRCLK;
@@ -25,6 +22,49 @@ void Audio::Initialize() {
   cfg.auto_clear = true;
   cfg.fixed_mclk = 0;
   i2s.begin(cfg);
+
+  source.begin();
+  decoder.begin();
+}
+
+void Audio::PlaySound(AudioType type) {
+  GetRandomAudio(type);
+  Stream *file = source.selectStream(filename);
+  copier.begin(decoder, *file);
+  isPlaying = true;
+}
+
+void Audio::GetRandomAudio(AudioType type) {
+  long filenum;
+  switch (type) {
+  case AudioType::Activate:
+    filenum = random(8) + 1;
+    snprintf(filename, 31, "/%02i/%03i.mp3", "01_activate", filenum);
+    break;
+  case AudioType::Searching:
+    filenum = random(10) + 1;
+    snprintf(filename, 31, "/%02i/%03i.mp3", "07_search", filenum);
+    break;
+  case AudioType::Pickup:
+    filenum = random(10) + 1;
+    snprintf(filename, 31, "/%02i/%03i.mp3", "05_pickup", filenum);
+    break;
+  case AudioType::Tipped:
+    filenum = random(6) + 1;
+    snprintf(filename, 31, "/%02i/%03i.mp3", "08_tipped", filenum);
+    break;
+  case AudioType::Retire:
+    filenum = random(7) + 1;
+    snprintf(filename, 31, "/%02i/%03i.mp3", "06_retire", filenum);
+    break;
+  default:
+    strcpy(filename, "/09/011_alarm.mp3");
+    break;
+  }
+}
+
+bool Audio::IsPlaying() {
+  return isPlaying;
 }
 
 void Audio::Update(ulong deltaTime) {
@@ -32,5 +72,10 @@ void Audio::Update(ulong deltaTime) {
     int bytesAvailableForWrite = i2s.availableForWrite();
     ShootAudio.Read(sampleBuffer, bytesAvailableForWrite);
     i2s.write(sampleBuffer, bytesAvailableForWrite);
-  }
+  } 
+  // else {
+  //   if(isPlaying && !copier.copy()) {
+  //     isPlaying = false;
+  //   }
+  // }
 }

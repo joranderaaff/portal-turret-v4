@@ -26,6 +26,7 @@ void ActivateState::OnActivate() {
 void ActivateState::Update(ulong deltaTime) {
   activateRoutine.runCoroutine();
   if (activateRoutine.isDone()) {
+    Serial.println("Updating State");
     stateMachine->GoToState(StateId::FiringState);
   }
 }
