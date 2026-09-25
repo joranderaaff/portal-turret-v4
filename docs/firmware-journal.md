@@ -2,6 +2,17 @@
 
 Ce journal accompagne [firmware-plan.md](firmware-plan.md). Il contient **tout** ce qui a été fait, ce qui est prévu, ce qui est terminé, les décisions et **les erreurs**, afin que quelqu'un qui ne connaît que le plan puisse reprendre le travail sans rien perdre.
 
+## Reprise rapide
+
+Pour reprendre le travail sans autre contexte :
+
+1. Lire `CLAUDE.md` (règles permanentes), puis « État actuel » ci-dessous : il donne la phase, la **prochaine action** et les blocages.
+2. Lire dans « Avancement des lots » le premier lot qui n'est pas *fait*, puis sa description dans [firmware-plan.md](firmware-plan.md) §7 (et les sections qu'elle cite).
+3. Parcourir « Erreurs, impasses et pièges » avant de lancer une commande : on n'y retombe pas deux fois.
+4. Travailler sur la branche indiquée dans « État actuel » ; à la fin, mettre à jour ce journal **dans le même commit** que le travail, puis pousser.
+
+Documents du dépôt : [firmware-plan.md](firmware-plan.md) (plan firmware), [design-plan.md](design-plan.md) et [status-and-history.md](status-and-history.md) (matériel, font foi sur la carte), [../README.md](../README.md) (présentation de la carte).
+
 ## Mode d'emploi
 
 - **Pour reprendre le travail** : lire « État actuel », puis « Avancement des lots », puis la dernière entrée de « Sessions ».
@@ -11,7 +22,7 @@ Ce journal accompagne [firmware-plan.md](firmware-plan.md). Il contient **tout**
 
 ---
 
-## État actuel — mis à jour le 24.09.2026 (2ᵉ session)
+## État actuel — mis à jour le 25.09.2026
 
 - **Phase** : plan terminé, **décisions D1 à D7 tranchées** (plan §9), page web de configuration ajoutée au plan (§10, lot 12). Documentation matérielle Turret2 ajoutée au dépôt (`README.md`, `docs/design-plan.md`, `docs/status-and-history.md`) ; le projet KiCad n'y est pas. **Aucune ligne de firmware modifiée** : `src/` est le firmware upstream intact (commit `020a839`).
 - **Cible** : Turret2 uniquement (plus de compatibilité Wemos / V4, D2).
@@ -128,3 +139,15 @@ Ce journal accompagne [firmware-plan.md](firmware-plan.md). Il contient **tout**
 - `hardware/Turret2/` (projet KiCad) n'est pas dans le dépôt : les liens du README vers ce dossier ne mènent nulle part tant que l'utilisateur ne l'a pas poussé.
 
 **Prochaine étape** : lot 1.
+
+### 25.09.2026 — Reprise rapide
+
+**Demande de l'utilisateur** : « et le journal de reprise ? » — vérifier que le journal est bien disponible pour reprendre le travail.
+
+**Fait**
+- Vérifié que `docs/firmware-journal.md` est sur la branche distante `claude/admiring-bell-q3hube` (commits `c17977f`, `83e856e`, `73ab93d`).
+- Ajout en tête d'une section « Reprise rapide » (procédure en 4 étapes + liste des documents).
+- Correction : le titre « État actuel » indiquait « 2ᵉ session » alors qu'il avait été mis à jour en 3ᵉ session ; il porte maintenant la date du 25.09.2026.
+
+**Prochaine étape** : lot 1 (inchangée).
+
