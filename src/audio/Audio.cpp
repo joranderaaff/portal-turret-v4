@@ -39,26 +39,26 @@ void Audio::GetRandomAudio(AudioType type) {
   switch (type) {
   case AudioType::Activate:
     filenum = random(8) + 1;
-    snprintf(filename, 31, "/%02i/%03i.mp3", "01_activate", filenum);
+    snprintf(filename, 31, "/01_activate/%03i.mp3", filenum);
     break;
   case AudioType::Searching:
     filenum = random(10) + 1;
-    snprintf(filename, 31, "/%02i/%03i.mp3", "07_search", filenum);
+    snprintf(filename, 31, "/07_search/%03i.mp3", filenum);
     break;
   case AudioType::Pickup:
     filenum = random(10) + 1;
-    snprintf(filename, 31, "/%02i/%03i.mp3", "05_pickup", filenum);
+    snprintf(filename, 31, "/05_pickup/%03i.mp3", filenum);
     break;
   case AudioType::Tipped:
     filenum = random(6) + 1;
-    snprintf(filename, 31, "/%02i/%03i.mp3", "08_tipped", filenum);
+    snprintf(filename, 31, "/08_tipped/%03i.mp3", filenum);
     break;
   case AudioType::Retire:
     filenum = random(7) + 1;
-    snprintf(filename, 31, "/%02i/%03i.mp3", "06_retire", filenum);
+    snprintf(filename, 31, "/06_retire/%03i.mp3", filenum);
     break;
   default:
-    strcpy(filename, "/09/011_alarm.mp3");
+    strcpy(filename, "/09/001.mp3");
     break;
   }
 }
@@ -73,9 +73,9 @@ void Audio::Update(ulong deltaTime) {
     ShootAudio.Read(sampleBuffer, bytesAvailableForWrite);
     i2s.write(sampleBuffer, bytesAvailableForWrite);
   } 
-  // else {
-  //   if(isPlaying && !copier.copy()) {
-  //     isPlaying = false;
-  //   }
-  // }
+  else {
+    if(isPlaying && !copier.copy()) {
+      isPlaying = false;
+    }
+  }
 }
