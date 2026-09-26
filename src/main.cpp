@@ -58,7 +58,6 @@ void loop() {
   light.Update(deltaTime);
   motion.Update(deltaTime);
   radar.Update(deltaTime);
-  audio.Update(deltaTime);
   ota.Update(deltaTime);
 
   stateMachine.Update(deltaTime);

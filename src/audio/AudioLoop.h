@@ -2,7 +2,7 @@
 
 class AudioLoop {
  public:
-  AudioLoop(const uint8_t* samplesIn, int loopStartSampleIn, int loopEndSampleIn);
+  AudioLoop(const uint8_t* samplesIn, int loopStartSampleIn, int loopEndSampleIn, int sampleCount);
   void Read(uint8_t* buffer, int len);
   void Begin();
   void Stop();
@@ -17,4 +17,5 @@ class AudioLoop {
   int totalSampleCount = 0;
   bool isPlaying = false;
   bool isLooping = false;
+  bool isStopping = false;
 };

@@ -1,23 +1,31 @@
 #include "AudioLoop.h"
 
-AudioLoop::AudioLoop(const uint8_t *samplesIn, int loopStartSampleIn,
-                     int loopEndSampleIn) {
+AudioLoop::AudioLoop(const uint8_t *samplesIn, int loopStartSampleIn, int loopEndSampleIn, int sampleCount) {
   loopStartSample = loopStartSampleIn;
   loopEndSample = loopEndSampleIn;
   samples = samplesIn;
-  totalSampleCount = sizeof(samplesIn) / 2;
+  totalSampleCount = sampleCount;
 }
 
 void AudioLoop::Begin() {
   isPlaying = true;
   isLooping = false;
+  isStopping = false;
   loopCounter = 0;
   sampleReadIndex = 0;
 }
 
-bool AudioLoop::IsPlaying() { return isPlaying; }
+bool AudioLoop::IsPlaying() {
+  return isPlaying;
+}
 
-void AudioLoop::Stop() { isLooping = false; }
+void AudioLoop::Stop() {
+  if (isStopping) {
+    return;
+  }
+  isLooping = false;
+  isStopping = true;
+}
 
 void AudioLoop::Read(uint8_t *buffer, int len) {
   for (int i = 0; i < len; i += 2) {

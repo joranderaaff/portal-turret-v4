@@ -5,7 +5,7 @@ void ActivateRoutine::Initialize(Turret &_turret) { turret = &_turret; }
 
 int ActivateRoutine::runCoroutine() {
   COROUTINE_BEGIN();
-  turret->audio.PlaySound(AudioType::Activate);
+  turret->audio.RequestSound(AudioType::Activate);
   COROUTINE_AWAIT(!turret->audio.IsPlaying());
   turret->gantry.OpenWings();
   COROUTINE_AWAIT(turret->gantry.GetWingLeft().IsOpen() && turret->gantry.GetWingRight().IsOpen());
