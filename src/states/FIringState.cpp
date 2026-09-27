@@ -34,6 +34,6 @@ void FiringState::OnActivate() {
 void FiringState::Update(ulong deltaTime) {
   firingRoutine.runCoroutine();
   if (firingRoutine.isDone()) {
-    stateMachine->GoToState(StateId::Disengage);
+    stateMachine->GoToState(StateId::SearchState);
   }
 }

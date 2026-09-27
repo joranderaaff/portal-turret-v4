@@ -112,6 +112,8 @@ void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
   settings = &settingsIn;
   turret = &turretIn;
 
+  webServer.serveStatic("/", LittleFS, "/www/");
+
   webServer.on("/", HTTP_GET, [this](AsyncWebServerRequest *request) {
     request->send(200, "application/json", "{\"status\":\"OK\"}");
   });
