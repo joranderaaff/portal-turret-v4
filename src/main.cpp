@@ -2,6 +2,7 @@
 #include "pins.h"
 #include "states/StateMachine.h"
 #include "web/Ota.h"
+#include "web/TurretWebServer.h"
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
 #include <WiFi.h>
@@ -20,7 +21,7 @@ Settings settings;
 
 const char *ssid = "Portal Turret";
 
-Turret turret{gantry, motion, radar, audio, light, server, settings};
+Turret turret{gantry, motion, radar, audio, light, settings};
 
 void setup() {
 
@@ -36,7 +37,7 @@ void setup() {
 
   settings.Initialize();
 
-  server.Initialize(settings);
+  server.Initialize(turret, settings);
   gantry.Initialize(settings);
   light.Initialize();
   motion.Initialize();
