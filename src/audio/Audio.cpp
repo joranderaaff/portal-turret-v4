@@ -1,10 +1,15 @@
 #include "Audio.h"
 
 #define SAMPLE_RATE 22050
+#define QUEUE_SIZE 5
 
 Audio::Audio() : source("/", ".mp3"), decoder(&i2s, &mp3Decoder), ShootAudio(samples, 773, 5065, sizeof(samples) / 2) {}
 
 void Audio::Initialize() {
+
+  audioCommandQueue = xQueueCreate(QUEUE_SIZE, sizeof(uint16_t));
+  loopedAudioCommandQueue = xQueueCreate(QUEUE_SIZE, sizeof(uint16_t));
+
   auto cfg = i2s.defaultConfig(TX_MODE);
   cfg.pin_bck = PIN_BCLK;
   cfg.pin_ws = PIN_LRCLK;
@@ -28,35 +33,34 @@ void Audio::Initialize() {
   xTaskCreatePinnedToCore(AudioTask, "audio", 8192, this, 2, nullptr, 0);
 }
 
-void Audio::RequestGunSoundChange(GunAudioRequestType requestType) {
-  playGunAudio = requestType;
+void Audio::QueueAudioCommand(AudioId nextAudio) {
+  xQueueSend(audioCommandQueue, &nextAudio, 0);
 }
 
-void Audio::RequestSound(AudioType type) {
-  requestedAudio = type;
-  isPlaying = true;
+void Audio::QueueLoopedAudioCommand(AudioLoopId nextAudio) {
+  xQueueSend(loopedAudioCommandQueue, &nextAudio, 0);
 }
 
-void Audio::GetRandomAudio(AudioType type) {
+void Audio::GetRandomSoundByType(AudioId type) {
   long filenum;
   switch (type) {
-  case AudioType::Activate:
+  case AudioId::Activate:
     filenum = random(8) + 1;
     snprintf(filename, 31, "/01_activate/%03i.mp3", filenum);
     break;
-  case AudioType::Searching:
+  case AudioId::Searching:
     filenum = random(10) + 1;
     snprintf(filename, 31, "/07_search/%03i.mp3", filenum);
     break;
-  case AudioType::Pickup:
+  case AudioId::Pickup:
     filenum = random(10) + 1;
     snprintf(filename, 31, "/05_pickup/%03i.mp3", filenum);
     break;
-  case AudioType::Tipped:
+  case AudioId::Tipped:
     filenum = random(6) + 1;
     snprintf(filename, 31, "/08_tipped/%03i.mp3", filenum);
     break;
-  case AudioType::Retire:
+  case AudioId::Retire:
     filenum = random(7) + 1;
     snprintf(filename, 31, "/06_retire/%03i.mp3", filenum);
     break;
@@ -67,43 +71,54 @@ void Audio::GetRandomAudio(AudioType type) {
 }
 
 bool Audio::IsPlaying() {
-  return requestedAudio != AudioType::None || isPlaying;
+  return isPlaying;
 }
 
-void Audio::AudioTask(void *arg) { // declare as static in Audio.h
+void Audio::AudioTask(void *arg) {
   auto *self = static_cast<Audio *>(arg);
   for (;;) {
     self->Update(0);
-    vTaskDelay(1); // yield so core 0 isn't starved (WiFi lives there)
+    vTaskDelay(1);
   }
+}
+
+AudioLoop *Audio::GetLoopendSoundByType(AudioLoopId type) {
+  return &ShootAudio;
 }
 
 void Audio::Update(ulong deltaTime) {
 
-  GunAudioRequestType gunAudioRequest = playGunAudio.exchange(GunAudioRequestType::None);
-  if (gunAudioRequest == GunAudioRequestType::Start) {
-    ShootAudio.Begin();
-  }
-  if (gunAudioRequest == GunAudioRequestType::Stop) {
-    ShootAudio.Stop();
+  AudioLoopId nextLoopedAudioType = AudioLoopId::None;
+  if (xQueueReceive(loopedAudioCommandQueue, &nextLoopedAudioType, 0)) {
+    if (currentLoopedAudio && nextLoopedAudioType == AudioLoopId::None) {
+      currentLoopedAudio->Stop();
+    }
+
+    if (nextLoopedAudioType != AudioLoopId::None) {
+      currentLoopedAudio = GetLoopendSoundByType(nextLoopedAudioType);
+      currentLoopedAudio->Begin();
+    }
   }
 
-  AudioType nextAudioType = requestedAudio.exchange(AudioType::None);
-  if (nextAudioType != AudioType::None) {
-    decoder.begin();
-    GetRandomAudio(nextAudioType);
-    Stream *file = source.selectStream(filename);
-    copier.begin(decoder, *file);
-    isPlaying = true;
+  AudioId nextAudioType = AudioId::None;
+  if (xQueueReceive(audioCommandQueue, &nextAudioType, 0)) {
+    if (nextAudioType != AudioId::None) {
+      decoder.begin();
+      GetRandomSoundByType(nextAudioType);
+      Stream *file = source.selectStream(filename);
+      copier.begin(decoder, *file);
+      isPlaying = true;
+    }
   }
 
-  if (ShootAudio.IsPlaying()) {
+  if (currentLoopedAudio && currentLoopedAudio->IsPlaying()) {
     int bytesAvailableForWrite = min(i2s.availableForWrite(), (int)sizeof(sampleBuffer));
-    ShootAudio.Read(sampleBuffer, bytesAvailableForWrite);
+    currentLoopedAudio->Read(sampleBuffer, bytesAvailableForWrite);
     i2s.write(sampleBuffer, bytesAvailableForWrite);
   } else {
     if (isPlaying) {
       if (!copier.copy()) {
+        decoder.end();
         isPlaying = false;
       }
     }

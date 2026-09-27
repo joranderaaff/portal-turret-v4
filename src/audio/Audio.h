@@ -8,7 +8,7 @@
 #include "GunShotAudio.h"
 #include "pins.h"
 
-enum class AudioType {
+enum class AudioId {
   None,
   Activate,
   Searching,
@@ -17,30 +17,32 @@ enum class AudioType {
   Retire,
 };
 
-enum class GunAudioRequestType {
+enum class AudioLoopId {
   None,
-  Start,
-  Stop
+  Gun
 };
 
 class Audio {
 public:
   Audio();
+  void QueueAudioCommand(AudioId nextAudio);
+  void QueueLoopedAudioCommand(AudioLoopId nextAudio);
   void Initialize();
-  void RequestSound(AudioType type);
-  void RequestGunSoundChange(GunAudioRequestType requestType);
   bool IsPlaying();
-  AudioLoop ShootAudio;
   
   private:
-  std::atomic<AudioType> requestedAudio{AudioType::None};
-  std::atomic<GunAudioRequestType> playGunAudio{GunAudioRequestType::None};
+  AudioLoop ShootAudio;
+  AudioLoop * currentLoopedAudio = nullptr;
+
+  QueueHandle_t audioCommandQueue = NULL;
+  QueueHandle_t loopedAudioCommandQueue = NULL;
   
   volatile bool isPlaying = false;
   
   static void AudioTask(void *arg);
   void Update(ulong deltaTime);
-  void GetRandomAudio(AudioType type);
+  void GetRandomSoundByType(AudioId type);
+  AudioLoop* GetLoopendSoundByType(AudioLoopId type);
   char filename[32];
   uint8_t sampleBuffer[4096];
   I2SStream i2s;

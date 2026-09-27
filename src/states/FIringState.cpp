@@ -7,7 +7,7 @@ const float pi = 3.1415;
 
 int FiringRoutine::runCoroutine() {
   COROUTINE_BEGIN();
-  turret->audio.RequestGunSoundChange(GunAudioRequestType::Start);
+  turret->audio.QueueLoopedAudioCommand(AudioLoopId::Gun);
   shootingStartTime = millis();
   while (turret->radar.GetTargetCount() > 0 && millis() < shootingStartTime + 2000) {
     RadarTarget radarTarget = turret->radar.GetTarget(0);
@@ -16,7 +16,7 @@ int FiringRoutine::runCoroutine() {
     COROUTINE_YIELD();
   }
   
-  turret->audio.RequestGunSoundChange(GunAudioRequestType::Stop);
+  turret->audio.QueueLoopedAudioCommand(AudioLoopId::None);
   COROUTINE_AWAIT(!turret->audio.IsPlaying());
   COROUTINE_END();
 }
