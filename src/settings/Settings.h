@@ -8,7 +8,8 @@
 enum SettingId {
   AngleOffsetX,
   AngleOffsetZ,
-  Test,
+  AngleMaxX,
+  AngleMaxZ,
   COUNT
 };
 
@@ -37,9 +38,9 @@ union SettingValue {
 class SettingsEntry {
 public:
   // Numeric settings: min/max bound the value.
-  SettingsEntry(const char *key, const char *label, const char *group, SettingType type, SettingValue defaultValue, SettingValue min, SettingValue max);
+  SettingsEntry(const char *key, const char *label, SettingType type, SettingValue defaultValue, SettingValue min, SettingValue max);
   // Bool and string settings: no meaningful range.
-  SettingsEntry(const char *key, const char *label, const char *group, SettingType type, SettingValue defaultValue);
+  SettingsEntry(const char *key, const char *label, SettingType type, SettingValue defaultValue);
 
   const char *key;   // NVS + JSON identity, max 15 chars, never rename
   const char *label; // human readable, for the frontend

@@ -7,16 +7,17 @@ const size_t NVS_KEY_MAX = 15;
 
 SettingValue::SettingValue(const char *v) { strlcpy(valueString, v, SETTING_STRING_MAX); }
 
-SettingsEntry::SettingsEntry(const char *key, const char *label, const char *group, SettingType type, SettingValue defaultValue, SettingValue min, SettingValue max) : key(key), label(label), type(type), value(defaultValue), defaultValue(defaultValue), min(min), max(max) {}
+SettingsEntry::SettingsEntry(const char *key, const char *label, SettingType type, SettingValue defaultValue, SettingValue min, SettingValue max) : key(key), label(label), type(type), value(defaultValue), defaultValue(defaultValue), min(min), max(max) {}
 
-SettingsEntry::SettingsEntry(const char *key, const char *label, const char *group, SettingType type, SettingValue defaultValue) : key(key), label(label), type(type), value(defaultValue), defaultValue(defaultValue), min((int32_t)0), max((int32_t)0) {}
+SettingsEntry::SettingsEntry(const char *key, const char *label, SettingType type, SettingValue defaultValue) : key(key), label(label), type(type), value(defaultValue), defaultValue(defaultValue), min((int32_t)0), max((int32_t)0) {}
 
 // The rows must stay in the same order as SettingId.
 Settings::Settings()
     : entries{
-          {"AngleOffsetX", "Angle offset X", "Motion", SettingType::Int, (int32_t)0, (int32_t)-90, (int32_t)90},
-          {"AngleOffsetZ", "Angle offset Z", "Motion", SettingType::Int, (int32_t)0, (int32_t)-90, (int32_t)90},
-          {"Test", "Test", "Debug", SettingType::Float, 10.5f, -90.0f, 90.0f},
+          {"AngleOffsetX", "Angle offset X", SettingType::Float, 0, -90, 90},
+          {"AngleOffsetZ", "Angle offset Z", SettingType::Float, 0, -90, 90},
+          {"AngleMaxX", "Max Z angle", SettingType::Float, 30, 0, 90},
+          {"AngleMaxX", "Max X angle", SettingType::Float, 30, 0, 90},
       },
       prefsReady(false) {}
 

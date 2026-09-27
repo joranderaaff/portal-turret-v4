@@ -1,14 +1,15 @@
 #include "WiFi.h"
 #include "settings/Settings.h"
 #include <ESPAsyncWebServer.h>
+#include <Turret.h>
 
-class TurretWebServer
-{
+class TurretWebServer {
 public:
-    TurretWebServer();
-    void Initialize(Settings &settings);
-    AsyncWebServer webServer;
+  TurretWebServer();
+  void Initialize(Turret &turret, Settings &settings);
+  AsyncWebServer webServer;
 
 private:
-    Settings *settings;
+  Settings *settings;
+  Turret *turret;
 };

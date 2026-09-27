@@ -4,23 +4,23 @@
 
 namespace {
 
-const char* TypeName(SettingType type) {
+const char *TypeName(SettingType type) {
   switch (type) {
-    case SettingType::Int:
-      return "int";
-    case SettingType::Float:
-      return "float";
-    case SettingType::Bool:
-      return "bool";
-    case SettingType::Str:
-      return "string";
+  case SettingType::Int:
+    return "int";
+  case SettingType::Float:
+    return "float";
+  case SettingType::Bool:
+    return "bool";
+  case SettingType::Str:
+    return "string";
   }
   return "unknown";
 }
 
-void AppendEscaped(String& out, const char* text) {
+void AppendEscaped(String &out, const char *text) {
   out += '"';
-  for (const char* c = text; *c != '\0'; c++) {
+  for (const char *c = text; *c != '\0'; c++) {
     if (*c == '"' || *c == '\\') {
       out += '\\';
       out += *c;
@@ -33,26 +33,26 @@ void AppendEscaped(String& out, const char* text) {
   out += '"';
 }
 
-void AppendValue(String& out, SettingType type, const SettingValue& value) {
+void AppendValue(String &out, SettingType type, const SettingValue &value) {
   char buffer[24];
   switch (type) {
-    case SettingType::Int:
-      out += String(value.valueInt);
-      break;
-    case SettingType::Float:
-      snprintf(buffer, sizeof(buffer), "%.6g", value.valueFloat);
-      out += buffer;
-      break;
-    case SettingType::Bool:
-      out += value.valueBool ? "true" : "false";
-      break;
-    case SettingType::Str:
-      AppendEscaped(out, value.valueString);
-      break;
+  case SettingType::Int:
+    out += String(value.valueInt);
+    break;
+  case SettingType::Float:
+    snprintf(buffer, sizeof(buffer), "%.6g", value.valueFloat);
+    out += buffer;
+    break;
+  case SettingType::Bool:
+    out += value.valueBool ? "true" : "false";
+    break;
+  case SettingType::Str:
+    AppendEscaped(out, value.valueString);
+    break;
   }
 }
 
-bool ParseBool(const char* text) {
+bool ParseBool(const char *text) {
   return strcasecmp(text, "true") == 0 || strcasecmp(text, "on") == 0 ||
          strcmp(text, "1") == 0;
 }
@@ -75,12 +75,12 @@ bool SetFromString(Settings settings, SettingId id, const char *text) {
   return false;
 }
 
-}  // namespace
+} // namespace
 
-String ToJson(Settings* settings) {
+String ToJson(Settings *settings) {
   String json = "[";
   for (int i = 0; i < SettingId::COUNT; i++) {
-    const SettingsEntry& entry = settings->entries[i];
+    const SettingsEntry &entry = settings->entries[i];
     if (i > 0) {
       json += ',';
     }
@@ -108,14 +108,39 @@ String ToJson(Settings* settings) {
 
 TurretWebServer::TurretWebServer() : webServer(80) {}
 
-void TurretWebServer::Initialize(Settings& settingsIn) {
+void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
   settings = &settingsIn;
+  turret = &turretIn;
 
-  webServer.on("/", HTTP_GET, [this](AsyncWebServerRequest* request) {
+  webServer.on("/", HTTP_GET, [this](AsyncWebServerRequest *request) {
     request->send(200, "application/json", "{\"status\":\"OK\"}");
   });
-  webServer.on("/settings", HTTP_GET, [this](AsyncWebServerRequest* request) {
+  webServer.on("/settings", HTTP_GET, [this](AsyncWebServerRequest *request) {
     request->send(200, "application/json", ToJson(settings));
   });
+
+  webServer.on("/settings", HTTP_POST, [this](AsyncWebServerRequest *request) {
+    for (int i = 0; i < SettingId::COUNT; i++) {
+      SettingId id = static_cast<SettingId>(i);
+      SettingsEntry entry = settings->entries[id];
+      if (request->hasParam(entry.key)) {
+        switch (entry.type) {
+        case SettingType::Int:
+          settings->Set(id, (int)request->getParam(entry.key)->value().toInt());
+          break;
+        case SettingType::Float:
+          settings->Set(id, request->getParam(entry.key)->value().toFloat());
+          break;
+        case SettingType::Bool:
+          settings->Set(id, request->getParam(entry.key)->value() == "TRUE");
+          break;
+        case SettingType::Str:
+          settings->Set(id, request->getParam(entry.key)->value());
+          break;
+        }
+      }
+    }
+  });
+
   webServer.begin();
 }
