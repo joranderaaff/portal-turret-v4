@@ -3,7 +3,7 @@
 #define SAMPLE_RATE 22050
 #define QUEUE_SIZE 5
 
-Audio::Audio() : source("/", ".mp3"), decoder(&i2s, &mp3Decoder), ShootAudio(samples, 773, 5065, sizeof(samples) / 2) {}
+Audio::Audio() : source("/", ".mp3"), decoder(&volumeStream, &mp3Decoder), ShootAudio(samples, 773, 5065, sizeof(samples) / 2) {}
 
 void Audio::Initialize() {
 
@@ -24,6 +24,11 @@ void Audio::Initialize() {
   cfg.auto_clear = true;
   cfg.fixed_mclk = 0;
   i2s.begin(cfg);
+
+  auto vcfg = volumeStream.defaultConfig();
+  vcfg.copyFrom(cfg);
+  volumeStream.begin(vcfg);
+  volumeStream.setVolume(1.0f);
 
   source.begin();
   decoder.begin();
@@ -74,14 +79,6 @@ bool Audio::IsPlaying() {
   return isPlaying;
 }
 
-void Audio::AudioTask(void *arg) {
-  auto *self = static_cast<Audio *>(arg);
-  for (;;) {
-    self->Update(0);
-    vTaskDelay(1);
-  }
-}
-
 AudioLoop *Audio::GetLoopendSoundByType(AudioLoopId type) {
   return &ShootAudio;
 }
@@ -111,16 +108,22 @@ void Audio::Update(ulong deltaTime) {
     }
   }
 
-  if (currentLoopedAudio && currentLoopedAudio->IsPlaying()) {
+  if (isPlaying) {
+    if (!copier.copy()) {
+      decoder.end();
+      isPlaying = false;
+    }
+  } else if (currentLoopedAudio && currentLoopedAudio->IsPlaying()) {
     int bytesAvailableForWrite = min(i2s.availableForWrite(), (int)sizeof(sampleBuffer));
     currentLoopedAudio->Read(sampleBuffer, bytesAvailableForWrite);
-    i2s.write(sampleBuffer, bytesAvailableForWrite);
-  } else {
-    if (isPlaying) {
-      if (!copier.copy()) {
-        decoder.end();
-        isPlaying = false;
-      }
-    }
+    volumeStream.write(sampleBuffer, bytesAvailableForWrite);
+  }
+}
+
+void Audio::AudioTask(void *arg) {
+  auto *self = static_cast<Audio *>(arg);
+  for (;;) {
+    self->Update(0);
+    vTaskDelay(1);
   }
 }

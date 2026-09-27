@@ -46,8 +46,9 @@ public:
   char filename[32];
   uint8_t sampleBuffer[4096];
   I2SStream i2s;
-  AudioSourceLittleFS source;
   MP3DecoderHelix mp3Decoder;
-  EncodedAudioStream decoder;
+  VolumeStream volumeStream{i2s};
+  EncodedAudioStream decoder{&volumeStream, &mp3Decoder};
+  AudioSourceLittleFS source;
   StreamCopy copier;
 };
