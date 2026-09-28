@@ -57,24 +57,6 @@ bool ParseBool(const char *text) {
          strcmp(text, "1") == 0;
 }
 
-bool SetFromString(Settings settings, SettingId id, const char *text) {
-  const SettingsEntry *entry = settings.Get(id);
-  if (entry == nullptr) {
-    return false;
-  }
-  switch (entry->type) {
-  case SettingType::Int:
-    return settings.Set(id, (int32_t)strtol(text, nullptr, 10));
-  case SettingType::Float:
-    return settings.Set(id, (float)strtod(text, nullptr));
-  case SettingType::Bool:
-    return settings.Set(id, ParseBool(text));
-  case SettingType::Str:
-    return settings.Set(id, text);
-  }
-  return false;
-}
-
 } // namespace
 
 String ToJson(Settings *settings) {
@@ -125,23 +107,24 @@ void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
     for (int i = 0; i < SettingId::COUNT; i++) {
       SettingId id = static_cast<SettingId>(i);
       SettingsEntry entry = settings->entries[id];
-      if (request->hasParam(entry.key)) {
+      if (request->hasParam(entry.key, true)) {
         switch (entry.type) {
         case SettingType::Int:
-          settings->Set(id, (int)request->getParam(entry.key)->value().toInt());
+          settings->Set(id, (int32_t)request->getParam(entry.key, true)->value().toInt());
           break;
         case SettingType::Float:
-          settings->Set(id, request->getParam(entry.key)->value().toFloat());
+          settings->Set(id, request->getParam(entry.key, true)->value().toFloat());
           break;
         case SettingType::Bool:
-          settings->Set(id, request->getParam(entry.key)->value() == "TRUE");
+          settings->Set(id, request->getParam(entry.key, true)->value() == "true");
           break;
         case SettingType::Str:
-          settings->Set(id, request->getParam(entry.key)->value());
+          settings->Set(id, request->getParam(entry.key, true)->value().c_str());
           break;
         }
       }
     }
+    request->send(200, "application/json", "{\"status\":\"OK\"}");
   });
 
   webServer.begin();

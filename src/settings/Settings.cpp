@@ -14,10 +14,10 @@ SettingsEntry::SettingsEntry(const char *key, const char *label, SettingType typ
 // The rows must stay in the same order as SettingId.
 Settings::Settings()
     : entries{
-          {"AngleOffsetX", "Angle offset X", SettingType::Float, 0, -90, 90},
-          {"AngleOffsetZ", "Angle offset Z", SettingType::Float, 0, -90, 90},
-          {"AngleMaxX", "Max Z angle", SettingType::Float, 30, 0, 90},
-          {"AngleMaxX", "Max X angle", SettingType::Float, 30, 0, 90},
+          {"AngleOffsetX", "Angle offset X", SettingType::Float, 0.0f, -90.0f, 90.0f},
+          {"AngleOffsetZ", "Angle offset Z", SettingType::Float, 0.0f, -90.0f, 90.0f},
+          {"AngleMaxX", "Max X angle", SettingType::Float, 30.0f, 0.0f, 90.0f},
+          {"AngleMaxZ", "Max Z angle", SettingType::Float, 30.0f, 0.0f, 90.0f},
       },
       prefsReady(false) {}
 
@@ -48,8 +48,7 @@ void Settings::Load() {
       entry.value.valueInt = prefs.getInt(entry.key, entry.value.valueInt);
       break;
     case SettingType::Float:
-      entry.value.valueFloat =
-          prefs.getFloat(entry.key, entry.value.valueFloat);
+      entry.value.valueFloat = prefs.getFloat(entry.key, entry.value.valueFloat);
       break;
     case SettingType::Bool:
       entry.value.valueBool = prefs.getBool(entry.key, entry.value.valueBool);
