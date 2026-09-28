@@ -7,7 +7,9 @@ int FiringState::runCoroutine() {
   COROUTINE_BEGIN();
   turret->audio.QueueLoopedAudioCommand(AudioLoopId::Gun);
   shootingStartTime = millis();
-  shootTime = random(1000, 2000);
+  int32_t minShootTime = settings->GetInt(SettingId::ShootMinTime);
+  int32_t maxShootTime = settings->GetInt(SettingId::ShootMaxTime);
+  shootTime = random(minShootTime, maxShootTime);
   while (turret->radar.GetTargetCount() > 0 && millis() < shootingStartTime + shootTime) {
     RadarTarget radarTarget = turret->radar.GetTarget(0);
     float angle = atan2(radarTarget.y, radarTarget.x) / pi * 180 - 90;

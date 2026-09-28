@@ -16,10 +16,17 @@ Settings::Settings()
     : entries{
           {"AngleOffsetX", "Angle offset X", SettingType::Float, 0.0f, -90.0f, 90.0f},
           {"AngleOffsetZ", "Angle offset Z", SettingType::Float, 0.0f, -90.0f, 90.0f},
+          {"GunTimeout", "Gun Move Timeout", SettingType::Int, 0, 100, 3000},
+          {"GunHallMin", "Gun Hall Min", SettingType::Int, 1500, 0, 4096},
+          {"GunHallMax", "Gun Hall Max", SettingType::Int, 2500, 0, 4096},
           {"AngleMaxX", "Max X angle", SettingType::Float, 30.0f, 0.0f, 90.0f},
           {"AngleMaxZ", "Max Z angle", SettingType::Float, 30.0f, 0.0f, 90.0f},
           {"ShootMinTime", "Shoot Min Time", SettingType::Int, 1000, 0, 10000},
           {"ShootMaxTime", "Shoot Max Time", SettingType::Int, 2000, 0, 10000},
+          {"SrcMinTime", "Search Min Time", SettingType::Int, 1000, 0, 10000},
+          {"SrcMaxTime", "Search Max Time", SettingType::Int, 5000, 0, 10000},
+          {"SrcMovMin", "Search Move Delay Min Time", SettingType::Int, 500, 0, 10000},
+          {"SrcMovMax", "Search Move Delay Max Time", SettingType::Int, 1000, 0, 10000},
       },
       prefsReady(false) {}
 

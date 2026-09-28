@@ -6,10 +6,17 @@
 enum SettingId {
   AngleOffsetX,
   AngleOffsetZ,
+  GunMoveTimeout,
+  GunHallMin,
+  GunHallMax,
   AngleMaxX,
   AngleMaxZ,
   ShootMinTime,
   ShootMaxTime,
+  SearchMinTime,
+  SearchMaxTime,
+  SearchMoveMinTime,
+  SearchMoveMaxTime,
   COUNT
 };
 

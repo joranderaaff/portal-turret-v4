@@ -29,8 +29,8 @@ void Gantry::Initialize(Settings &settingsIn) {
   servoRotateZ.attach(PIN_ROTATE_Z, 500, 2400);
   SetRotationZ(0, true);
 
-  wingLeft.Initialize();
-  wingRight.Initialize();
+  wingLeft.Initialize(settingsIn);
+  wingRight.Initialize(settingsIn);
 
   wingLeft.Close();
   wingRight.Close();
