@@ -1,9 +1,7 @@
 #include "ActivateState.h"
 #include "StateMachine.h"
 
-void ActivateRoutine::Initialize(Turret &_turret) { turret = &_turret; }
-
-int ActivateRoutine::runCoroutine() {
+int ActivateState::runCoroutine() {
   COROUTINE_BEGIN();
   turret->audio.QueueAudioCommand(AudioId::Activate);
   COROUTINE_AWAIT(turret->audio.IsPlaying());
@@ -16,19 +14,6 @@ int ActivateRoutine::runCoroutine() {
   COROUTINE_END();
 }
 
-void ActivateState::Initialize(StateMachine *stateMachine, Turret &turret) {
-  BaseState::Initialize(stateMachine, turret);
-  activateRoutine.Initialize(turret);
-}
-
-void ActivateState::OnActivate() {
-  BaseState::OnActivate();
-  activateRoutine.reset();
-}
-
-void ActivateState::Update(ulong deltaTime) {
-  activateRoutine.runCoroutine();
-  if (activateRoutine.isDone()) {
-    stateMachine->GoToState(StateId::FiringState);
-  }
+void ActivateState::OnRoutineDone() {
+  stateMachine->GoToState(StateId::FiringState);
 }

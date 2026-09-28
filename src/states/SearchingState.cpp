@@ -2,12 +2,12 @@
 #include "StateMachine.h"
 #include "sensors/Radar.h"
 
-void SearchingRoutine::Initialize(StateMachine &_stateMachine, Turret &_turret) {
-  stateMachine = &_stateMachine;
-  turret = &_turret;
+void SearchState::OnActivate() {
+  Serial.println("SearchState");
+  RoutineState::OnActivate();
 }
 
-int SearchingRoutine::runCoroutine() {
+int SearchState::runCoroutine() {
   COROUTINE_BEGIN();
   turret->audio.QueueAudioCommand(AudioId::Searching);
   COROUTINE_AWAIT(turret->audio.IsPlaying());
@@ -44,19 +44,4 @@ int SearchingRoutine::runCoroutine() {
   }
 
   COROUTINE_END();
-}
-
-void SearchState::OnActivate() {
-  Serial.println("SearchState");
-  BaseState::OnActivate();
-  searchingRoutine.reset();
-}
-
-void SearchState::Initialize(StateMachine *stateMachine, Turret &turret) {
-  BaseState::Initialize(stateMachine, turret);
-  searchingRoutine.Initialize(*stateMachine, turret);
-}
-
-void SearchState::Update(ulong deltaTime) {
-  searchingRoutine.runCoroutine();
 }

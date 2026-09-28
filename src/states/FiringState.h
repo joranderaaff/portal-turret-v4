@@ -1,26 +1,16 @@
 #pragma once
 
-#include <AceRoutine.h>
-#include "BaseState.h"
+#include "RoutineState.h"
 #include "StateId.h"
 
-class FiringRoutine : public ace_routine::Coroutine {
+class FiringState : public RoutineState {
  public:
-  void Initialize(Turret& turret);
   int runCoroutine() override;
 
+ protected:
+  void OnRoutineDone() override;
+
  private:
-  Turret* turret = nullptr;
   ulong shootTime = 0;
   ulong shootingStartTime = 0;
-};
-
-class FiringState : public BaseState {
- public:
-  void Initialize(StateMachine* stateMachine, Turret& turret) override;
-  void OnActivate() override;
-  void Update(ulong deltaTime) override;
-
- private:
-  FiringRoutine firingRoutine;
 };

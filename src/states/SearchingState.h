@@ -1,28 +1,14 @@
 #pragma once
 
-#include <AceRoutine.h>
-#include "BaseState.h"
+#include "RoutineState.h"
 #include "StateId.h"
 
-class SearchingRoutine : public ace_routine::Coroutine {
+class SearchState : public RoutineState {
 public:
-  void Initialize(StateMachine &stateMachine, Turret &turret);
+  void OnActivate() override;
   int runCoroutine() override;
 
 private:
-  Turret *turret;
-  StateMachine *stateMachine;
   ulong searchStartTime = 0;
   ulong timeAtChangeRotation = 0;
-};
-
-class SearchState : public BaseState {
-public:
-  void Initialize(StateMachine *stateMachine, Turret &turret) override;
-  void OnActivate() override;
-  void Update(ulong deltaTime) override;
-
-private:
-  ulong timeSearching = 0;
-  SearchingRoutine searchingRoutine;
 };

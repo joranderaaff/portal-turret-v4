@@ -1,11 +1,9 @@
 #include "FiringState.h"
 #include "StateMachine.h"
 
-void FiringRoutine::Initialize(Turret &_turret) { turret = &_turret; }
-
 const float pi = 3.1415;
 
-int FiringRoutine::runCoroutine() {
+int FiringState::runCoroutine() {
   COROUTINE_BEGIN();
   turret->audio.QueueLoopedAudioCommand(AudioLoopId::Gun);
   shootingStartTime = millis();
@@ -16,25 +14,12 @@ int FiringRoutine::runCoroutine() {
     turret->gantry.SetRotationZ(angle, false);
     COROUTINE_YIELD();
   }
-  
+
   turret->audio.QueueLoopedAudioCommand(AudioLoopId::None);
   COROUTINE_AWAIT(!turret->audio.IsPlaying());
   COROUTINE_END();
 }
 
-void FiringState::Initialize(StateMachine *stateMachine, Turret &turret) {
-  BaseState::Initialize(stateMachine, turret);
-  firingRoutine.Initialize(turret);
-}
-
-void FiringState::OnActivate() {
-  BaseState::OnActivate();
-  firingRoutine.reset();
-}
-
-void FiringState::Update(ulong deltaTime) {
-  firingRoutine.runCoroutine();
-  if (firingRoutine.isDone()) {
-    stateMachine->GoToState(StateId::SearchState);
-  }
+void FiringState::OnRoutineDone() {
+  stateMachine->GoToState(StateId::SearchState);
 }

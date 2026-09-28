@@ -3,8 +3,6 @@
 #include <Arduino.h>
 #include <Preferences.h>
 
-// Every setting gets an id here. COUNT sizes the table, so adding an id
-// without adding its row in Settings.cpp is a compile error.
 enum SettingId {
   AngleOffsetX,
   AngleOffsetZ,
@@ -15,7 +13,6 @@ enum SettingId {
   COUNT
 };
 
-// Scoped, so the enumerators don't collide with Arduino's String class.
 enum class SettingType { Int,
                          Float,
                          Bool,
@@ -23,8 +20,6 @@ enum class SettingType { Int,
 
 constexpr size_t SETTING_STRING_MAX = 32;
 
-// One storage slot shared by every type. Only the member matching the
-// entry's SettingType is valid; that's what the type tag is for.
 union SettingValue {
   int32_t valueInt;
   float valueFloat;

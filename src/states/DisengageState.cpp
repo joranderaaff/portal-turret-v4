@@ -1,9 +1,7 @@
 #include "DisengageState.h"
 #include "StateMachine.h"
 
-void DisengageRoutine::Initialize(Turret &_turret) { turret = &_turret; }
-
-int DisengageRoutine::runCoroutine() {
+int DisengageState::runCoroutine() {
   COROUTINE_BEGIN();
   turret->audio.QueueAudioCommand(AudioId::Retire);
   COROUTINE_AWAIT(turret->audio.IsPlaying());
@@ -18,19 +16,6 @@ int DisengageRoutine::runCoroutine() {
   COROUTINE_END();
 }
 
-void DisengageState::Initialize(StateMachine *stateMachine, Turret &turret) {
-  BaseState::Initialize(stateMachine, turret);
-  disengageRoutine.Initialize(turret);
-}
-
-void DisengageState::OnActivate() {
-  BaseState::OnActivate();
-  disengageRoutine.reset();
-}
-
-void DisengageState::Update(ulong deltaTime) {
-  disengageRoutine.runCoroutine();
-  if (disengageRoutine.isDone()) {
-    stateMachine->GoToState(StateId::Idle);
-  }
+void DisengageState::OnRoutineDone() {
+  stateMachine->GoToState(StateId::Idle);
 }
