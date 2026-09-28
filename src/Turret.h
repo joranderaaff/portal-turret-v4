@@ -3,6 +3,7 @@
 #include "audio/Audio.h"
 #include "light/Light.h"
 #include "motion/Gantry.h"
+#include "motion/TargetTracker.h"
 #include "sensors/Motion.h"
 #include "sensors/Radar.h"
 #include "settings/Settings.h"
@@ -14,4 +15,5 @@ struct Turret {
   Audio &audio;
   Light &light;
   Settings &settings;
+  TargetTracker &targetTracker;
 };

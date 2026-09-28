@@ -18,10 +18,11 @@ Audio audio;
 Light light;
 Ota ota;
 Settings settings;
+TargetTracker targetTracker(settings, radar);
 
 const char *ssid = "Portal Turret";
 
-Turret turret{gantry, motion, radar, audio, light, settings};
+Turret turret{gantry, motion, radar, audio, light, settings, targetTracker};
 
 void setup() {
 
