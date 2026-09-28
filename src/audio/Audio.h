@@ -15,6 +15,7 @@ enum class AudioId {
   Pickup,
   Tipped,
   Retire,
+  Alarm,
 };
 
 enum class AudioLoopId {

@@ -10,6 +10,8 @@ enum SettingId {
   AngleOffsetZ,
   AngleMaxX,
   AngleMaxZ,
+  ShootMinTime,
+  ShootMaxTime,
   COUNT
 };
 

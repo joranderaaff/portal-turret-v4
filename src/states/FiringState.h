@@ -1,7 +1,6 @@
 #pragma once
 
 #include <AceRoutine.h>
-
 #include "BaseState.h"
 #include "StateId.h"
 
@@ -12,6 +11,7 @@ class FiringRoutine : public ace_routine::Coroutine {
 
  private:
   Turret* turret = nullptr;
+  ulong shootTime = 0;
   ulong shootingStartTime = 0;
 };
 

@@ -18,6 +18,8 @@ Settings::Settings()
           {"AngleOffsetZ", "Angle offset Z", SettingType::Float, 0.0f, -90.0f, 90.0f},
           {"AngleMaxX", "Max X angle", SettingType::Float, 30.0f, 0.0f, 90.0f},
           {"AngleMaxZ", "Max Z angle", SettingType::Float, 30.0f, 0.0f, 90.0f},
+          {"ShootMinTime", "Shoot Min Time", SettingType::Int, 1000, 0, 10000},
+          {"ShootMaxTime", "Shoot Max Time", SettingType::Int, 2000, 0, 10000},
       },
       prefsReady(false) {}
 

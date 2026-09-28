@@ -69,6 +69,9 @@ void Audio::GetRandomSoundByType(AudioId type) {
     filenum = random(7) + 1;
     snprintf(filename, 31, "/06_retire/%03i.mp3", filenum);
     break;
+  case AudioId::Alarm:
+    strcpy(filename, "/09/001.mp3");
+    break;
   default:
     strcpy(filename, "/09/001.mp3");
     break;
