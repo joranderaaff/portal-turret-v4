@@ -27,6 +27,7 @@ Settings::Settings()
           {"SrcMaxTime", "Search Max Time", SettingType::Int, 5000, 0, 10000},
           {"SrcMovMin", "Search Move Delay Min Time", SettingType::Int, 500, 0, 10000},
           {"SrcMovMax", "Search Move Delay Max Time", SettingType::Int, 1000, 0, 10000},
+          {"MoveTres", "Movement Detect Treshold (mm)", SettingType::Int, 100, 0, 100000},
       },
       prefsReady(false) {}
 

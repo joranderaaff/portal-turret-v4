@@ -17,6 +17,7 @@ enum SettingId {
   SearchMaxTime,
   SearchMoveMinTime,
   SearchMoveMaxTime,
+  MovementTresshold,
   COUNT
 };
 

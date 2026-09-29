@@ -12,7 +12,7 @@ int FiringState::runCoroutine() {
   int32_t maxShootTime = settings->GetInt(SettingId::ShootMaxTime);
   shootTime = random(minShootTime, maxShootTime);
 
-  while (turret->radar.GetTargetCount() > 0 && millis() < shootingStartTime + shootTime) {
+  while (turret->targetTracker.GetTargetsMovedThisFrame() > 0 && millis() < shootingStartTime + shootTime) {
     RadarTarget radarTarget = turret->radar.GetTarget(0);
     float angle = atan2(radarTarget.y, radarTarget.x) / pi * 180 - 90;
     turret->gantry.SetRotationZ(angle, false);
