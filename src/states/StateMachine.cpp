@@ -27,21 +27,18 @@ BaseState *StateMachine::GetState(StateId stateId) {
   case StateId::Booting:
     Serial.println("Bootstate");
     return &bootState;
-    break;
   case StateId::Activate:
     Serial.println("ActivateState");
     return &activateState;
-    break;
   case StateId::FiringState:
     Serial.println("FiringState");
     return &firingState;
-    break;
   case StateId::SearchState:
+    Serial.println("SearchState");
     return &searchState;
   case StateId::Disengage:
     Serial.println("DisengageState");
     return &disengageState;
-    break;
   case StateId::Idle:
     Serial.println("IdleState");
     return &idleState;

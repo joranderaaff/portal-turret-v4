@@ -17,9 +17,9 @@ void TargetTracker::Update(ulong deltaTime) {
     previousPositions[i].movedThisFrame = false;
     RadarTarget target = radar.GetTarget(i);
     if (target.available) {
-      int8_t diffX = target.x - previousPositions[i].x;
-      int8_t diffY = target.y - previousPositions[i].y;
-      int8_t distanceSqrd = diffX * diffX + diffY * diffY;
+      int diffX = target.x - previousPositions[i].x;
+      int diffY = target.y - previousPositions[i].y;
+      int distanceSqrd = diffX * diffX + diffY * diffY;
       if (distanceSqrd > distanceTreshold * distanceTreshold) {
         previousPositions[i].x = target.x;
         previousPositions[i].y = target.y;
@@ -29,6 +29,9 @@ void TargetTracker::Update(ulong deltaTime) {
         previousPositions[i].movedThisFrame = false;
       }
     }
+  }
+  if(targetsMovedThisFrame) {
+    Serial.println("Targets Detected");
   }
 }
 

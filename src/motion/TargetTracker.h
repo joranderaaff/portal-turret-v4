@@ -12,10 +12,10 @@ class TargetTracker {
 public:
   TargetTracker(Settings &settings, Radar &radar);
   void Initialize();
+  void Update(ulong deltaTime);
   uint8_t GetTargetsMovedThisFrame();
 
 private:
-  void Update(ulong deltaTime);
   TargetInfo previousPositions[TRACK_COUNT];
   Settings &settings;
   Radar &radar;

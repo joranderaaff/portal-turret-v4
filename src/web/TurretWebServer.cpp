@@ -4,6 +4,8 @@
 
 namespace {
 
+constexpr ulong RADAR_SEND_INTERVAL_MS = 50;
+
 const char *TypeName(SettingType type) {
   switch (type) {
   case SettingType::Int:
@@ -88,17 +90,57 @@ String ToJson(Settings *settings) {
   return json;
 }
 
-TurretWebServer::TurretWebServer() : webServer(80) {}
+TurretWebServer::TurretWebServer() : webServer(80), socket("/ws") {}
+
+void TurretWebServer::Update(ulong deltaTime) {
+  socket.cleanupClients();
+
+  timeSinceRadarSend += deltaTime;
+  if (timeSinceRadarSend < RADAR_SEND_INTERVAL_MS) {
+    return;
+  }
+  timeSinceRadarSend = 0;
+
+  if (socket.count() > 0) {
+    SendRadar();
+  }
+}
+
+void TurretWebServer::SendRadar() {
+  uint8_t buffer[RADAR_MESSAGE_BYTES];
+  size_t offset = 0;
+
+  auto writeU8 = [&](uint8_t value) { buffer[offset++] = value; };
+  auto writeI16 = [&](int16_t value) {
+    buffer[offset++] = value & 0xFF;
+    buffer[offset++] = (uint16_t)value >> 8;
+  };
+
+  writeU8(MESSAGE_RADAR);
+  writeU8(TRACK_COUNT);
+  for (uint8_t i = 0; i < TRACK_COUNT; i++) {
+    const RadarTarget &target = turret->radar.GetTarget(i);
+    writeU8(target.id);
+    writeU8((target.available ? 0x01 : 0) | (target.isMoving ? 0x02 : 0));
+    writeI16(target.x);
+    writeI16(target.y);
+    writeI16(target.previousX);
+    writeI16(target.previousY);
+    writeI16(target.speed);
+    writeI16((int16_t)target.resolution);
+  }
+
+  socket.binaryAll(buffer, offset);
+}
 
 void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
   settings = &settingsIn;
   turret = &turretIn;
 
-  webServer.serveStatic("/", LittleFS, "/www/");
+  webServer.addHandler(&socket);
 
-  webServer.on("/", HTTP_GET, [this](AsyncWebServerRequest *request) {
-    request->send(200, "application/json", "{\"status\":\"OK\"}");
-  });
+  webServer.serveStatic("/", LittleFS, "/www/").setDefaultFile("index.html");
+
   webServer.on("/settings", HTTP_GET, [this](AsyncWebServerRequest *request) {
     request->send(200, "application/json", ToJson(settings));
   });

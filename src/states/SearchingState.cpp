@@ -3,7 +3,6 @@
 #include "sensors/Radar.h"
 
 void SearchState::OnActivate() {
-  Serial.println("SearchState");
   RoutineState::OnActivate();
 }
 
@@ -13,10 +12,11 @@ int SearchState::runCoroutine() {
   COROUTINE_AWAIT(turret->audio.IsPlaying());
   COROUTINE_AWAIT(!turret->audio.IsPlaying());
 
+  doLoop = true;
   searchStartTime = millis();
   timeAtChangeRotation = millis() + settings->GetInt(SettingId::SearchMinTime);
-
-  while (true) {
+  movementWasDetected = false;
+  while (doLoop) {
     ulong curMillis = millis();
     ulong timeSearching = curMillis - searchStartTime;
 
@@ -26,22 +26,32 @@ int SearchState::runCoroutine() {
       timeAtChangeRotation = curMillis + random(settings->GetInt(SettingId::SearchMoveMinTime), settings->GetInt(SettingId::SearchMoveMaxTime));
     }
 
-    if (timeSearching > settings->GetInt(SettingId::SearchMinTime) && turret->radar.GetTargetCount() > 0) {
+    if (turret->targetTracker.GetTargetsMovedThisFrame() > 0) {
+      movementWasDetected = true;
+    }
+
+    if (movementWasDetected && timeSearching > settings->GetInt(SettingId::SearchMinTime)) {
       turret->audio.QueueAudioCommand(AudioId::Alarm);
       COROUTINE_AWAIT(turret->audio.IsPlaying());
       COROUTINE_AWAIT(!turret->audio.IsPlaying());
-      stateMachine->GoToState(StateId::FiringState);
+      nextState = StateId::FiringState;
+      doLoop = false;
     }
 
     if (timeSearching > settings->GetInt(SettingId::SearchMaxTime)) {
       turret->audio.QueueAudioCommand(AudioId::Retire);
       COROUTINE_AWAIT(turret->audio.IsPlaying());
       COROUTINE_AWAIT(!turret->audio.IsPlaying());
-      stateMachine->GoToState(StateId::Idle);
+      nextState = StateId::Disengage;
+      doLoop = false;
     }
 
     COROUTINE_YIELD();
   }
 
   COROUTINE_END();
+}
+
+void SearchState::OnRoutineDone() {
+  stateMachine->GoToState(nextState);
 }

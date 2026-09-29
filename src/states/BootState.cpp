@@ -2,7 +2,6 @@
 #include <LittleFS.h>
 
 void BootState::OnActivate() {
-  Serial.println("BootState");
   BaseState::OnActivate();
 
   if (!LittleFS.begin()) {

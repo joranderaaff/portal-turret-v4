@@ -44,6 +44,7 @@ void setup() {
   motion.Initialize();
   radar.Initialize();
   audio.Initialize();
+  targetTracker.Initialize();
 
   stateMachine.Initialize(turret);
 
@@ -61,6 +62,8 @@ void loop() {
   motion.Update(deltaTime);
   radar.Update(deltaTime);
   ota.Update(deltaTime);
+  server.Update(deltaTime);
+  targetTracker.Update(deltaTime);
 
   stateMachine.Update(deltaTime);
 }

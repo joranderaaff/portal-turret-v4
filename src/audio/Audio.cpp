@@ -28,7 +28,7 @@ void Audio::Initialize() {
   auto vcfg = volumeStream.defaultConfig();
   vcfg.copyFrom(cfg);
   volumeStream.begin(vcfg);
-  volumeStream.setVolume(1.0f);
+  volumeStream.setVolume(0.5f);
 
   source.begin();
   decoder.begin();
@@ -79,7 +79,7 @@ void Audio::GetRandomSoundByType(AudioId type) {
 }
 
 bool Audio::IsPlaying() {
-  return isPlaying;
+  return isPlaying || (currentLoopedAudio != nullptr && currentLoopedAudio->IsPlaying());
 }
 
 AudioLoop *Audio::GetLoopendSoundByType(AudioLoopId type) {
