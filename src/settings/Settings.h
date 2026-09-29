@@ -18,6 +18,7 @@ enum SettingId {
   SearchMoveMinTime,
   SearchMoveMaxTime,
   MovementTresshold,
+  DelayAfterDisengage,
   COUNT
 };
 

@@ -12,7 +12,7 @@ int DisengageState::runCoroutine() {
   turret->gantry.CloseWings();
   COROUTINE_AWAIT(!turret->gantry.GetWingLeft().IsClosing() &&
                   !turret->gantry.GetWingRight().IsClosing());
-  COROUTINE_DELAY(500);
+  COROUTINE_DELAY(turret->settings.GetInt(SettingId::DelayAfterDisengage));
   COROUTINE_END();
 }
 

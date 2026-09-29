@@ -182,5 +182,25 @@
       });
   });
 
+  document.getElementById('reset-settings').addEventListener('click', function () {
+    if (!confirm('Reset ALL settings to their defaults? This cannot be undone.')) return;
+
+    if (isLocalTest) {
+      console.log('POST /settings/reset (test mode)');
+      setStatus('Settings reset to defaults', 'ok');
+      return;
+    }
+
+    fetch('/settings/reset', { method: 'POST' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        load();
+        setStatus('Settings reset to defaults', 'ok');
+      })
+      .catch(function (err) {
+        setStatus('Reset failed: ' + err.message, 'error');
+      });
+  });
+
   load();
 })();

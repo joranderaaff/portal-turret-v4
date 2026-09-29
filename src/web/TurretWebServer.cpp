@@ -145,7 +145,12 @@ void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
     request->send(200, "application/json", ToJson(settings));
   });
 
-  webServer.on("/settings", HTTP_POST, [this](AsyncWebServerRequest *request) {
+  webServer.on("/settings/reset", HTTP_POST, [this](AsyncWebServerRequest *request) {
+    settings->ResetToDefaults();
+    request->send(200, "application/json", "{\"status\":\"OK\"}");
+  });
+
+  webServer.on("/settings", HTTP_POST,[this](AsyncWebServerRequest *request) {
     for (int i = 0; i < SettingId::COUNT; i++) {
       SettingId id = static_cast<SettingId>(i);
       SettingsEntry entry = settings->entries[id];
