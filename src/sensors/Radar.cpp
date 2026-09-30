@@ -9,6 +9,32 @@ void Radar::Update(ulong deltaTime) {
   UpdateSerialData();
 }
 
+void Radar::EnableMultiTarget() {
+  uint8_t enableConfigurationMessage[] = {
+      0xFD, 0xFC, 0xFB, 0xFA, // Header
+      0x04, 0x00,             // Size
+      0xFF, 0x00, 0x01, 0x00, // Command Word
+      0x04, 0x03, 0x02, 0x01  // End Frame
+  };
+  Serial1.write(enableConfigurationMessage, 14);
+
+  uint8_t enableMultiTrackMessage[] = {
+      0xFD, 0xFC, 0xFB, 0xFA, // Header
+      0x02, 0x00,             // Size
+      0x90, 0x00,             // Command Word (enable multi target tracking)
+      0x04, 0x03, 0x02, 0x01  // End Frame
+  };
+  Serial1.write(enableMultiTrackMessage, 12);
+
+  uint8_t disableConfigurationMessage[] = {
+      0xFD, 0xFC, 0xFB, 0xFA, // Header
+      0x02, 0x00,             // Size
+      0xFE, 0x00,             // Command Word
+      0x04, 0x03, 0x02, 0x01  // End Frame
+  };
+  Serial1.write(disableConfigurationMessage, 12);
+}
+
 const RadarTarget &Radar::GetTarget(uint8_t index) const {
   return radarTargets[index % TRACK_COUNT];
 }

@@ -145,6 +145,11 @@ void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
     request->send(200, "application/json", ToJson(settings));
   });
 
+  webServer.on("/enable_multitarget", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    turret->radar.EnableMultitarget();
+    request->send(200, "application/json", "{\"status\":\"OK\"}");
+  });
+
   webServer.on("/settings/reset", HTTP_POST, [this](AsyncWebServerRequest *request) {
     settings->ResetToDefaults();
     request->send(200, "application/json", "{\"status\":\"OK\"}");

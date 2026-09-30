@@ -202,5 +202,12 @@
       });
   });
 
+  document.getElementById('enable-multitarget').addEventListener('click', function () {
+    fetch('/enable_multitarget', { method: 'GET' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+      });
+  });
+
   load();
 })();

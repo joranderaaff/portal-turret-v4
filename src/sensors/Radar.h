@@ -20,6 +20,7 @@ class Radar {
 public:
   void Initialize();
   void Update(ulong deltaTime);
+  void EnableMultitarget();
   const RadarTarget& GetTarget(uint8_t index) const;
   uint8_t GetTargetCount();
 
