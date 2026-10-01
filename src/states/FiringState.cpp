@@ -7,6 +7,9 @@ int FiringState::runCoroutine() {
   COROUTINE_BEGIN();
   turret->audio.QueueLoopedAudioCommand(AudioLoopId::Gun);
   
+  turret->gantry.GetWingLeft().GetGun().StartFiring();
+  turret->gantry.GetWingRight().GetGun().StartFiring();
+
   shootingStartTime = millis();
   int32_t minShootTime = settings->GetInt(SettingId::ShootMinTime);
   int32_t maxShootTime = settings->GetInt(SettingId::ShootMaxTime);
@@ -19,6 +22,9 @@ int FiringState::runCoroutine() {
     turret->gantry.SetRotationZ(angle, false);
     COROUTINE_YIELD();
   }
+  
+  turret->gantry.GetWingLeft().GetGun().StopFiring();
+  turret->gantry.GetWingRight().GetGun().StopFiring();
 
   turret->audio.QueueLoopedAudioCommand(AudioLoopId::None);
   COROUTINE_AWAIT(!turret->audio.IsPlaying());

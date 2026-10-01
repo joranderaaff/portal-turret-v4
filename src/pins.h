@@ -1,3 +1,5 @@
+#pragma once
+
 #define PIN_GUN_LEFT 1  // PWM
 #define PIN_GUN_RIGHT 2  // PWM
 #define PIN_WING_LEFT 4  // PWM

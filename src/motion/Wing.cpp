@@ -5,13 +5,12 @@
 #define CENTER_ANGLE 90
 #define SPEED 70
 
-Wing::Wing(int servoPinIn, int gunServoPinIn, int hallSensorPinIn) : gun(gunServoPinIn) {
+Wing::Wing(Settings &_settings, int servoPinIn, int gunServoPinIn, int hallSensorPinIn) : settings(_settings), gun(_settings, gunServoPinIn) {
   servoPin = servoPinIn;
   hallSensorPin = hallSensorPinIn;
 }
 
-void Wing::Initialize(Settings &_settings) {
-  settings = &_settings;
+void Wing::Initialize() {
   servo.setPeriodHertz(50); // standard 50 hz servo
   servo.attach(servoPin, 500, 2400);
   Serial.print("Connecting wing servo to pin ");
@@ -55,9 +54,11 @@ Gun &Wing::GetGun() { return gun; }
 void Wing::Update(ulong deltaTime) {
   uint16_t hallValue = analogRead(hallSensorPin);
 
+  gun.Update(deltaTime);
+
   if (isOpening || isClosing) {
     timeMoving += deltaTime;
-    if (timeMoving >= settings->GetInt(SettingId::GunMoveTimeout)) {
+    if (timeMoving >= settings.GetInt(SettingId::GunMoveTimeout)) {
       Serial.println("Wing Movement Timeout");
       if (isOpening) {
         isOpen = true;
@@ -68,7 +69,7 @@ void Wing::Update(ulong deltaTime) {
     }
   }
 
-  if (isOpening && hallValue >= settings->GetInt(SettingId::GunHallMax)) {
+  if (isOpening && hallValue >= settings.GetInt(SettingId::GunHallMax)) {
     Serial.println("Wing Is Open");
     isOpening = false;
     isOpen = true;
@@ -76,7 +77,7 @@ void Wing::Update(ulong deltaTime) {
     return;
   }
 
-  if (isClosing && hallValue <= settings->GetInt(SettingId::GunHallMin)) {
+  if (isClosing && hallValue <= settings.GetInt(SettingId::GunHallMin)) {
     Serial.println("Wing Is Closed");
     isClosing = false;
     servo.write(90);

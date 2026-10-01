@@ -7,8 +7,8 @@
 
 class Wing {
 public:
-  Wing(int servoPin, int gunServoPin, int hallSensorPin);
-  void Initialize(Settings &settings);
+  Wing(Settings &settings, int servoPin, int gunServoPin, int hallSensorPin);
+  void Initialize();
   void Open();
   void Close();
   void Update(ulong deltaTime);
@@ -17,7 +17,7 @@ public:
   Gun &GetGun();
 
 private:
-  Settings *settings;
+  Settings &settings;
   bool isOpening = false;
   bool isClosing = false;
   bool isOpen = false;

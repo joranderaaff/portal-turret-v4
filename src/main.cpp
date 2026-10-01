@@ -9,15 +9,15 @@
 
 ulong prevTime;
 
+Settings settings;
 TurretWebServer server;
 StateMachine stateMachine;
-Gantry gantry;
+Gantry gantry(settings);
 Motion motion;
 Radar radar;
 Audio audio;
 Light light;
 Ota ota;
-Settings settings;
 TargetTracker targetTracker(settings, radar);
 
 const char *ssid = "Portal Turret";
@@ -39,7 +39,7 @@ void setup() {
   settings.Initialize();
 
   server.Initialize(turret, settings);
-  gantry.Initialize(settings);
+  gantry.Initialize();
   light.Initialize();
   motion.Initialize();
   radar.Initialize();
@@ -58,12 +58,12 @@ void loop() {
   prevTime = currentTime;
 
   gantry.Update(deltaTime);
-  light.Update(deltaTime);
   motion.Update(deltaTime);
   radar.Update(deltaTime);
   ota.Update(deltaTime);
   server.Update(deltaTime);
   targetTracker.Update(deltaTime);
+  light.Update(deltaTime);
 
   stateMachine.Update(deltaTime);
 }

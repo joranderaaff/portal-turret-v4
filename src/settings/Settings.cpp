@@ -29,6 +29,7 @@ Settings::Settings()
           {"SrcMovMax", "Search Move Delay Max Time (ms)", SettingType::Int, 1000, 0, 10000},
           {"MoveTres", "Movement Detect Treshold (mm)", SettingType::Int, 100, 0, 100000},
           {"DisEngDelay", "Delay After Disengage (ms)", SettingType::Int, 1000, 0, 100000},
+          {"ShotDur", "Shot Duration (ms)", SettingType::Int, 200, 0, 500},
       },
       prefsReady(false) {}
 

@@ -146,7 +146,7 @@ void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
   });
 
   webServer.on("/enable_multitarget", HTTP_GET, [this](AsyncWebServerRequest *request) {
-    turret->radar.EnableMultitarget();
+    turret->radar.EnableMultiTarget();
     request->send(200, "application/json", "{\"status\":\"OK\"}");
   });
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "sensors/Radar.h"
 #include "settings/Settings.h"
 #include <Arduino.h>

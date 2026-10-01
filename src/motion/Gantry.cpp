@@ -1,23 +1,17 @@
 #include "motion/Gantry.h"
 
-#include "Arduino.h"
-#include "helpers/Math.h"
-#include "pins.h"
+Gantry::Gantry(Settings &_settings) : settings(_settings), wingLeft(_settings, PIN_WING_LEFT, PIN_GUN_LEFT, PIN_HALL_LEFT), wingRight(_settings, PIN_WING_RIGHT, PIN_GUN_RIGHT, PIN_HALL_RIGHT) {
 
-Gantry::Gantry()
-    : wingLeft(PIN_WING_LEFT, PIN_GUN_LEFT, PIN_HALL_LEFT),
-      wingRight(PIN_WING_RIGHT, PIN_GUN_RIGHT, PIN_HALL_RIGHT) {}
+}
 
-void Gantry::Initialize(Settings &settingsIn) {
+void Gantry::Initialize() {
   ESP32PWM::allocateTimer(0);
   ESP32PWM::allocateTimer(1);
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
 
-  settings = &settingsIn;
-
-  angleOffsetX = settings->GetInt(SettingId::AngleOffsetX);
-  angleOffsetZ = settings->GetInt(SettingId::AngleOffsetZ);
+  angleOffsetX = settings.GetInt(SettingId::AngleOffsetX);
+  angleOffsetZ = settings.GetInt(SettingId::AngleOffsetZ);
 
   delay(100);
 
@@ -29,8 +23,8 @@ void Gantry::Initialize(Settings &settingsIn) {
   servoRotateZ.attach(PIN_ROTATE_Z, 500, 2400);
   SetRotationZ(0, true);
 
-  wingLeft.Initialize(settingsIn);
-  wingRight.Initialize(settingsIn);
+  wingLeft.Initialize();
+  wingRight.Initialize();
 
   wingLeft.Close();
   wingRight.Close();
