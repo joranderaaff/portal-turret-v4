@@ -14,7 +14,8 @@
   // Accelerometer graphs. Size and colors come from CSS / data-color on the canvases.
   const GRAPH_HISTORY = 200;          // samples kept per axis
   // Value range per graph comes from data-min / data-max on its canvas.
-  const ACCEL_AXES = ['x', 'y', 'z'];
+  // Payload order: instant x, y, z followed by smoothed x, y, z.
+  const ACCEL_AXES = ['x', 'y', 'z', 'smooth-x', 'smooth-y', 'smooth-z'];
   const ORIENTATION_AXES = ['roll', 'pitch'];
   // When served from 127.0.0.1 there is no webserver, so fake the data.
   const isLocalTest = location.hostname === '127.0.0.1';
@@ -96,34 +97,13 @@
     return axes.map(function (axis, index) {
       const el = document.getElementById('graph-' + axis);
       return { axis: axis, index: index, canvas: el, ctx: el.getContext('2d'),
-               color: el.dataset.color || '#fff', samples: [], smoothSamples: [],
+               color: el.dataset.color || '#fff', samples: [],
                min: parseFloat(el.dataset.min), max: parseFloat(el.dataset.max) };
     });
   }
   const accelGraphs = makeGraphs(ACCEL_AXES);
   const orientationGraphs = makeGraphs(ORIENTATION_AXES);
   const allGraphs = accelGraphs.concat(orientationGraphs);
-
-  // Darker shade of a #rrggbb color, used for the smoothed line.
-  function darken(hex, factor) {
-    const n = parseInt(hex.slice(1), 16);
-    const r = Math.round(((n >> 16) & 255) * factor);
-    const g = Math.round(((n >> 8) & 255) * factor);
-    const b = Math.round((n & 255) * factor);
-    return 'rgb(' + r + ',' + g + ',' + b + ')';
-  }
-
-  function drawLine(g, graph, samples, w, color, lineWidth) {
-    g.strokeStyle = color;
-    g.lineWidth = lineWidth;
-    g.beginPath();
-    samples.forEach(function (value, i) {
-      const px = w - (samples.length - 1 - i) * (w / (GRAPH_HISTORY - 1));
-      const py = graph.toY(value);
-      if (i === 0) { g.moveTo(px, py); } else { g.lineTo(px, py); }
-    });
-    g.stroke();
-  }
 
   function drawGraph(graph) {
     const c = graph.canvas;
@@ -140,11 +120,11 @@
     g.clearRect(0, 0, w, h);
 
     const pad = 2 * dpr;
-    graph.toY = function (value) {
+    const toY = function (value) {
       const clamped = Math.max(graph.min, Math.min(graph.max, value));
       return h - pad - (clamped - graph.min) / (graph.max - graph.min) * (h - 2 * pad);
     };
-    const midY = graph.toY((graph.min + graph.max) / 2);
+    const midY = toY((graph.min + graph.max) / 2);
     g.lineWidth = 1;
     g.strokeStyle = style.getPropertyValue('--graph-grid').trim() || '#2a313a';
     g.beginPath();
@@ -155,26 +135,25 @@
     g.fillStyle = graph.color;
     g.font = (11 * dpr) + 'px sans-serif';
     const last = graph.samples[graph.samples.length - 1];
-    g.fillText(graph.axis.toUpperCase() + (last === undefined ? '' : ' ' + last.toFixed(2)),
+    g.fillText((graph.canvas.dataset.label || graph.axis.toUpperCase()) + (last === undefined ? '' : ' ' + last.toFixed(2)),
                6 * dpr, 14 * dpr);
 
-    // Smoothed line first so the instant values are drawn on top of it.
-    drawLine(g, graph, graph.smoothSamples, w, darken(graph.color, 0.5), 4 * dpr);
-    drawLine(g, graph, graph.samples, w, graph.color, 2 * dpr);
+    g.strokeStyle = graph.color;
+    g.lineWidth = 2 * dpr;
+    g.beginPath();
+    graph.samples.forEach(function (value, i) {
+      const px = w - (graph.samples.length - 1 - i) * (w / (GRAPH_HISTORY - 1));
+      const py = toY(value);
+      if (i === 0) { g.moveTo(px, py); } else { g.lineTo(px, py); }
+    });
+    g.stroke();
   }
 
-  // values[i] is the instant value for graph i; smoothValues (optional) the smoothed one.
-  function pushValues(graphs, values, smoothValues) {
+  function pushValues(graphs, values) {
     graphs.forEach(function (graph) {
       graph.samples.push(values[graph.index]);
       if (graph.samples.length > GRAPH_HISTORY) {
         graph.samples.shift();
-      }
-      if (smoothValues) {
-        graph.smoothSamples.push(smoothValues[graph.index]);
-        if (graph.smoothSamples.length > GRAPH_HISTORY) {
-          graph.smoothSamples.shift();
-        }
       }
       drawGraph(graph);
     });
@@ -197,9 +176,7 @@
         draw();
         break;
       case MESSAGE_MOTION:
-        // Payload: instant x, y, z followed by smoothed x, y, z.
-        const motion = parseFloats(view);
-        pushValues(accelGraphs, motion.slice(0, 3), motion.slice(3, 6));
+        pushValues(accelGraphs, parseFloats(view));
         break;
       case MESSAGE_ORIENTATION:
         pushValues(orientationGraphs, parseFloats(view));
@@ -235,7 +212,7 @@
       fakeSmooth = instant.map(function (v, i) {
         return fakeSmooth[i] + (v - fakeSmooth[i]) * 0.15;
       });
-      pushValues(accelGraphs, instant, fakeSmooth);
+      pushValues(accelGraphs, instant.concat(fakeSmooth));
       pushValues(orientationGraphs, [
         180 * Math.sin(t * 0.5),
         90 * Math.sin(t * 0.8 + 1)

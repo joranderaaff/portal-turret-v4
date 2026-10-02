@@ -7,6 +7,7 @@
 #include "AudioTools/Disk/AudioSourceLittleFS.h"
 #include "GunShotAudio.h"
 #include "pins.h"
+#include "settings/Settings.h"
 
 enum class AudioId {
   None,
@@ -25,25 +26,26 @@ enum class AudioLoopId {
 
 class Audio {
 public:
-  Audio();
+  Audio(Settings &settings);
   void QueueAudioCommand(AudioId nextAudio);
   void QueueLoopedAudioCommand(AudioLoopId nextAudio);
   void Initialize();
   bool IsPlaying();
-  
-  private:
+
+private:
+  Settings &settings;
   AudioLoop ShootAudio;
-  AudioLoop * currentLoopedAudio = nullptr;
+  AudioLoop *currentLoopedAudio = nullptr;
 
   QueueHandle_t audioCommandQueue = NULL;
   QueueHandle_t loopedAudioCommandQueue = NULL;
-  
+
   volatile bool isPlaying = false;
-  
+
   static void AudioTask(void *arg);
   void Update(ulong deltaTime);
   void GetRandomSoundByType(AudioId type);
-  AudioLoop* GetLoopendSoundByType(AudioLoopId type);
+  AudioLoop *GetLoopendSoundByType(AudioLoopId type);
   char filename[32];
   uint8_t sampleBuffer[4096];
   I2SStream i2s;

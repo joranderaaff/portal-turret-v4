@@ -12,7 +12,7 @@ ulong prevTime;
 Settings settings;
 TurretWebServer server;
 StateMachine stateMachine;
-Audio audio;
+Audio audio(settings);
 Light light;
 Gantry gantry(settings, light);
 Motion motion(settings);

@@ -4,6 +4,7 @@
 #include <Preferences.h>
 
 enum SettingId {
+  AudioVolume,
   AngleOffsetX,
   AngleOffsetZ,
   GunMoveTimeout,
@@ -63,7 +64,7 @@ public:
 class Settings {
 public:
   Settings();
-  
+
   SettingsEntry entries[SettingId::COUNT];
 
   // Opens NVS and overwrites values that have been stored before.
@@ -73,7 +74,7 @@ public:
   float GetFloat(SettingId id) const;
   bool GetBool(SettingId id) const;
   const char *GetString(SettingId id) const;
-  
+
   const SettingsEntry *Get(SettingId id) const;
   SettingsEntry *Get(SettingId id);
 
