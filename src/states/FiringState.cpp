@@ -22,12 +22,13 @@ int FiringState::runCoroutine() {
     turret->gantry.SetRotationZ(angle, false);
     COROUTINE_YIELD();
   }
+
+  turret->audio.QueueLoopedAudioCommand(AudioLoopId::None);
+  COROUTINE_AWAIT(!turret->audio.IsPlaying());
   
   turret->gantry.GetWingLeft().GetGun().StopFiring();
   turret->gantry.GetWingRight().GetGun().StopFiring();
 
-  turret->audio.QueueLoopedAudioCommand(AudioLoopId::None);
-  COROUTINE_AWAIT(!turret->audio.IsPlaying());
   COROUTINE_DELAY(500);
   COROUTINE_END();
 }

@@ -6,9 +6,11 @@
 #include "settings/Settings.h"
 #include <ESP32Servo.h>
 
+struct Turret;
+
 class Gun {
 public:
-  Gun(Settings &settings, int servoPin);
+  Gun(Turret &turret, int servoPin);
   void Initialize();
   void Extend();
   void Retract();
@@ -17,8 +19,9 @@ public:
   void Update(ulong deltaTime);
 
 private:
-  Settings &settings;
+  Turret &turret;
   int servoPin;
+  int shotBrightness;
   Servo servo;
   bool firing = false;
   ulong firingTime = 0;

@@ -1,15 +1,17 @@
 #include "Gun.h"
+#include "Turret.h"
 
 const int EXTEND_ANGLE = 160;
 
-Gun::Gun(Settings &_settings, int servoPinIn) : settings(_settings) {
+Gun::Gun(Turret &_turret, int servoPinIn) : turret(_turret) {
   servoPin = servoPinIn;
 }
 
 void Gun::Initialize() {
   servo.setPeriodHertz(50); // standard 50 hz servo
   servo.attach(servoPin, 500, 2400);
-  shotDuration = settings.GetInt(SettingId::ShotDuration);
+  shotBrightness = turret.settings.GetInt(SettingId::ShotBrightness);
+  shotDuration = turret.settings.GetInt(SettingId::ShotDuration);
   Retract();
 }
 
@@ -25,18 +27,13 @@ void Gun::Update(ulong deltaTime) {
     float q = 1.0f - max((p - attack) / (1.0f - attack), (p - attack) * -(1.0f / attack));
     q = Clamp(q, 0.0f, 1.0f);
 
-    float extendAngle = servoPin == PIN_GUN_LEFT ? EXTEND_ANGLE : 180.0f - extendAngle;
+    float extendAngle = servoPin == PIN_GUN_LEFT ? EXTEND_ANGLE : 180.0f - EXTEND_ANGLE;
     float angle = Lerp(90, extendAngle, q);
 
     if (servoPin == PIN_GUN_LEFT) {
-      Serial.print("firingTime: ");
-      Serial.print(firingTime);
-      Serial.print(" currentShotPhase: ");
-      Serial.print(currentShotPhase);
-      Serial.print(" Q: ");
-      Serial.print(q);
-      Serial.print(" Angle: ");
-      Serial.println(angle);
+      turret.light.SetLeftGunLight(HeatColor(q * shotBrightness));
+    } else {
+      turret.light.SetRightGunLight(HeatColor(q * shotBrightness));
     }
 
     servo.write(angle);
@@ -62,5 +59,10 @@ void Gun::StartFiring() {
 
 void Gun::StopFiring() {
   firing = false;
+  if (servoPin == PIN_GUN_LEFT) {
+    turret.light.SetLeftGunLight(CRGB::Black);
+  } else {
+    turret.light.SetRightGunLight(CRGB::Black);
+  }
   Retract();
 }

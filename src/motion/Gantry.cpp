@@ -1,6 +1,7 @@
 #include "motion/Gantry.h"
+#include "Turret.h"
 
-Gantry::Gantry(Settings &_settings) : settings(_settings), wingLeft(_settings, PIN_WING_LEFT, PIN_GUN_LEFT, PIN_HALL_LEFT), wingRight(_settings, PIN_WING_RIGHT, PIN_GUN_RIGHT, PIN_HALL_RIGHT) {
+Gantry::Gantry(Turret &_turret) : turret(_turret), wingLeft(_turret, PIN_WING_LEFT, PIN_GUN_LEFT, PIN_HALL_LEFT), wingRight(_turret, PIN_WING_RIGHT, PIN_GUN_RIGHT, PIN_HALL_RIGHT) {
 
 }
 
@@ -10,8 +11,10 @@ void Gantry::Initialize() {
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
 
-  angleOffsetX = settings.GetInt(SettingId::AngleOffsetX);
-  angleOffsetZ = settings.GetInt(SettingId::AngleOffsetZ);
+  angleOffsetX = turret.settings.GetFloat(SettingId::AngleOffsetX);
+  angleOffsetZ = turret.settings.GetFloat(SettingId::AngleOffsetZ);
+  maxAngleX = turret.settings.GetFloat(SettingId::AngleMaxX);
+  maxAngleZ = turret.settings.GetFloat(SettingId::AngleMaxZ);
 
   delay(100);
 
@@ -31,7 +34,7 @@ void Gantry::Initialize() {
 }
 
 void Gantry::SetRotationX(float angle, bool force) {
-  angle = constrain(angle, -30, 30);
+  angle = constrain(angle, -maxAngleX, maxAngleX);
   targetAngleX = 90 + (angle + angleOffsetX) * X_AXIS_GEAR_RATIO;
   if (force) {
     currentAngleX = targetAngleX;
@@ -40,7 +43,7 @@ void Gantry::SetRotationX(float angle, bool force) {
 }
 
 void Gantry::SetRotationZ(float angle, bool force) {
-  angle = constrain(angle, -30, 30);
+  angle = constrain(angle, -maxAngleZ, maxAngleZ);
   targetAngleZ = 90 - (angle + angleOffsetZ) * Z_AXIS_GEAR_RATIO;
   if (force) {
     currentAngleZ = targetAngleZ;

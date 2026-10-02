@@ -39,9 +39,6 @@ int SearchState::runCoroutine() {
     }
 
     if (timeSearching > settings->GetInt(SettingId::SearchMaxTime)) {
-      turret->audio.QueueAudioCommand(AudioId::Retire);
-      COROUTINE_AWAIT(turret->audio.IsPlaying());
-      COROUTINE_AWAIT(!turret->audio.IsPlaying());
       nextState = StateId::Disengage;
       doLoop = false;
     }

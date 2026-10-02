@@ -21,8 +21,8 @@ Settings::Settings()
           {"GunHallMax", "Gun Hall Max", SettingType::Int, 2500, 0, 4096},
           {"AngleMaxX", "Max X angle (deg)", SettingType::Float, 30.0f, 0.0f, 90.0f},
           {"AngleMaxZ", "Max Z angle (deg)", SettingType::Float, 30.0f, 0.0f, 90.0f},
-          {"ShootMinTime", "Shoot Min Time (ms)", SettingType::Int, 1000, 0, 10000},
-          {"ShootMaxTime", "Shoot Max Time (ms)", SettingType::Int, 2000, 0, 10000},
+          {"ShootMinTime", "Shoot Min Time (ms)", SettingType::Int, 2000, 0, 10000},
+          {"ShootMaxTime", "Shoot Max Time (ms)", SettingType::Int, 5000, 0, 10000},
           {"SrcMinTime", "Search Min Time (ms)", SettingType::Int, 1000, 0, 10000},
           {"SrcMaxTime", "Search Max Time (ms)", SettingType::Int, 5000, 0, 10000},
           {"SrcMovMin", "Search Move Delay Min Time (ms)", SettingType::Int, 500, 0, 10000},
@@ -30,6 +30,7 @@ Settings::Settings()
           {"MoveTres", "Movement Detect Treshold (mm)", SettingType::Int, 100, 0, 100000},
           {"DisEngDelay", "Delay After Disengage (ms)", SettingType::Int, 1000, 0, 100000},
           {"ShotDur", "Shot Duration (ms)", SettingType::Int, 200, 0, 500},
+          {"ShotBri", "Shot Brightness", SettingType::Int, 127, 0, 255},
       },
       prefsReady(false) {}
 

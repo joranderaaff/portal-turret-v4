@@ -20,6 +20,7 @@ enum SettingId {
   MovementTresshold,
   DelayAfterDisengage,
   ShotDuration,
+  ShotBrightness,
   COUNT
 };
 
