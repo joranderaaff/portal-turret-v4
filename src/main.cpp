@@ -14,8 +14,8 @@ TurretWebServer server;
 StateMachine stateMachine;
 extern Turret turret;
 Gantry gantry(turret);
-Motion motion;
-Radar radar;
+Motion motion(turret);
+Radar radar(turret);
 Audio audio;
 Light light;
 Ota ota;
@@ -32,7 +32,7 @@ void setup() {
   Serial.println("This is a triumph");
 
   WiFi.softAP(ssid);
-  
+
   ota.Initialize(server.webServer);
 
   prevTime = millis();

@@ -8,6 +8,7 @@
 enum WebSocketMessage : uint8_t {
   MESSAGE_RADAR = 0x01,
   MESSAGE_MOTION = 0x02,
+  MESSAGE_ORIENTATION = 0x03,
 };
 
 // Radar message layout (little endian):
@@ -22,7 +23,12 @@ constexpr size_t RADAR_MESSAGE_BYTES = 2 + TRACK_COUNT * RADAR_TARGET_BYTES;
 // Motion message layout (little endian):
 //   u8  MESSAGE_MOTION
 //   3 x f32 acceleration x, y, z in m/s^2
-constexpr size_t MOTION_MESSAGE_BYTES = 1 + 3 * sizeof(float);
+constexpr size_t MOTION_MESSAGE_BYTES = 1 + 6 * sizeof(float);
+
+// Orientation message layout (little endian):
+//   u8  MESSAGE_ORIENTATION
+//   2 x f32 roll (-180..180), pitch (-90..90) in degrees
+constexpr size_t ORIENTATION_MESSAGE_BYTES = 1 + 2 * sizeof(float);
 
 class TurretWebServer {
 public:
@@ -34,6 +40,7 @@ public:
 private:
   void SendRadar();
   void SendMotion();
+  void SendOrientation();
 
   AsyncWebSocket socket;
   Settings *settings;

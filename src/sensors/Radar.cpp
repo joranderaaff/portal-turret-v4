@@ -1,5 +1,8 @@
 #include "Radar.h"
+#include "Turret.h"
 #include "pins.h"
+
+Radar::Radar(Turret &_turret) : turret(_turret) {}
 
 void Radar::Initialize() {
   Serial1.begin(256000, SERIAL_8N1, PIN_RADAR_RX, PIN_RADAR_TX);

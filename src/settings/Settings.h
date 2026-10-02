@@ -21,6 +21,7 @@ enum SettingId {
   DelayAfterDisengage,
   ShotDuration,
   ShotBrightness,
+  AccelerationDamping,
   COUNT
 };
 

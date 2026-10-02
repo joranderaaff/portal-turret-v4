@@ -11,9 +11,11 @@
     <h1>Portal Turret</h1>
     <canvas id="radar" width="640" height="340"></canvas>
     <div class="graphs">
-      <canvas id="graph-x" class="graph" data-color="#ef5350"></canvas>
-      <canvas id="graph-y" class="graph" data-color="#66bb6a"></canvas>
-      <canvas id="graph-z" class="graph" data-color="#42a5f5"></canvas>
+      <canvas id="graph-x" class="graph" data-min="-20" data-max="20" data-color="#ef5350"></canvas>
+      <canvas id="graph-y" class="graph" data-min="-20" data-max="20" data-color="#66bb6a"></canvas>
+      <canvas id="graph-z" class="graph" data-min="-20" data-max="20" data-color="#42a5f5"></canvas>
+      <canvas id="graph-roll" class="graph" data-color="#ffa726" data-min="-180" data-max="180"></canvas>
+      <canvas id="graph-pitch" class="graph" data-color="#ab47bc" data-min="-90" data-max="90"></canvas>
     </div>
     <div id="connection" role="status">Connecting…</div>
     <p><a href="settings.html">Settings</a></p>  </main>

@@ -104,6 +104,7 @@ void TurretWebServer::Update(ulong deltaTime) {
   if (socket.count() > 0) {
     SendRadar();
     SendMotion();
+    SendOrientation();
   }
 }
 
@@ -138,10 +139,23 @@ void TurretWebServer::SendMotion() {
   uint8_t buffer[MOTION_MESSAGE_BYTES];
   buffer[0] = MESSAGE_MOTION;
 
-  const float values[3] = {turret->motion.GetAccelerationX(),
-                           turret->motion.GetAccelerationY(),
-                           turret->motion.GetAccelerationZ()};
+  const float values[6] = {turret->motion.GetAcceleration().x,
+                           turret->motion.GetAcceleration().y,
+                           turret->motion.GetAcceleration().z,
+                           turret->motion.GetSmoothAcceleration().x,
+                           turret->motion.GetSmoothAcceleration().y,
+                           turret->motion.GetSmoothAcceleration().z};
   // ESP32 is little endian, matching the wire format.
+  memcpy(buffer + 1, values, sizeof(values));
+
+  socket.binaryAll(buffer, sizeof(buffer));
+}
+
+void TurretWebServer::SendOrientation() {
+  uint8_t buffer[ORIENTATION_MESSAGE_BYTES];
+  buffer[0] = MESSAGE_ORIENTATION;
+
+  const float values[2] = {turret->motion.GetRoll(), turret->motion.GetPitch()};
   memcpy(buffer + 1, values, sizeof(values));
 
   socket.binaryAll(buffer, sizeof(buffer));
@@ -169,7 +183,7 @@ void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
     request->send(200, "application/json", "{\"status\":\"OK\"}");
   });
 
-  webServer.on("/settings", HTTP_POST,[this](AsyncWebServerRequest *request) {
+  webServer.on("/settings", HTTP_POST, [this](AsyncWebServerRequest *request) {
     for (int i = 0; i < SettingId::COUNT; i++) {
       SettingId id = static_cast<SettingId>(i);
       SettingsEntry entry = settings->entries[id];

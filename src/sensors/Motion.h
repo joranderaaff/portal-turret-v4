@@ -1,21 +1,34 @@
 #pragma once
 
-#include <Arduino.h>
+#include "helpers/Math.h"
 #include <Adafruit_ADXL345_U.h>
 #include <Adafruit_Sensor.h>
+#include <Arduino.h>
 #include <Wire.h>
+
+struct Acceleration {
+  float x = 0;
+  float y = 0;
+  float z = 0;
+};
+
+struct Turret;
 
 class Motion {
 public:
+  Motion(Turret &turret);
   void Initialize();
   void Update(ulong deltaTime);
-  float GetAccelerationX();
-  float GetAccelerationY();
-  float GetAccelerationZ();
+  Acceleration GetAcceleration();
+  Acceleration GetSmoothAcceleration();
+  // Degrees, derived from gravity. Roll -180..180, pitch -90..90.
+  float GetRoll();
+  float GetPitch();
 
 private:
+  Turret &turret;
+  float damping = 1;
   Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(12345);
-  float accelerationX;
-  float accelerationY;
-  float accelerationZ;
+  Acceleration acceleration;
+  Acceleration smoothAcceleration;
 };
