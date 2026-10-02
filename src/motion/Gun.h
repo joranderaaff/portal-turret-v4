@@ -3,14 +3,13 @@
 #include "Arduino.h"
 #include "helpers/Math.h"
 #include "pins.h"
+#include "light/Light.h"
 #include "settings/Settings.h"
 #include <ESP32Servo.h>
 
-struct Turret;
-
 class Gun {
 public:
-  Gun(Turret &turret, int servoPin);
+  Gun(Settings &settings, Light &light, int servoPin);
   void Initialize();
   void Extend();
   void Retract();
@@ -19,7 +18,8 @@ public:
   void Update(ulong deltaTime);
 
 private:
-  Turret &turret;
+  Settings &settings;
+  Light &light;
   int servoPin;
   int shotBrightness;
   Servo servo;

@@ -4,14 +4,13 @@
 #include "Wing.h"
 #include "helpers/Math.h"
 #include "pins.h"
+#include "light/Light.h"
 #include "settings/Settings.h"
 #include <ESP32Servo.h>
 
-struct Turret;
-
 class Gantry {
 public:
-  Gantry(Turret &turret);
+  Gantry(Settings &settings, Light &light);
   void Initialize();
   void Update(ulong deltaTime);
   void SetRotationX(float angle, bool force);
@@ -39,5 +38,5 @@ private:
   Wing wingRight;
   Servo servoRotateX;
   Servo servoRotateZ;
-  Turret &turret;
+  Settings &settings;
 };

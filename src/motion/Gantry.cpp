@@ -1,7 +1,6 @@
 #include "motion/Gantry.h"
-#include "Turret.h"
 
-Gantry::Gantry(Turret &_turret) : turret(_turret), wingLeft(_turret, PIN_WING_LEFT, PIN_GUN_LEFT, PIN_HALL_LEFT), wingRight(_turret, PIN_WING_RIGHT, PIN_GUN_RIGHT, PIN_HALL_RIGHT) {
+Gantry::Gantry(Settings &_settings, Light &light) : settings(_settings), wingLeft(_settings, light, PIN_WING_LEFT, PIN_GUN_LEFT, PIN_HALL_LEFT), wingRight(_settings, light, PIN_WING_RIGHT, PIN_GUN_RIGHT, PIN_HALL_RIGHT) {
 
 }
 
@@ -11,10 +10,10 @@ void Gantry::Initialize() {
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
 
-  angleOffsetX = turret.settings.GetFloat(SettingId::AngleOffsetX);
-  angleOffsetZ = turret.settings.GetFloat(SettingId::AngleOffsetZ);
-  maxAngleX = turret.settings.GetFloat(SettingId::AngleMaxX);
-  maxAngleZ = turret.settings.GetFloat(SettingId::AngleMaxZ);
+  angleOffsetX = settings.GetFloat(SettingId::AngleOffsetX);
+  angleOffsetZ = settings.GetFloat(SettingId::AngleOffsetZ);
+  maxAngleX = settings.GetFloat(SettingId::AngleMaxX);
+  maxAngleZ = settings.GetFloat(SettingId::AngleMaxZ);
 
   delay(100);
 

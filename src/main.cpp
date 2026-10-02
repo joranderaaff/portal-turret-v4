@@ -12,12 +12,11 @@ ulong prevTime;
 Settings settings;
 TurretWebServer server;
 StateMachine stateMachine;
-extern Turret turret;
-Gantry gantry(turret);
-Motion motion(turret);
-Radar radar(turret);
 Audio audio;
 Light light;
+Gantry gantry(settings, light);
+Motion motion(settings);
+Radar radar;
 Ota ota;
 TargetTracker targetTracker(settings, radar);
 

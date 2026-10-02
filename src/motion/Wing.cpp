@@ -1,12 +1,11 @@
 #include "Wing.h"
 #include "Arduino.h"
 #include "pins.h"
-#include "Turret.h"
 
 #define CENTER_ANGLE 90
 #define SPEED 70
 
-Wing::Wing(Turret &_turret, int servoPinIn, int gunServoPinIn, int hallSensorPinIn) : turret(_turret), gun(_turret, gunServoPinIn) {
+Wing::Wing(Settings &_settings, Light &light, int servoPinIn, int gunServoPinIn, int hallSensorPinIn) : settings(_settings), gun(_settings, light, gunServoPinIn) {
   servoPin = servoPinIn;
   hallSensorPin = hallSensorPinIn;
 }
@@ -59,7 +58,7 @@ void Wing::Update(ulong deltaTime) {
 
   if (isOpening || isClosing) {
     timeMoving += deltaTime;
-    if (timeMoving >= turret.settings.GetInt(SettingId::GunMoveTimeout)) {
+    if (timeMoving >= settings.GetInt(SettingId::GunMoveTimeout)) {
       Serial.println("Wing Movement Timeout");
       if (isOpening) {
         isOpen = true;
@@ -70,7 +69,7 @@ void Wing::Update(ulong deltaTime) {
     }
   }
 
-  if (isOpening && hallValue >= turret.settings.GetInt(SettingId::GunHallMax)) {
+  if (isOpening && hallValue >= settings.GetInt(SettingId::GunHallMax)) {
     Serial.println("Wing Is Open");
     isOpening = false;
     isOpen = true;
@@ -78,7 +77,7 @@ void Wing::Update(ulong deltaTime) {
     return;
   }
 
-  if (isClosing && hallValue <= turret.settings.GetInt(SettingId::GunHallMin)) {
+  if (isClosing && hallValue <= settings.GetInt(SettingId::GunHallMin)) {
     Serial.println("Wing Is Closed");
     isClosing = false;
     servo.write(90);

@@ -16,11 +16,8 @@ struct RadarTarget {
   bool isMoving;
 };
 
-struct Turret;
-
 class Radar {
 public:
-  Radar(Turret &turret);
   void Initialize();
   void Update(ulong deltaTime);
   void EnableMultiTarget();
@@ -28,7 +25,6 @@ public:
   uint8_t GetTargetCount();
 
 private:
-  Turret &turret;
   void UpdateSerialData();
 
   RadarTarget radarTargets[TRACK_COUNT];

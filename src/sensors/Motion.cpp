@@ -1,10 +1,9 @@
 #include "Motion.h"
-#include "Turret.h"
 
-Motion::Motion(Turret &_turret) : turret(_turret) {}
+Motion::Motion(Settings &_settings) : settings(_settings) {}
 
 void Motion::Initialize() {
-  damping = turret.settings.GetFloat(SettingId::AccelerationDamping);
+  damping = settings.GetFloat(SettingId::AccelerationDamping);
   if (!accel.begin()) {
     return;
   }

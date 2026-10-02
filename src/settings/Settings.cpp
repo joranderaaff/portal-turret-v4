@@ -31,7 +31,7 @@ Settings::Settings()
           {"DisEngDelay", "Delay After Disengage (ms)", SettingType::Int, 1000, 0, 100000},
           {"ShotDur", "Shot Duration (ms)", SettingType::Int, 200, 0, 500},
           {"ShotBri", "Shot Brightness", SettingType::Int, 127, 0, 255},
-          {"AccelDamp", "Acceleration Damping", SettingType::Float, 5, 1, 10},
+          {"AccelDamp", "Acceleration Damping", SettingType::Float, 5.0f, 1.0f, 10.0f},
       },
       prefsReady(false) {}
 

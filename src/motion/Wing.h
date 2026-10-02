@@ -5,11 +5,9 @@
 #include "settings/Settings.h"
 #include <ESP32Servo.h>
 
-struct Turret;
-
 class Wing {
 public:
-  Wing(Turret &turret, int servoPin, int gunServoPin, int hallSensorPin);
+  Wing(Settings &settings, Light &light, int servoPin, int gunServoPin, int hallSensorPin);
   void Initialize();
   void Open();
   void Close();
@@ -19,7 +17,7 @@ public:
   Gun &GetGun();
 
 private:
-  Turret &turret;
+  Settings &settings;
   bool isOpening = false;
   bool isClosing = false;
   bool isOpen = false;
