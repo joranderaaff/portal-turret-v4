@@ -103,6 +103,7 @@ void TurretWebServer::Update(ulong deltaTime) {
 
   if (socket.count() > 0) {
     SendRadar();
+    SendMotion();
   }
 }
 
@@ -131,6 +132,19 @@ void TurretWebServer::SendRadar() {
   }
 
   socket.binaryAll(buffer, offset);
+}
+
+void TurretWebServer::SendMotion() {
+  uint8_t buffer[MOTION_MESSAGE_BYTES];
+  buffer[0] = MESSAGE_MOTION;
+
+  const float values[3] = {turret->motion.GetAccelerationX(),
+                           turret->motion.GetAccelerationY(),
+                           turret->motion.GetAccelerationZ()};
+  // ESP32 is little endian, matching the wire format.
+  memcpy(buffer + 1, values, sizeof(values));
+
+  socket.binaryAll(buffer, sizeof(buffer));
 }
 
 void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {

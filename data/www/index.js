@@ -2,12 +2,20 @@
   // Message identifiers, first byte of every binary socket message.
   // Keep in sync with WebSocketMessage in src/web/TurretWebServer.h.
   const MESSAGE_RADAR = 0x01;
+  const MESSAGE_MOTION = 0x02;
 
   // Radar: sensor sits at the bottom-center of the canvas, forward is up.
   // Positions are in mm.
   const RADAR_MAX_RANGE_MM = 3000;
   const RADAR_ARC_STEP_MM = 500;
   const RADAR_TARGET_BYTES = 14;
+
+  // Accelerometer graphs. Size and colors come from CSS / data-color on the canvases.
+  const GRAPH_HISTORY = 200;          // samples kept per axis
+  const GRAPH_RANGE = 20;             // +/- m/s^2 shown
+  const GRAPH_AXES = ['x', 'y', 'z'];
+  // When served from 127.0.0.1 there is no webserver, so fake the data.
+  const isLocalTest = location.hostname === '127.0.0.1';
 
   const canvas = document.getElementById('radar');
   const ctx = canvas.getContext('2d');
@@ -82,12 +90,75 @@
     return parsed;
   }
 
+  const graphs = GRAPH_AXES.map(function (axis, index) {
+    const el = document.getElementById('graph-' + axis);
+    return { axis: axis, index: index, canvas: el, ctx: el.getContext('2d'),
+             color: el.dataset.color || '#fff', samples: [] };
+  });
+
+  function drawGraph(graph) {
+    const c = graph.canvas;
+    const g = graph.ctx;
+    // Match the backing store to the CSS size so it stays sharp when restyled.
+    const dpr = window.devicePixelRatio || 1;
+    const w = Math.round(c.clientWidth * dpr);
+    const h = Math.round(c.clientHeight * dpr);
+    if (c.width !== w || c.height !== h) {
+      c.width = w;
+      c.height = h;
+    }
+    const style = getComputedStyle(document.documentElement);
+    g.clearRect(0, 0, w, h);
+
+    const midY = h / 2;
+    const scale = (h / 2 - 2) / GRAPH_RANGE;
+    g.lineWidth = 1;
+    g.strokeStyle = style.getPropertyValue('--graph-grid').trim() || '#2a313a';
+    g.beginPath();
+    g.moveTo(0, midY);
+    g.lineTo(w, midY);
+    g.stroke();
+
+    g.fillStyle = graph.color;
+    g.font = (11 * dpr) + 'px sans-serif';
+    const last = graph.samples[graph.samples.length - 1];
+    g.fillText(graph.axis.toUpperCase() + (last === undefined ? '' : ' ' + last.toFixed(2)),
+               6 * dpr, 14 * dpr);
+
+    g.strokeStyle = graph.color;
+    g.lineWidth = 2 * dpr;
+    g.beginPath();
+    graph.samples.forEach(function (value, i) {
+      const px = w - (graph.samples.length - 1 - i) * (w / (GRAPH_HISTORY - 1));
+      const py = midY - Math.max(-GRAPH_RANGE, Math.min(GRAPH_RANGE, value)) * scale;
+      if (i === 0) { g.moveTo(px, py); } else { g.lineTo(px, py); }
+    });
+    g.stroke();
+  }
+
+  function pushMotion(values) {
+    graphs.forEach(function (graph) {
+      graph.samples.push(values[graph.index]);
+      if (graph.samples.length > GRAPH_HISTORY) {
+        graph.samples.shift();
+      }
+      drawGraph(graph);
+    });
+  }
+
+  function parseMotion(view) {
+    return [view.getFloat32(1, true), view.getFloat32(5, true), view.getFloat32(9, true)];
+  }
+
   function onMessage(event) {
     const view = new DataView(event.data);
     switch (view.getUint8(0)) {
       case MESSAGE_RADAR:
         targets = parseRadar(view);
         draw();
+        break;
+      case MESSAGE_MOTION:
+        pushMotion(parseMotion(view));
         break;
     }
   }
@@ -105,5 +176,19 @@
   }
 
   draw();
-  connect();
+  graphs.forEach(drawGraph);
+  if (isLocalTest) {
+    connection.textContent = 'Test mode (fake data)';
+    // Offset sine waves per axis; z rides around 1 g like a resting sensor.
+    setInterval(function () {
+      const t = Date.now() / 1000;
+      pushMotion([
+        8 * Math.sin(t * 2),
+        8 * Math.sin(t * 1.3 + 2),
+        9.8 + 4 * Math.sin(t * 0.7 + 4)
+      ]);
+    }, 50);
+  } else {
+    connect();
+  }
 })();

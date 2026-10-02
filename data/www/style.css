@@ -1,3 +1,12 @@
+/* Accelerometer graph tweakables. */
+:root {
+  --graph-width: 640px;
+  --graph-height: 100px;
+  --graph-gap: 8px;
+  --graph-background: #14181d;
+  --graph-grid: #2a313a;
+}
+
 body {
   font-family: sans-serif;
   margin: 0;
@@ -62,3 +71,17 @@ button {
 
 #status.ok { color: #1a7f37; }
 #status.error { color: #c62828; }
+
+.graphs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--graph-gap);
+  margin-top: var(--graph-gap);
+}
+
+canvas.graph {
+  display: block;
+  width: var(--graph-width);
+  height: var(--graph-height);
+  background: var(--graph-background);
+}
