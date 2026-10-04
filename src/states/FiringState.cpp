@@ -33,6 +33,10 @@ int FiringState::runCoroutine() {
   COROUTINE_END();
 }
 
+bool FiringState::CheckInterrupt(StateId& next) {
+  return InterruptForOrientation(next);
+}
+
 void FiringState::OnRoutineDone() {
   stateMachine->GoToState(StateId::SearchState);
 }

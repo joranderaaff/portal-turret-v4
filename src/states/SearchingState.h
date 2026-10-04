@@ -7,6 +7,7 @@ class SearchState : public RoutineState {
 public:
   void OnActivate() override;
   int runCoroutine() override;
+  bool CheckInterrupt(StateId& next) override;
 
  protected:
   void OnRoutineDone() override;

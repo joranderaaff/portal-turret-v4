@@ -9,6 +9,8 @@
 #include "states/FiringState.h"
 #include "states/IdleState.h"
 #include "states/ManualState.h"
+#include "states/PanicState.h"
+#include "states/TippedOverState.h"
 #include "states/SearchingState.h"
 #include "states/StateId.h"
 
@@ -29,4 +31,6 @@ private:
   SearchState searchState;
   DisengageState disengageState;
   ManualState manualState;
+  TippedOverState tippedOverState;
+  PanicState panicState;
 };

@@ -13,3 +13,7 @@ inline float Clamp(float t, float min, float max) {
 inline float Damp(float current, float target, float lambda, float dt) {
   return Lerp(target, current, exp(-lambda * dt));
 }
+
+inline int Sign(float a) {
+  return a >= 0.0f ? 1 : -1;
+}

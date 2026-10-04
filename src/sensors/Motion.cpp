@@ -28,9 +28,10 @@ float Motion::GetPitch() {
 void Motion::Update(ulong deltaTime) {
   sensors_event_t event;
   if (accel.getEvent(&event)) {
-    acceleration.x = event.acceleration.x;
-    acceleration.y = event.acceleration.y;
-    acceleration.z = event.acceleration.z;
+    //ADXL345 is mounted sideways. Interpret values like this:
+    acceleration.x = event.acceleration.z;
+    acceleration.y = event.acceleration.x;
+    acceleration.z = event.acceleration.y;
   }
   float deltaTimeSeconds = (float)deltaTime / 1000.0f;
   smoothAcceleration.x = Damp(smoothAcceleration.x, acceleration.x, damping, deltaTimeSeconds);

@@ -14,7 +14,7 @@ int SearchState::runCoroutine() {
 
   doLoop = true;
   searchStartTime = millis();
-  timeAtChangeRotation = millis() + settings->GetInt(SettingId::SearchMinTime);
+  timeAtChangeRotation = millis() + settings->GetInt(SettingId::SearchMoveMinTime);
   movementWasDetected = false;
   while (doLoop) {
     ulong curMillis = millis();
@@ -47,6 +47,10 @@ int SearchState::runCoroutine() {
   }
 
   COROUTINE_END();
+}
+
+bool SearchState::CheckInterrupt(StateId& next) {
+  return InterruptForOrientation(next);
 }
 
 void SearchState::OnRoutineDone() {

@@ -8,4 +8,6 @@ enum class StateId {
   SearchState,
   Disengage,
   Manual,
+  TippedOver,
+  Panic,
 };

@@ -6,4 +6,5 @@ class IdleState : public BaseState {
 public:
   void OnActivate() override;
   void Update(ulong deltaTime) override;
+  bool CheckInterrupt(StateId& next) override;
 };

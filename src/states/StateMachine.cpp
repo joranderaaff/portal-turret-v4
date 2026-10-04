@@ -8,6 +8,8 @@ void StateMachine::Initialize(Turret &turretIn) {
   manualState.Initialize(this, turretIn);
   firingState.Initialize(this, turretIn);
   searchState.Initialize(this, turretIn);
+  tippedOverState.Initialize(this, turretIn);
+  panicState.Initialize(this, turretIn);
 }
 
 void StateMachine::GoToState(StateId nextStateId) {
@@ -45,12 +47,25 @@ BaseState *StateMachine::GetState(StateId stateId) {
   case StateId::Manual:
     Serial.println("ManualState");
     return &manualState;
+  case StateId::TippedOver:
+    Serial.println("TippedOverState");
+    return &tippedOverState;
+  case StateId::Panic:
+    Serial.println("PanicState");
+    return &panicState;
   }
   return nullptr;
 }
 
 void StateMachine::Update(ulong deltaTime) {
-  if (currentState) {
-    currentState->Update(deltaTime);
+  if (!currentState) {
+    return;
   }
+
+  StateId next;
+  if (currentState->CheckInterrupt(next)) {
+    GoToState(next);
+    return;
+  }
+  currentState->Update(deltaTime);
 }

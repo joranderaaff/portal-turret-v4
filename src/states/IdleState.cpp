@@ -11,3 +11,7 @@ void IdleState::Update(ulong deltaTime) {
     stateMachine->GoToState(StateId::Activate);
   }
 }
+
+bool IdleState::CheckInterrupt(StateId& next) {
+  return InterruptForOrientation(next);
+}

@@ -5,12 +5,13 @@
 #include "helpers/Math.h"
 #include "pins.h"
 #include "light/Light.h"
+#include "sensors/Motion.h"
 #include "settings/Settings.h"
-#include <ESP32Servo.h>
+#include "motion/IntertiaServo.h"
 
 class Gantry {
 public:
-  Gantry(Settings &settings, Light &light);
+  Gantry(Settings &settings, Light &light, Motion &motion);
   void Initialize();
   void Update(ulong deltaTime);
   void SetRotationX(float angle, bool force);
@@ -19,6 +20,9 @@ public:
   void CloseWings();
   Wing &GetWingLeft();
   Wing &GetWingRight();
+  // Level checks on the smoothed acceleration (no hysteresis yet).
+  bool IsTippedOver();
+  bool IsPickedUp();
 
 private:
   float X_AXIS_GEAR_RATIO = 75.0 / 17.0;
@@ -36,7 +40,8 @@ private:
 
   Wing wingLeft;
   Wing wingRight;
-  Servo servoRotateX;
-  Servo servoRotateZ;
+  InertiaServo servoRotateX;
+  InertiaServo servoRotateZ;
   Settings &settings;
+  Motion &motion;
 };

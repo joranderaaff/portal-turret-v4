@@ -6,6 +6,7 @@
 class FiringState : public RoutineState {
  public:
   int runCoroutine() override;
+  bool CheckInterrupt(StateId& next) override;
 
  protected:
   void OnRoutineDone() override;
