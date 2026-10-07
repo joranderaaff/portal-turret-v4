@@ -4,13 +4,13 @@
 #include "light/Light.h"
 #include "motion/Gantry.h"
 #include "motion/TargetTracker.h"
-#include "sensors/Motion.h"
+#include "sensors/ADXL.h"
 #include "sensors/Radar.h"
 #include "settings/Settings.h"
 
 struct Turret {
   Gantry &gantry;
-  Motion &motion;
+  ADXL &motion;
   Radar &radar;
   Audio &audio;
   Light &light;

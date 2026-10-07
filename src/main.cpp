@@ -14,7 +14,7 @@ TurretWebServer server;
 StateMachine stateMachine;
 Audio audio(settings);
 Light light;
-Motion motion(settings);
+ADXL motion(settings);
 Gantry gantry(settings, light, motion);
 Radar radar;
 Ota ota;

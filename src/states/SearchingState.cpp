@@ -30,15 +30,29 @@ int SearchState::runCoroutine() {
       movementWasDetected = true;
     }
 
-    if (movementWasDetected && timeSearching > settings->GetInt(SettingId::SearchMinTime)) {
+    //Also wait until the voice line is over before we go into the alarm and re-fire
+    if (movementWasDetected && timeSearching > settings->GetInt(SettingId::SearchMinTime) && !turret->audio.IsPlaying()) {
+      Serial.print(" RE-TRIGGER: ");
+      Serial.print(" timeSearching: ");
+      Serial.print(timeSearching);
+      Serial.print(" settings->GetInt(SettingId::SearchMinTime): ");
+      Serial.print(settings->GetInt(SettingId::SearchMinTime));
+      Serial.println("");
+
+
       turret->audio.QueueAudioCommand(AudioId::Alarm);
       COROUTINE_AWAIT(turret->audio.IsPlaying());
       COROUTINE_AWAIT(!turret->audio.IsPlaying());
       nextState = StateId::FiringState;
       doLoop = false;
     }
-
-    if (timeSearching > settings->GetInt(SettingId::SearchMaxTime)) {
+    else if (timeSearching > settings->GetInt(SettingId::SearchMaxTime)) {
+      Serial.print(" DISENGAGE: ");
+      Serial.print(" timeSearching: ");
+      Serial.print(timeSearching);
+      Serial.print(" settings->GetInt(SettingId::SearchMaxTime): ");
+      Serial.print(settings->GetInt(SettingId::SearchMaxTime));
+      Serial.println("");
       nextState = StateId::Disengage;
       doLoop = false;
     }

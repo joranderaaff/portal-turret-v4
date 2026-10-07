@@ -18,6 +18,8 @@ enum SettingId {
   SearchMaxTime,
   SearchMoveMinTime,
   SearchMoveMaxTime,
+  PanicMoveMinTime,
+  PanicMoveMaxTime,
   MovementTresshold,
   DelayAfterDisengage,
   ShotDuration,

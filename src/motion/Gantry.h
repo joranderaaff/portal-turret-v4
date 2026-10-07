@@ -5,13 +5,13 @@
 #include "helpers/Math.h"
 #include "pins.h"
 #include "light/Light.h"
-#include "sensors/Motion.h"
+#include "sensors/ADXL.h"
 #include "settings/Settings.h"
 #include "motion/IntertiaServo.h"
 
 class Gantry {
 public:
-  Gantry(Settings &settings, Light &light, Motion &motion);
+  Gantry(Settings &settings, Light &light, ADXL &motion);
   void Initialize();
   void Update(ulong deltaTime);
   void SetRotationX(float angle, bool force);
@@ -23,6 +23,7 @@ public:
   // Level checks on the smoothed acceleration (no hysteresis yet).
   bool IsTippedOver();
   bool IsPickedUp();
+  bool IsAtRest();
 
 private:
   float X_AXIS_GEAR_RATIO = 75.0 / 17.0;
@@ -43,5 +44,9 @@ private:
   InertiaServo servoRotateX;
   InertiaServo servoRotateZ;
   Settings &settings;
-  Motion &motion;
+  ADXL &motion;
+
+  ulong timeSinceLastImpulseUpdate = 0;
+  bool pickupImpulseDetected;
+  ImpulseDetection impulseDetection;
 };

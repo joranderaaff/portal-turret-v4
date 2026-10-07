@@ -28,6 +28,8 @@ Settings::Settings()
           {"SrcMaxTime", "Search Max Time (ms)", SettingType::Int, 5000, 0, 10000},
           {"SrcMovMin", "Search Move Delay Min Time (ms)", SettingType::Int, 500, 0, 10000},
           {"SrcMovMax", "Search Move Delay Max Time (ms)", SettingType::Int, 1000, 0, 10000},
+          {"PanicMovMin", "Panic Move Delay Min Time (ms)", SettingType::Int, 250, 0, 10000},
+          {"PanicMovMax", "Panic Move Delay Max Time (ms)", SettingType::Int, 500, 0, 10000},
           {"MoveTres", "Movement Detect Treshold (mm)", SettingType::Int, 100, 0, 100000},
           {"DisEngDelay", "Delay After Disengage (ms)", SettingType::Int, 1000, 0, 100000},
           {"ShotDur", "Shot Duration (ms)", SettingType::Int, 200, 0, 500},

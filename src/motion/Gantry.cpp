@@ -1,21 +1,24 @@
 #include "motion/Gantry.h"
 
-// TODO: tune thresholds, add hysteresis / hold time.
 static const float kGravity = 9.81f;
-static const float kTippedMinZ = 0.5f * kGravity; // upright reads ~+1 g on Z
-static const float kPickedUpDeviation = 0.3f * kGravity;
+static const float kTippedMinZ = 0.5f * kGravity;
 
-Gantry::Gantry(Settings &_settings, Light &light, Motion &_motion) : settings(_settings), motion(_motion), wingLeft(_settings, light, PIN_WING_LEFT, PIN_GUN_LEFT, PIN_HALL_LEFT), wingRight(_settings, light, PIN_WING_RIGHT, PIN_GUN_RIGHT, PIN_HALL_RIGHT) {
+constexpr ulong IMPULSE_DETECTION_UPDATE_INTERVAL = 50;
+
+Gantry::Gantry(Settings &_settings, Light &light, ADXL &_motion) : settings(_settings), motion(_motion), wingLeft(_settings, light, PIN_WING_LEFT, PIN_GUN_LEFT, PIN_HALL_LEFT), wingRight(_settings, light, PIN_WING_RIGHT, PIN_GUN_RIGHT, PIN_HALL_RIGHT) {
 }
 
 bool Gantry::IsTippedOver() {
-  return motion.GetSmoothAcceleration().z < kTippedMinZ;
+  //return motion.GetSmoothAcceleration().z < kTippedMinZ;
+  return false;
 }
 
 bool Gantry::IsPickedUp() {
-  Acceleration a = motion.GetSmoothAcceleration();
-  float magnitude = sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
-  return fabsf(magnitude - kGravity) > kPickedUpDeviation;
+  return pickupImpulseDetected;
+}
+
+bool Gantry::IsAtRest() {
+  return false;
 }
 
 void Gantry::Initialize() {
@@ -63,6 +66,12 @@ void Gantry::Update(ulong deltaTime) {
 
   wingLeft.Update(deltaTime);
   wingRight.Update(deltaTime);
+  
+  timeSinceLastImpulseUpdate += deltaTime;
+  if(timeSinceLastImpulseUpdate > IMPULSE_DETECTION_UPDATE_INTERVAL) {
+    timeSinceLastImpulseUpdate -= IMPULSE_DETECTION_UPDATE_INTERVAL;
+    pickupImpulseDetected = impulseDetection.AddSample(motion.GetSmoothAcceleration().z);
+  }
 }
 
 void Gantry::OpenWings() {

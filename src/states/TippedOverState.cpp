@@ -3,7 +3,9 @@
 
 int TippedOverState::runCoroutine() {
   COROUTINE_BEGIN();
-  // TODO: tipped over behaviour
+  turret->gantry.CloseWings();
+  COROUTINE_AWAIT(!turret->gantry.GetWingLeft().IsOpen() && !turret->gantry.GetWingRight().IsOpen());
+  COROUTINE_AWAIT(turret->gantry.IsAtRest());
   COROUTINE_END();
 }
 

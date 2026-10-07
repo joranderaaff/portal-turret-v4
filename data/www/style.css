@@ -4,6 +4,8 @@
   --graph-height: 100px;
   --graph-smooth-height: calc(var(--graph-height) * 0.66);
   --graph-gap: 8px;
+  --vector-height: 200px;
+  --vector-background: #14181d;
   --graph-background: #14181d;
   --graph-grid: #2a313a;
 }
@@ -72,6 +74,22 @@ button {
 
 #status.ok { color: #1a7f37; }
 #status.error { color: #c62828; }
+
+/* Tilt arrows: two side by side, together as wide as the graphs. */
+.vectors {
+  display: flex;
+  gap: var(--graph-gap);
+  width: var(--graph-width);
+  margin-top: var(--graph-gap);
+}
+
+canvas.vector {
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  height: var(--vector-height);
+  background: var(--vector-background);
+}
 
 .graphs {
   display: flex;

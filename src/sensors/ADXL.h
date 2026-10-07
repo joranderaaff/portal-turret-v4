@@ -6,6 +6,7 @@
 #include <Adafruit_Sensor.h>
 #include <Arduino.h>
 #include <Wire.h>
+#include <sensors/ImpulseDetection.h>
 
 struct Acceleration {
   float x = 0;
@@ -13,9 +14,9 @@ struct Acceleration {
   float z = 0;
 };
 
-class Motion {
+class ADXL {
 public:
-  Motion(Settings &settings);
+  ADXL(Settings &settings);
   void Initialize();
   void Update(ulong deltaTime);
   Acceleration GetAcceleration();

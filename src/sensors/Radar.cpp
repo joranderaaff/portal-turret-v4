@@ -101,14 +101,10 @@ void Radar::UpdateSerialData() {
             if (combinedBytes != 0x00) {
               // Valid target;
 
-              int16_t x = (int16_t)(messageBuffer[index] |
-                                    (messageBuffer[index + 1] << 8));
-              int16_t y = (int16_t)(messageBuffer[index + 2] |
-                                    (messageBuffer[index + 3] << 8));
-              int16_t speed = (int16_t)(messageBuffer[index + 4] |
-                                        (messageBuffer[index + 5] << 8));
-              uint16_t resolution = (uint16_t)(messageBuffer[index + 6] |
-                                               (messageBuffer[index + 7] << 8));
+              int16_t x = (int16_t)(messageBuffer[index] | (messageBuffer[index + 1] << 8));
+              int16_t y = (int16_t)(messageBuffer[index + 2] | (messageBuffer[index + 3] << 8));
+              int16_t speed = (int16_t)(messageBuffer[index + 4] | (messageBuffer[index + 5] << 8));
+              uint16_t resolution = (uint16_t)(messageBuffer[index + 6] | (messageBuffer[index + 7] << 8));
 
               if (messageBuffer[index + 1] & 0x80)
                 x -= 0x8000;
