@@ -33,11 +33,14 @@ private:
   float maxAngleX = 90;
   float maxAngleZ = 90;
 
+  
   float currentAngleX;
   float targetAngleX;
-
+  
   float currentAngleZ;
   float targetAngleZ;
+  
+  bool enableTiltShutdown = false;
 
   Wing wingLeft;
   Wing wingRight;

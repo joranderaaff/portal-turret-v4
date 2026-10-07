@@ -8,6 +8,7 @@ public:
   ImpulseDetection();
   // Adds a sample and returns true when the latest window matches the impulse.
   bool AddSample(float z);
+  float GetCurrentAmplitudeZ();
 
 private:
   // Number of values in the impulse template; the constructor list must match.
@@ -17,6 +18,8 @@ private:
   static const int maxWindowSize = 30;
   // History kept, must hold the longest window.
   static const int sampleCount = maxWindowSize;
+
+  float currentAmplitudeZ = 0;
 
   int currentIndex = 0;
   float samples[sampleCount];

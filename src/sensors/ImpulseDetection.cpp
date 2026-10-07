@@ -70,7 +70,8 @@ bool ImpulseDetection::AddSample(float z) {
       target[i] = Lerp(impulse[sampleIndexA], impulse[sampleIndexB], blend);
     }
 
-    if (Normalise(window, windowSize) < MIN_AMPLITUDE) {
+    currentAmplitudeZ = Normalise(window, windowSize);
+    if (currentAmplitudeZ < MIN_AMPLITUDE) {
       continue;
     }
     Normalise(target, windowSize);
@@ -91,4 +92,8 @@ bool ImpulseDetection::AddSample(float z) {
   }
 
   return bestScore <= MATCH_THRESHOLD;
+}
+
+float ImpulseDetection::GetCurrentAmplitudeZ() {
+  return currentAmplitudeZ;
 }

@@ -15,6 +15,7 @@ SettingsEntry::SettingsEntry(const char *key, const char *label, SettingType typ
 Settings::Settings()
     : entries{
           {"AudioVOlume", "Audio Volume", SettingType::Float, 0.75f, 0.0f, 1.0f},
+          {"TiltShutdown", "Enable Tilt Shutdown", SettingType::Bool, true},
           {"AngleOffsetX", "Angle offset X (deg)", SettingType::Float, 0.0f, -90.0f, 90.0f},
           {"AngleOffsetZ", "Angle offset Z (deg)", SettingType::Float, 0.0f, -90.0f, 90.0f},
           {"GunTimeout", "Gun Move Timeout (ms)", SettingType::Int, 0, 100, 3000},

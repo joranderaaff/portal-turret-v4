@@ -5,6 +5,7 @@
 
 enum SettingId {
   AudioVolume,
+  EnableTiltShutdown,
   AngleOffsetX,
   AngleOffsetZ,
   GunMoveTimeout,
