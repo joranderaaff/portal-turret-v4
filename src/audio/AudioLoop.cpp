@@ -15,15 +15,6 @@ void AudioLoop::Begin() {
   loopStartSample = loopPoints[currentSegmentIndex];
   loopEndSample = loopPoints[currentSegmentIndex + 1];
 
-  Serial.print(" Begin() ");
-  Serial.print(" loopStartSample: ");
-  Serial.print(loopStartSample);
-
-  Serial.print(" loopEndSample: ");
-  Serial.print(loopEndSample);
-
-  Serial.println("");
-
   loopCounter = 0;
   sampleReadIndex = 0;
 }
@@ -73,17 +64,6 @@ void AudioLoop::Read(uint8_t *buffer, int len) {
 
         loopStartSample = loopPoints[currentSegmentIndex];
         loopEndSample = loopPoints[currentSegmentIndex + 1];
-
-        Serial.print(" loopStartSample: ");
-        Serial.print(loopStartSample);
-
-        Serial.print(" loopEndSample: ");
-        Serial.print(loopEndSample);
-
-        sampleReadIndex = loopStartSample + sampleOffset;
-
-        Serial.print(" sampleReadIndex: ");
-        Serial.print(sampleReadIndex);
 
         loopCounter++;
 

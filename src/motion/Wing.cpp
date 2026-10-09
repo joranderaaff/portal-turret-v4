@@ -5,7 +5,7 @@
 #define CENTER_ANGLE 90
 #define SPEED 70
 
-Wing::Wing(Settings &_settings, Light &light, int servoPinIn, int gunServoPinIn, int hallSensorPinIn) : settings(_settings), gun(_settings, light, gunServoPinIn) {
+Wing::Wing(Settings &_settings, Light &light, Audio &audio, int servoPinIn, int gunServoPinIn, int hallSensorPinIn) : settings(_settings), gun(_settings, light, audio, gunServoPinIn) {
   servoPin = servoPinIn;
   hallSensorPin = hallSensorPinIn;
 }

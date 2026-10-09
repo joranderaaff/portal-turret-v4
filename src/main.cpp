@@ -16,7 +16,7 @@ StateMachine stateMachine;
 Audio audio(settings);
 Light light;
 ADXL motion(settings);
-Gantry gantry(settings, light, motion);
+Gantry gantry(settings, light, audio, motion);
 Radar radar;
 Ota ota;
 TargetTracker targetTracker(settings, radar);

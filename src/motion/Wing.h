@@ -7,7 +7,7 @@
 
 class Wing {
 public:
-  Wing(Settings &settings, Light &light, int servoPin, int gunServoPin, int hallSensorPin);
+  Wing(Settings &settings, Light &light, Audio &audio, int servoPin, int gunServoPin, int hallSensorPin);
   void Initialize();
   void Open();
   void Close();

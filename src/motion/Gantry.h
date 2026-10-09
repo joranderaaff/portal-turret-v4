@@ -11,7 +11,7 @@
 
 class Gantry {
 public:
-  Gantry(Settings &settings, Light &light, ADXL &motion);
+  Gantry(Settings &settings, Light &light, Audio &audio, ADXL &motion);
   void Initialize();
   void Update(ulong deltaTime);
   void SetRotationX(float angle, bool force);

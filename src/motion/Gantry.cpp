@@ -9,7 +9,7 @@ constexpr float REST_AMPLITUDE = 0.05f;
 constexpr ulong IMPULSE_DETECTION_UPDATE_INTERVAL = 50;
 } // namespace
 
-Gantry::Gantry(Settings &_settings, Light &light, ADXL &_motion) : settings(_settings), motion(_motion), wingLeft(_settings, light, PIN_WING_LEFT, PIN_GUN_LEFT, PIN_HALL_LEFT), wingRight(_settings, light, PIN_WING_RIGHT, PIN_GUN_RIGHT, PIN_HALL_RIGHT) {
+Gantry::Gantry(Settings &_settings, Light &light, Audio &audio, ADXL &_motion) : settings(_settings), motion(_motion), wingLeft(_settings, light, audio, PIN_WING_LEFT, PIN_GUN_LEFT, PIN_HALL_LEFT), wingRight(_settings, light, audio, PIN_WING_RIGHT, PIN_GUN_RIGHT, PIN_HALL_RIGHT) {
 }
 
 bool Gantry::IsTippedOver() {

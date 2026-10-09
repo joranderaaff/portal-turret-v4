@@ -4,18 +4,19 @@
 #define QUEUE_SIZE 5
 
 namespace {
-  const int loopSections[2] {
+const int loopSections[2]{
     774,
     5063,
-  };
+};
 }
 
-Audio::Audio(Settings &_settings) : settings(_settings), source("/", ".mp3"), decoder(&volumeStream, &mp3Decoder), ShootAudio(samples, loopSections, sizeof(loopSections) / sizeof(loopSections[0]), sizeof(samples) / 2) {}
+Audio::Audio(Settings &_settings) : settings(_settings), source("/", ".mp3"), decoder(&volumeStream, &mp3Decoder), ShootAudio(samples, sizeof(samples) / 2) {}
 
 void Audio::Initialize() {
 
-  audioCommandQueue = xQueueCreate(QUEUE_SIZE, sizeof(uint16_t));
-  loopedAudioCommandQueue = xQueueCreate(QUEUE_SIZE, sizeof(uint16_t));
+  audioCommandQueue = xQueueCreate(QUEUE_SIZE, sizeof(AudioId));
+  loopedAudioCommandQueue = xQueueCreate(QUEUE_SIZE, sizeof(AudioLoopId));
+  layeredAudioCommandQueue = xQueueCreate(QUEUE_SIZE, sizeof(LayeredAudioId));
 
   auto cfg = i2s.defaultConfig(TX_MODE);
   cfg.pin_bck = PIN_BCLK;
@@ -53,6 +54,10 @@ void Audio::QueueLoopedAudioCommand(AudioLoopId nextAudio) {
   xQueueSend(loopedAudioCommandQueue, &nextAudio, 0);
 }
 
+void Audio::QueueLayeredAudioCommand(LayeredAudioId nextAudio) {
+  xQueueSend(layeredAudioCommandQueue, &nextAudio, 0);
+}
+
 void Audio::GetRandomSoundByType(AudioId type) {
   long filenum;
   switch (type) {
@@ -86,11 +91,11 @@ void Audio::GetRandomSoundByType(AudioId type) {
 }
 
 bool Audio::IsPlaying() {
-  return isPlaying || (currentLoopedAudio != nullptr && currentLoopedAudio->IsPlaying());
+  return isPlaying || ShootAudio.IsPlaying() || (currentLoopedAudio != nullptr && currentLoopedAudio->IsPlaying());
 }
 
 AudioLoop *Audio::GetLoopendSoundByType(AudioLoopId type) {
-  return &ShootAudio;
+  return nullptr;
 }
 
 void Audio::Update(ulong deltaTime) {
@@ -107,6 +112,13 @@ void Audio::Update(ulong deltaTime) {
     }
   }
 
+  LayeredAudioId nextLayereddAudioType;
+  if (xQueueReceive(layeredAudioCommandQueue, &nextLayereddAudioType, 0)) {
+    if (nextLayereddAudioType == LayeredAudioId::Trigger) {
+      ShootAudio.Trigger();
+    }
+  }
+
   AudioId nextAudioType = AudioId::None;
   if (xQueueReceive(audioCommandQueue, &nextAudioType, 0)) {
     if (nextAudioType != AudioId::None) {
@@ -118,15 +130,19 @@ void Audio::Update(ulong deltaTime) {
     }
   }
 
-  if (isPlaying) {
+  int bytesAvailableForWrite = min(i2s.availableForWrite(), (int)sizeof(sampleBuffer));
+  int bytesAvailableForWriteMultOfTwo = floor(bytesAvailableForWrite / 2) * 2;
+  if (ShootAudio.IsPlaying()) {
+    ShootAudio.Read(sampleBuffer, bytesAvailableForWriteMultOfTwo);
+    size_t written = volumeStream.write(sampleBuffer, bytesAvailableForWriteMultOfTwo);
+  } else if (isPlaying) {
     if (!copier.copy()) {
       decoder.end();
       isPlaying = false;
     }
   } else if (currentLoopedAudio && currentLoopedAudio->IsPlaying()) {
-    int bytesAvailableForWrite = min(i2s.availableForWrite(), (int)sizeof(sampleBuffer));
-    currentLoopedAudio->Read(sampleBuffer, bytesAvailableForWrite);
-    volumeStream.write(sampleBuffer, bytesAvailableForWrite);
+    currentLoopedAudio->Read(sampleBuffer, bytesAvailableForWriteMultOfTwo);
+    volumeStream.write(sampleBuffer, bytesAvailableForWriteMultOfTwo);
   }
 }
 

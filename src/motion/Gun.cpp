@@ -2,7 +2,7 @@
 
 const int EXTEND_ANGLE = 160;
 
-Gun::Gun(Settings &_settings, Light &_light, int servoPinIn) : settings(_settings), light(_light) {
+Gun::Gun(Settings &_settings, Light &_light, Audio &_audio, int servoPinIn) : settings(_settings), light(_light), audio(_audio) {
   servoPin = servoPinIn;
 }
 
@@ -27,9 +27,18 @@ void Gun::Update(ulong deltaTime) {
     } else {
       barrelHeat += deltaTime / barrelHeatupDuration;
     }
-    firingTime += deltaTime;
     uint phaseOffset = servoPin == PIN_GUN_LEFT ? 0 : shotDuration >> 2;
+
+    uint prevShotIndex = (firingTime + phaseOffset) / shotDuration;
+    firingTime += deltaTime;
+    uint shotIndex = (firingTime + phaseOffset) / shotDuration;
+
     uint currentShotPhase = (firingTime + phaseOffset) % shotDuration;
+
+    if(shotIndex > prevShotIndex) {
+      audio.QueueLayeredAudioCommand(LayeredAudioId::Trigger);
+    }
+
     // Move phase of one gun half the duration
     float p = (float)currentShotPhase / shotDuration;
     float attack = 0.20f;
@@ -41,7 +50,7 @@ void Gun::Update(ulong deltaTime) {
 
     servo.write(angle);
   } else {
-    if(barrelCooldownDuration == 0.0f) {
+    if (barrelCooldownDuration == 0.0f) {
       barrelHeat = 0.0f;
     } else {
       barrelHeat -= deltaTime / barrelCooldownDuration;
@@ -75,6 +84,7 @@ void Gun::Retract() {
 void Gun::StartFiring() {
   firingTime = 0;
   firing = true;
+  audio.QueueLayeredAudioCommand(LayeredAudioId::Trigger);
 }
 
 void Gun::StopFiring() {

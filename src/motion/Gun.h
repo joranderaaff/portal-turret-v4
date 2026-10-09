@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Arduino.h"
+#include "audio/Audio.h"
 #include "helpers/Math.h"
 #include "pins.h"
 #include "light/Light.h"
@@ -9,7 +10,7 @@
 
 class Gun {
 public:
-  Gun(Settings &settings, Light &light, int servoPin);
+  Gun(Settings &settings, Light &light, Audio &audio, int servoPin);
   void Initialize();
   void Extend();
   void Retract();
@@ -20,6 +21,7 @@ public:
 private:
   Settings &settings;
   Light &light;
+  Audio &audio;
   int servoPin;
   int shotBrightness = 0;
   int heatBrightness = 0;

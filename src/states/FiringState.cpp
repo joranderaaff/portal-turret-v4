@@ -5,8 +5,6 @@ const float pi = 3.1415;
 
 int FiringState::runCoroutine() {
   COROUTINE_BEGIN();
-  turret->audio.QueueLoopedAudioCommand(AudioLoopId::Gun);
-  
   turret->gantry.GetWingLeft().GetGun().StartFiring();
   turret->gantry.GetWingRight().GetGun().StartFiring();
 
@@ -23,9 +21,6 @@ int FiringState::runCoroutine() {
     COROUTINE_YIELD();
   }
 
-  turret->audio.QueueLoopedAudioCommand(AudioLoopId::None);
-  COROUTINE_AWAIT(!turret->audio.IsPlaying());
-  
   turret->gantry.GetWingLeft().GetGun().StopFiring();
   turret->gantry.GetWingRight().GetGun().StopFiring();
 
