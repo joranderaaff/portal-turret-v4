@@ -29,14 +29,6 @@ void Light::SetEyeColor(CRGB color) {
 }
 
 void Light::Update(ulong deltaTime) {
-
-  uint8_t t = millis() / 4;
-  uint8_t tri = triwave8(t);
-
-  //fill_solid(leftLeds, 2, HeatColor(tri));
-  //fill_solid(rightLeds, 2, HeatColor(tri));
-  fill_solid(centerLeds, 9, CRGB::Red);
-  
   std::swap(centerLeds[8].r, centerLeds[8].g);
   FastLED.show();
   std::swap(centerLeds[8].r, centerLeds[8].g);
