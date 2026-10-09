@@ -6,26 +6,40 @@
 enum SettingId {
   AudioVolume,
   EnableTiltShutdown,
+  
   AngleOffsetX,
   AngleOffsetZ,
+
   GunMoveTimeout,
   GunHallMin,
   GunHallMax,
+  
   AngleMaxX,
   AngleMaxZ,
+  
   ShootMinTime,
   ShootMaxTime,
+  
   SearchMinTime,
   SearchMaxTime,
   SearchMoveMinTime,
   SearchMoveMaxTime,
+  
   PanicMoveMinTime,
   PanicMoveMaxTime,
+
   MovementTresshold,
   DelayAfterDisengage,
+
+  HeatBrightness,
+  BarrelCooldownDuration,
+  BarrelHeatupDuration,
+
   ShotDuration,
   ShotBrightness,
+  
   AccelerationDamping,
+  
   COUNT
 };
 

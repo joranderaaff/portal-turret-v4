@@ -24,6 +24,10 @@ void Light::SetRightGunLight(CRGB color) {
   fill_solid(rightLeds, 2, color);
 }
 
+void Light::SetEyeColor(CRGB color) {
+  fill_solid(centerLeds, 9, color);
+}
+
 void Light::Update(ulong deltaTime) {
 
   uint8_t t = millis() / 4;

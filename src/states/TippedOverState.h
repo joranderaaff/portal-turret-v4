@@ -4,9 +4,12 @@
 #include "StateId.h"
 
 class TippedOverState : public RoutineState {
- public:
+public:
   int runCoroutine() override;
 
- protected:
+protected:
   void OnRoutineDone() override;
+
+private:
+  int eyeBrightness = 255;
 };

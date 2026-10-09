@@ -33,8 +33,14 @@ Settings::Settings()
           {"PanicMovMax", "Panic Move Delay Max Time (ms)", SettingType::Int, 500, 0, 10000},
           {"MoveTres", "Movement Detect Treshold (mm)", SettingType::Int, 100, 0, 100000},
           {"DisEngDelay", "Delay After Disengage (ms)", SettingType::Int, 1000, 0, 100000},
+          
+          {"HeatBri", "Heat Brightness", SettingType::Int, 100, 0, 255},
+          {"BrrlHeat", "Barrel Heatup Duration (s)", SettingType::Float, 3.0f, 0.0f, 10.0f},
+          {"BrrlCool", "Barrel Cooldown Duration (s)", SettingType::Float, 5.0f, 0.0f, 10.0f},
+          
           {"ShotDur", "Shot Duration (ms)", SettingType::Int, 200, 0, 500},
           {"ShotBri", "Shot Brightness", SettingType::Int, 127, 0, 255},
+          
           {"AccelDamp", "Acceleration Damping", SettingType::Float, 5.0f, 1.0f, 10.0f},
       },
       prefsReady(false) {}
