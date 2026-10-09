@@ -1,8 +1,8 @@
 #include "AudioLoop.h"
 
-AudioLoop::AudioLoop(const uint8_t *samplesIn, int loopStartSampleIn, int loopEndSampleIn, int sampleCount) {
-  loopStartSample = loopStartSampleIn;
-  loopEndSample = loopEndSampleIn;
+AudioLoop::AudioLoop(const uint8_t *samplesIn, const int loopPointsIn[], int loopPointCount, int sampleCount) {
+  loopPoints = loopPointsIn;
+  loopSegmentCount = loopPointCount - 1;
   samples = samplesIn;
   totalSampleCount = sampleCount;
 }
@@ -11,6 +11,19 @@ void AudioLoop::Begin() {
   isPlaying = true;
   isLooping = false;
   isStopping = false;
+
+  loopStartSample = loopPoints[currentSegmentIndex];
+  loopEndSample = loopPoints[currentSegmentIndex + 1];
+
+  Serial.print(" Begin() ");
+  Serial.print(" loopStartSample: ");
+  Serial.print(loopStartSample);
+
+  Serial.print(" loopEndSample: ");
+  Serial.print(loopEndSample);
+
+  Serial.println("");
+
   loopCounter = 0;
   sampleReadIndex = 0;
 }
@@ -45,8 +58,36 @@ void AudioLoop::Read(uint8_t *buffer, int len) {
       }
 
       if (isLooping && sampleReadIndex >= loopEndSample) {
-        sampleReadIndex -= loopEndSample - loopStartSample;
+
+        int sectionLength = loopEndSample - loopStartSample;
+        sampleReadIndex -= sectionLength;
+        int sampleOffset = sampleReadIndex - loopStartSample;
+
+        Serial.print(" sectionLength: ");
+        Serial.print(sectionLength);
+
+        Serial.print(" currentSegmentIndex: ");
+        Serial.print(currentSegmentIndex);
+
+        currentSegmentIndex = random(0, loopSegmentCount);
+
+        loopStartSample = loopPoints[currentSegmentIndex];
+        loopEndSample = loopPoints[currentSegmentIndex + 1];
+
+        Serial.print(" loopStartSample: ");
+        Serial.print(loopStartSample);
+
+        Serial.print(" loopEndSample: ");
+        Serial.print(loopEndSample);
+
+        sampleReadIndex = loopStartSample + sampleOffset;
+
+        Serial.print(" sampleReadIndex: ");
+        Serial.print(sampleReadIndex);
+
         loopCounter++;
+
+        Serial.println("");
       }
 
       if (sampleReadIndex >= totalSampleCount) {

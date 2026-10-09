@@ -3,7 +3,14 @@
 #define SAMPLE_RATE 22050
 #define QUEUE_SIZE 5
 
-Audio::Audio(Settings &_settings) : settings(_settings), source("/", ".mp3"), decoder(&volumeStream, &mp3Decoder), ShootAudio(samples, 773, 5065, sizeof(samples) / 2) {}
+namespace {
+  const int loopSections[2] {
+    774,
+    5063,
+  };
+}
+
+Audio::Audio(Settings &_settings) : settings(_settings), source("/", ".mp3"), decoder(&volumeStream, &mp3Decoder), ShootAudio(samples, loopSections, sizeof(loopSections) / sizeof(loopSections[0]), sizeof(samples) / 2) {}
 
 void Audio::Initialize() {
 
