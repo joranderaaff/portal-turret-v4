@@ -161,6 +161,18 @@ void TurretWebServer::SendOrientation() {
   socket.binaryAll(buffer, sizeof(buffer));
 }
 
+void TurretWebServer::SendLog(LogLevel level, const char *message) {
+  if (socket.count() == 0) {
+    return;
+  }
+  const size_t length = strlen(message);
+  uint8_t buffer[2 + length];
+  buffer[0] = MESSAGE_LOG;
+  buffer[1] = (uint8_t)level;
+  memcpy(buffer + 2, message, length);
+  socket.binaryAll(buffer, sizeof(buffer));
+}
+
 void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
   settings = &settingsIn;
   turret = &turretIn;

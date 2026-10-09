@@ -1,6 +1,7 @@
 #include "states/StateMachine.h"
 
 void StateMachine::Initialize(Turret &turretIn) {
+  turret = &turretIn;
   bootState.Initialize(this, turretIn);
   idleState.Initialize(this, turretIn);
   activateState.Initialize(this, turretIn);
@@ -20,6 +21,7 @@ void StateMachine::GoToState(StateId nextStateId) {
   currentState = GetState(nextStateId);
 
   if (currentState) {
+    turret->logger.Info("State %d", (int)nextStateId);
     currentState->OnActivate();
   }
 }

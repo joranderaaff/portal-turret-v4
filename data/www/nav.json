@@ -1,0 +1,4 @@
+[
+  { "label": "Home", "href": "index.html" },
+  { "label": "Settings", "href": "settings.html" }
+]

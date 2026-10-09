@@ -7,25 +7,37 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main>
-    <h1>Portal Turret</h1>
-    <canvas id="radar" width="640" height="340"></canvas>
-    <div class="vectors">
-      <canvas id="vector-xz" class="vector" data-label="X / Z" data-h="0" data-v="2" data-color="#ffd54f"></canvas>
-      <canvas id="vector-yz" class="vector" data-label="Y / Z" data-h="1" data-v="2" data-color="#4dd0e1"></canvas>
+  <header id="site-nav"><span class="brand">Portal Turret</span></header>
+  <main class="wide">
+    <div class="columns">
+      <section class="column log-column" aria-label="Turret messages">
+        <div class="log-header">
+          <h2>Messages</h2>
+          <button type="button" id="log-clear">Clear</button>
+        </div>
+        <div id="log" role="log" aria-live="polite"></div>
+        <div id="connection" role="status">Connecting…</div>
+      </section>
+      <section class="column graph-column" aria-label="Sensors">
+        <canvas id="radar" width="640" height="340"></canvas>
+        <div class="vectors">
+          <canvas id="vector-xz" class="vector" data-label="X / Z" data-h="0" data-v="2" data-color="#ffd54f"></canvas>
+          <canvas id="vector-yz" class="vector" data-label="Y / Z" data-h="1" data-v="2" data-color="#4dd0e1"></canvas>
+        </div>
+        <div class="graphs">
+          <canvas id="graph-x" class="graph" data-min="-20" data-max="20" data-color="#ef5350"></canvas>
+          <canvas id="graph-smooth-x" class="graph smooth" data-label="X smooth" data-min="-20" data-max="20" data-color="#ef5350"></canvas>
+          <canvas id="graph-y" class="graph" data-min="-20" data-max="20" data-color="#66bb6a"></canvas>
+          <canvas id="graph-smooth-y" class="graph smooth" data-label="Y smooth" data-min="-20" data-max="20" data-color="#66bb6a"></canvas>
+          <canvas id="graph-z" class="graph" data-min="-1" data-max="12" data-color="#42a5f5"></canvas>
+          <canvas id="graph-smooth-z" class="graph smooth" data-label="Z smooth" data-min="-1" data-max="12" data-color="#42a5f5"></canvas>
+          <canvas id="graph-roll" class="graph" data-color="#ffa726" data-min="-180" data-max="180"></canvas>
+          <canvas id="graph-pitch" class="graph" data-color="#ab47bc" data-min="-90" data-max="90"></canvas>
+        </div>
+      </section>
     </div>
-    <div class="graphs">
-      <canvas id="graph-x" class="graph" data-min="-20" data-max="20" data-color="#ef5350"></canvas>
-      <canvas id="graph-smooth-x" class="graph smooth" data-label="X smooth" data-min="-20" data-max="20" data-color="#ef5350"></canvas>
-      <canvas id="graph-y" class="graph" data-min="-20" data-max="20" data-color="#66bb6a"></canvas>
-      <canvas id="graph-smooth-y" class="graph smooth" data-label="Y smooth" data-min="-20" data-max="20" data-color="#66bb6a"></canvas>
-      <canvas id="graph-z" class="graph" data-min="-1" data-max="12" data-color="#42a5f5"></canvas>
-      <canvas id="graph-smooth-z" class="graph smooth" data-label="Z smooth" data-min="-1" data-max="12" data-color="#42a5f5"></canvas>
-      <canvas id="graph-roll" class="graph" data-color="#ffa726" data-min="-180" data-max="180"></canvas>
-      <canvas id="graph-pitch" class="graph" data-color="#ab47bc" data-min="-90" data-max="90"></canvas>
-    </div>
-    <div id="connection" role="status">Connecting…</div>
-    <p><a href="settings.html">Settings</a></p>  </main>
+  </main>
+  <script src="nav.js"></script>
   <script src="index.js"></script>
 </body>
 </html>

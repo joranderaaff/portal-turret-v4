@@ -3,6 +3,7 @@
 const MESSAGE_RADAR = 0x01;
 const MESSAGE_MOTION = 0x02;
 const MESSAGE_ORIENTATION = 0x03;
+const MESSAGE_LOG = 0x05;
 
 // Radar: sensor sits at the bottom-center of the canvas, forward is up.
 // Positions are in mm.
@@ -239,9 +240,41 @@ function updateVectors(values) {
   vectors.forEach(drawVector);
 }
 
+// Log panel. Levels match LogLevel in src/web/Log.h.
+const LEVEL_CLASSES = ['log', 'warning', 'error'];
+const LOG_MAX_ENTRIES = 500;
+const logPanel = document.getElementById('log');
+const textDecoder = new TextDecoder();
+
+function addLog(level, text) {
+  // Only follow new messages while the user hasn't scrolled up to read.
+  const atBottom = logPanel.scrollHeight - logPanel.scrollTop - logPanel.clientHeight < 8;
+  const entry = document.createElement('div');
+  entry.className = 'entry ' + (LEVEL_CLASSES[level] || 'log');
+  const time = document.createElement('span');
+  time.className = 'time';
+  time.textContent = new Date().toLocaleTimeString();
+  entry.appendChild(time);
+  entry.appendChild(document.createTextNode(text));
+  logPanel.appendChild(entry);
+  while (logPanel.childElementCount > LOG_MAX_ENTRIES) {
+    logPanel.removeChild(logPanel.firstChild);
+  }
+  if (atBottom) {
+    logPanel.scrollTop = logPanel.scrollHeight;
+  }
+}
+
+document.getElementById('log-clear').addEventListener('click', function () {
+  logPanel.textContent = '';
+});
+
 function onMessage(event) {
   const view = new DataView(event.data);
   switch (view.getUint8(0)) {
+    case MESSAGE_LOG:
+      addLog(view.getUint8(1), textDecoder.decode(new Uint8Array(event.data, 2)));
+      break;
     case MESSAGE_RADAR:
       targets = parseRadar(view);
       draw();
@@ -275,6 +308,9 @@ vectors.forEach(drawVector);
 let fakeSmooth = [0, 0, 9.8];
 if (isLocalTest) {
   connection.textContent = 'Test mode (fake data)';
+  addLog(0, 'Test log message');
+  addLog(1, 'Test warning message');
+  addLog(2, 'Test error message');
   // Offset sine waves per axis; z rides around 1 g like a resting sensor.
   setInterval(function () {
     const t = Date.now() / 1000;

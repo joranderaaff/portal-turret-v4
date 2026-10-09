@@ -13,7 +13,6 @@
 body {
   font-family: sans-serif;
   margin: 0;
-  padding: 16px;
   background: #fff;
   color: #222;
 }
@@ -21,6 +20,110 @@ body {
 main {
   max-width: 480px;
   margin: 0 auto;
+  padding: 16px;
+}
+
+main.wide {
+  max-width: 1200px;
+}
+
+/* Shared navigation header, filled from nav.json by nav.js. */
+#site-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  padding: 10px 16px;
+  background: #14181d;
+  color: #fff;
+}
+
+#site-nav .brand {
+  font-weight: bold;
+}
+
+#site-nav nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+#site-nav a {
+  color: #bbb;
+  text-decoration: none;
+  padding: 4px 0;
+  border-bottom: 2px solid transparent;
+}
+
+#site-nav a:hover { color: #fff; }
+#site-nav a.active {
+  color: #fff;
+  border-bottom-color: #ffd54f;
+}
+
+/* Two columns: messages left, graphs right. Stacks on narrow screens. */
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, var(--graph-width));
+  gap: 16px;
+  align-items: start;
+}
+
+.column {
+  min-width: 0;
+}
+
+.log-column {
+  position: sticky;
+  top: 8px;
+}
+
+.log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.log-header h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+#log {
+  height: 70vh;
+  overflow-y: auto;
+  padding: 8px;
+  background: var(--graph-background);
+  color: #fff;
+  font-family: monospace;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+#log .entry { padding: 1px 0; }
+#log .time { color: #777; margin-right: 6px; }
+#log .log { color: #fff; }
+#log .warning { color: #ffd54f; }
+#log .error { color: #ef5350; }
+
+#connection {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+@media (max-width: 800px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .log-column {
+    position: static;
+  }
+  #log {
+    height: 35vh;
+  }
 }
 
 h1 {
@@ -79,8 +182,15 @@ button {
 .vectors {
   display: flex;
   gap: var(--graph-gap);
-  width: var(--graph-width);
+  max-width: var(--graph-width);
   margin-top: var(--graph-gap);
+}
+
+#radar {
+  display: block;
+  width: 100%;
+  max-width: var(--graph-width);
+  height: auto;
 }
 
 canvas.vector {
@@ -100,7 +210,8 @@ canvas.vector {
 
 canvas.graph {
   display: block;
-  width: var(--graph-width);
+  width: 100%;
+  max-width: var(--graph-width);
   height: var(--graph-height);
   background: var(--graph-background);
 }

@@ -9,7 +9,14 @@ enum WebSocketMessage : uint8_t {
   MESSAGE_RADAR = 0x01,
   MESSAGE_MOTION = 0x02,
   MESSAGE_ORIENTATION = 0x03,
+  // 0x04 is the gantry message.
+  MESSAGE_LOG = 0x05,
 };
+
+// Log message layout:
+//   u8  MESSAGE_LOG
+//   u8  LogLevel (0 info, 1 warning, 2 error)
+//   UTF-8 text (not terminated)
 
 // Radar message layout (little endian):
 //   u8  MESSAGE_RADAR
@@ -35,6 +42,8 @@ public:
   TurretWebServer();
   void Initialize(Turret &turret, Settings &settings);
   void Update(ulong deltaTime);
+  // Sends a finished log message to all websocket clients, see logging/Logger.h.
+  void SendLog(LogLevel level, const char *message);
   AsyncWebServer webServer;
 
 private:

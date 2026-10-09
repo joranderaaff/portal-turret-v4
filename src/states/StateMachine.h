@@ -23,6 +23,7 @@ public:
 private:
   BaseState *GetState(StateId nextStateId);
   BaseState *currentState = nullptr;
+  Turret *turret = nullptr;
 
   BootState bootState;
   IdleState idleState;

@@ -11,6 +11,7 @@ ulong prevTime;
 
 Settings settings;
 TurretWebServer server;
+Logger logger(server);
 StateMachine stateMachine;
 Audio audio(settings);
 Light light;
@@ -22,7 +23,7 @@ TargetTracker targetTracker(settings, radar);
 
 const char *ssid = "Portal Turret";
 
-Turret turret{gantry, motion, radar, audio, light, settings, targetTracker};
+Turret turret{gantry, motion, radar, audio, light, settings, targetTracker, logger};
 
 void setup() {
 
