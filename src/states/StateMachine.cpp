@@ -21,7 +21,7 @@ void StateMachine::GoToState(StateId nextStateId) {
   currentState = GetState(nextStateId);
 
   if (currentState) {
-    turret->logger.Info("State %d", (int)nextStateId);
+    //turret->logger.Info("State %d", (int)nextStateId);
     currentState->OnActivate();
   }
 }

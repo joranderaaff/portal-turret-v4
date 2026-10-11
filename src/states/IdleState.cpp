@@ -4,6 +4,7 @@
 
 void IdleState::OnActivate() {
   BaseState::OnActivate();
+  turret->logger.Info("Standby.");
 }
 
 void IdleState::Update(ulong deltaTime) {

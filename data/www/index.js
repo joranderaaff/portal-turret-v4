@@ -265,10 +265,6 @@ function addLog(level, text) {
   }
 }
 
-document.getElementById('log-clear').addEventListener('click', function () {
-  logPanel.textContent = '';
-});
-
 function onMessage(event) {
   const view = new DataView(event.data);
   switch (view.getUint8(0)) {

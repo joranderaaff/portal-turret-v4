@@ -3,6 +3,7 @@
 
 int DisengageState::runCoroutine() {
   COROUTINE_BEGIN();
+  turret->logger.Info("Sleep mode activated...");
   turret->audio.QueueAudioCommand(AudioId::Retire);
   COROUTINE_AWAIT(turret->audio.IsPlaying());
   COROUTINE_AWAIT(!turret->audio.IsPlaying());

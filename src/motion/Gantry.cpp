@@ -56,18 +56,32 @@ void Gantry::Initialize() {
 }
 
 void Gantry::SetRotationX(float angle, bool force) {
+  if (closeWingsRequested) {
+    return;
+  }
   angle = constrain(angle, -maxAngleX, maxAngleX);
   targetAngleX = 90 + (angle + angleOffsetX) * X_AXIS_GEAR_RATIO;
   servoRotateX.write(targetAngleX, force);
 }
 
 void Gantry::SetRotationZ(float angle, bool force) {
+  if (closeWingsRequested) {
+    return;
+  }
   angle = constrain(angle, -maxAngleZ, maxAngleZ);
   targetAngleZ = 90 - (angle + angleOffsetZ) * Z_AXIS_GEAR_RATIO;
   servoRotateZ.write(targetAngleZ, force);
 }
 
 void Gantry::Update(ulong deltaTime) {
+  if (closeWingsRequested) {
+    if (millis() > closeWingsTime) {
+      closeWingsRequested = false;
+      wingLeft.Close();
+      wingRight.Close();
+    }
+  }
+  
   servoRotateX.Update(deltaTime);
   servoRotateZ.Update(deltaTime);
 
@@ -81,18 +95,22 @@ void Gantry::Update(ulong deltaTime) {
   }
 }
 
-void Gantry::OpenWings() {
-  wingLeft.Open();
-  wingRight.Open();
-}
-
 Wing &Gantry::GetWingLeft() { return wingLeft; }
 
 Wing &Gantry::GetWingRight() { return wingRight; }
 
 void Gantry::CloseWings() {
+  if (closeWingsRequested) {
+    return;
+  }
   SetRotationX(0, true);
   SetRotationZ(0, true);
-  wingLeft.Close();
-  wingRight.Close();
+  closeWingsRequested = true;
+  closeWingsTime = millis() + 500;
+}
+
+void Gantry::OpenWings() {
+  wingLeft.Open();
+  wingRight.Open();
+  closeWingsRequested = false;
 }

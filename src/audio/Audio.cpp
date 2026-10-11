@@ -4,6 +4,14 @@
 #define QUEUE_SIZE 5
 
 namespace {
+// Shots are mixed into the I2S DMA queue until about this many bytes are waiting (1024 = ~23 ms)
+constexpr int SHOT_QUEUE_TARGET_BYTES = 1024;
+// Don't bother mixing smaller top-ups than this (256 = ~6 ms)
+constexpr int SHOT_MIN_WRITE_BYTES = 256;
+constexpr int BLOCKING_WRITE_TIMEOUT_MS = 100;
+// 16 bit mono: bytes the I2S peripheral consumes per microsecond
+constexpr float BYTES_PER_US = SAMPLE_RATE * 2 / 1000000.0f;
+
 const int loopSections[2]{
     774,
     5063,
@@ -32,6 +40,7 @@ void Audio::Initialize() {
   cfg.auto_clear = true;
   cfg.fixed_mclk = 0;
   i2s.begin(cfg);
+  SetWriteBlocking(true);
 
   auto vcfg = volumeStream.defaultConfig();
   vcfg.copyFrom(cfg);
@@ -112,9 +121,9 @@ void Audio::Update(ulong deltaTime) {
     }
   }
 
-  LayeredAudioId nextLayereddAudioType;
-  if (xQueueReceive(layeredAudioCommandQueue, &nextLayereddAudioType, 0)) {
-    if (nextLayereddAudioType == LayeredAudioId::Trigger) {
+  LayeredAudioId nextLayeredAudioType;
+  if (xQueueReceive(layeredAudioCommandQueue, &nextLayeredAudioType, 0)) {
+    if (nextLayeredAudioType == LayeredAudioId::Trigger) {
       ShootAudio.Trigger();
     }
   }
@@ -130,20 +139,60 @@ void Audio::Update(ulong deltaTime) {
     }
   }
 
-  int bytesAvailableForWrite = min(i2s.availableForWrite(), (int)sizeof(sampleBuffer));
-  int bytesAvailableForWriteMultOfTwo = floor(bytesAvailableForWrite / 2) * 2;
-  if (ShootAudio.IsPlaying()) {
-    ShootAudio.Read(sampleBuffer, bytesAvailableForWriteMultOfTwo);
-    size_t written = volumeStream.write(sampleBuffer, bytesAvailableForWriteMultOfTwo);
+  if (ShootAudio.IsPlaying() || pendingBytes > 0) {
+    // Non-blocking: only top up the DMA queue to a shallow fill level. Whatever is queued
+    // plays before a new shot can be heard, so a shallow queue keeps trigger latency low.
+    SetWriteBlocking(false);
+
+    // i2s.availableForWrite() can't be used for the fill level: the driver counts the silence it
+    // auto-clears as "sent" and never resyncs, so after idle time it reports the queue as empty.
+    // Estimate the fill from what was accepted and how much has played since (22050 Hz, 16 bit).
+    ulong now = micros();
+    queuedBytes = max(0.0f, queuedBytes - (now - lastQueueUpdateUs) * BYTES_PER_US);
+    lastQueueUpdateUs = now;
+
+    if (pendingBytes == 0) {
+      int len = min((int)(SHOT_QUEUE_TARGET_BYTES - queuedBytes), (int)sizeof(sampleBuffer)) & ~1;
+      if (len >= SHOT_MIN_WRITE_BYTES) {
+        ShootAudio.Read(sampleBuffer, len);
+        // First attempt goes through the volume stream, which scales the buffer in place
+        size_t written = volumeStream.write(sampleBuffer, len);
+        queuedBytes += written;
+        pendingBytes = len - written;
+        if (pendingBytes > 0) {
+          memmove(sampleBuffer, sampleBuffer + written, pendingBytes);
+        }
+      }
+    } else {
+      // The queue didn't take everything: retry the rest (already scaled, so skip the volume stream)
+      size_t written = i2s.write(sampleBuffer, pendingBytes);
+      queuedBytes += written;
+      pendingBytes -= written;
+      if (pendingBytes > 0) {
+        memmove(sampleBuffer, sampleBuffer + written, pendingBytes);
+      }
+    }
   } else if (isPlaying) {
+    // The decoder writes chunks of unknown size and can't handle a partial write
+    SetWriteBlocking(true);
     if (!copier.copy()) {
       decoder.end();
       isPlaying = false;
     }
   } else if (currentLoopedAudio && currentLoopedAudio->IsPlaying()) {
-    currentLoopedAudio->Read(sampleBuffer, bytesAvailableForWriteMultOfTwo);
-    volumeStream.write(sampleBuffer, bytesAvailableForWriteMultOfTwo);
+    SetWriteBlocking(true);
+    int len = min(i2s.availableForWrite(), (int)sizeof(sampleBuffer)) & ~1;
+    currentLoopedAudio->Read(sampleBuffer, len);
+    volumeStream.write(sampleBuffer, len);
   }
+}
+
+void Audio::SetWriteBlocking(bool blocking) {
+  if (blocking == writeBlocking) {
+    return;
+  }
+  writeBlocking = blocking;
+  static_cast<I2SDriver *>(i2s.driver())->setWaitTimeWriteMs(blocking ? BLOCKING_WRITE_TIMEOUT_MS : 0);
 }
 
 void Audio::AudioTask(void *arg) {

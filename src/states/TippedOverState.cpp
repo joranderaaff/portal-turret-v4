@@ -3,13 +3,16 @@
 
 int TippedOverState::runCoroutine() {
   COROUTINE_BEGIN();
+  turret->logger.Error("Operation error!");
+  turret->logger.Error("Abort! Abort! Abort!");
   turret->audio.QueueAudioCommand(AudioId::Tipped);
   COROUTINE_AWAIT(turret->audio.IsPlaying());
   COROUTINE_AWAIT(!turret->audio.IsPlaying());
   turret->gantry.CloseWings();
   COROUTINE_AWAIT(!turret->gantry.GetWingLeft().IsOpen() && !turret->gantry.GetWingRight().IsOpen());
 
-  eyeBrightness= 255;
+  turret->logger.Error("Power loss detected!");
+  eyeBrightness = 255;
   while (eyeBrightness > -50) {
     uint8_t noise = inoise8(millis() * 5);
     noise = scale8(noise, 50);
@@ -20,6 +23,8 @@ int TippedOverState::runCoroutine() {
     COROUTINE_DELAY(6); // 255+50 to 0 in about 2 seconds is 6ms per tick
   }
 
+  turret->logger.Info("Situation stabilized. Rebooting...");
+  
   COROUTINE_AWAIT(turret->gantry.IsAtRest());
 
   eyeBrightness = 0;

@@ -49,6 +49,14 @@ private:
   QueueHandle_t layeredAudioCommandQueue = NULL;
 
   volatile bool isPlaying = false;
+  // Shot path bookkeeping: estimated bytes waiting in the I2S DMA queue, and a mixed chunk the
+  // queue hasn't fully accepted yet
+  float queuedBytes = 0;
+  ulong lastQueueUpdateUs = 0;
+  int pendingBytes = 0;
+  // Starts false so the first SetWriteBlocking(true) in Initialize applies it to the driver
+  bool writeBlocking = false;
+  void SetWriteBlocking(bool blocking);
 
   static void AudioTask(void *arg);
   void Update(ulong deltaTime);

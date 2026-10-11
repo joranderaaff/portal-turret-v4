@@ -3,11 +3,11 @@
 #include "Arduino.h"
 #include "Wing.h"
 #include "helpers/Math.h"
-#include "pins.h"
 #include "light/Light.h"
+#include "motion/IntertiaServo.h"
+#include "pins.h"
 #include "sensors/ADXL.h"
 #include "settings/Settings.h"
-#include "motion/IntertiaServo.h"
 
 class Gantry {
 public:
@@ -26,6 +26,9 @@ public:
   bool IsAtRest();
 
 private:
+  ulong closeWingsTime = 0;
+  bool closeWingsRequested = false;
+  
   float X_AXIS_GEAR_RATIO = 75.0 / 17.0;
   float Z_AXIS_GEAR_RATIO = 30.0 / 15.0;
   float angleOffsetX = 0;
@@ -33,13 +36,12 @@ private:
   float maxAngleX = 90;
   float maxAngleZ = 90;
 
-  
   float currentAngleX;
   float targetAngleX;
-  
+
   float currentAngleZ;
   float targetAngleZ;
-  
+
   bool enableTiltShutdown = false;
 
   Wing wingLeft;

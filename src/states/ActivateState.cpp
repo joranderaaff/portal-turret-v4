@@ -3,6 +3,7 @@
 
 int ActivateState::runCoroutine() {
   COROUTINE_BEGIN();
+  turret->logger.Info("Target acquired!");
   turret->audio.QueueAudioCommand(AudioId::Activate);
   COROUTINE_AWAIT(turret->audio.IsPlaying());
   COROUTINE_AWAIT(!turret->audio.IsPlaying());

@@ -5,6 +5,7 @@ const float pi = 3.1415;
 
 int FiringState::runCoroutine() {
   COROUTINE_BEGIN();
+  turret->logger.Info("Firing!");
   turret->gantry.GetWingLeft().GetGun().StartFiring();
   turret->gantry.GetWingRight().GetGun().StartFiring();
 
@@ -13,13 +14,15 @@ int FiringState::runCoroutine() {
   int32_t maxShootTime = settings->GetInt(SettingId::ShootMaxTime);
   shootTime = random(minShootTime, maxShootTime);
 
-  //while (turret->targetTracker.GetTargetsMovedThisFrame() > 0 || millis() < shootingStartTime + shootTime) {
+  // while (turret->targetTracker.GetTargetsMovedThisFrame() > 0 || millis() < shootingStartTime + shootTime) {
   while (millis() < shootingStartTime + shootTime) {
     RadarTarget radarTarget = turret->radar.GetTarget(0);
     float angle = atan2(radarTarget.y, radarTarget.x) / pi * 180 - 90;
     turret->gantry.SetRotationZ(angle, false);
     COROUTINE_YIELD();
   }
+
+  turret->logger.Info("Bullets dispensed.");
 
   turret->gantry.GetWingLeft().GetGun().StopFiring();
   turret->gantry.GetWingRight().GetGun().StopFiring();
@@ -28,8 +31,13 @@ int FiringState::runCoroutine() {
   COROUTINE_END();
 }
 
-bool FiringState::CheckInterrupt(StateId& next) {
-  return InterruptForOrientation(next);
+bool FiringState::CheckInterrupt(StateId &next) {
+  bool interrupt = InterruptForOrientation(next);
+  if (interrupt) {
+    turret->gantry.GetWingLeft().GetGun().StopFiring();
+    turret->gantry.GetWingRight().GetGun().StopFiring();
+  }
+  return
 }
 
 void FiringState::OnRoutineDone() {

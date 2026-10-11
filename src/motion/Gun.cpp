@@ -22,12 +22,12 @@ void Gun::Initialize() {
 void Gun::Update(ulong deltaTime) {
   float shotBrightnessEnvelope = 0.0f;
   if (firing) {
-    if (barrelHeatupDuration == 1.0f) {
+    if (barrelHeatupDuration == 0.0f) {
       barrelHeat = 1.0f;
     } else {
       barrelHeat += deltaTime / barrelHeatupDuration;
     }
-    uint phaseOffset = servoPin == PIN_GUN_LEFT ? 0 : shotDuration >> 2;
+    uint phaseOffset = servoPin == PIN_GUN_LEFT ? 0 : shotDuration / 2;
 
     uint prevShotIndex = (firingTime + phaseOffset) / shotDuration;
     firingTime += deltaTime;
@@ -35,7 +35,8 @@ void Gun::Update(ulong deltaTime) {
 
     uint currentShotPhase = (firingTime + phaseOffset) % shotDuration;
 
-    if(shotIndex > prevShotIndex) {
+    if (shotIndex > prevShotIndex) {
+      Serial.println(millis());
       audio.QueueLayeredAudioCommand(LayeredAudioId::Trigger);
     }
 

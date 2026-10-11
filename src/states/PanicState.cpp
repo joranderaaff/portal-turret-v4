@@ -3,6 +3,7 @@
 
 int PanicState::runCoroutine() {
   COROUTINE_BEGIN();
+  turret->logger.Error("Abnormal shift in gravity detected!");
   isPanicking = true;
 
   turret->audio.QueueLoopedAudioCommand(AudioLoopId::None);
