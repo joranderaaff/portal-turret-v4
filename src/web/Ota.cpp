@@ -1,4 +1,5 @@
 #include "Ota.h"
+#include <LittleFS.h>
 #include <Update.h>
 
 namespace {
@@ -24,8 +25,16 @@ void Ota::Initialize(AsyncWebServer &server) {
       [](AsyncWebServerRequest *request, String filename, size_t index,
          uint8_t *data, size_t len, bool final) {
         if (index == 0) {
-          Serial.printf("OTA start: %s\n", filename.c_str());
-          if (!::Update.begin(UPDATE_SIZE_UNKNOWN)) {
+          // A LittleFS image (?target=fs, or PlatformIO's littlefs.bin) goes to the
+          // filesystem partition instead of the firmware.
+          const bool isFilesystem = (request->hasParam("target") &&
+                                     request->getParam("target")->value() == "fs") ||
+                                    filename.endsWith("littlefs.bin");
+          Serial.printf("OTA start (%s): %s\n", isFilesystem ? "filesystem" : "firmware", filename.c_str());
+          if (isFilesystem) {
+            LittleFS.end();
+          }
+          if (!::Update.begin(UPDATE_SIZE_UNKNOWN, isFilesystem ? U_SPIFFS : U_FLASH)) {
             ::Update.printError(Serial);
             return;
           }

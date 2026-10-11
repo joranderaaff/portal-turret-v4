@@ -6,6 +6,8 @@
 // Over-the-air firmware upload over the existing web server.
 // POST the firmware.bin to /update as multipart form data, e.g.
 //   curl -F "firmware=@.pio/build/lolin_s3_mini/firmware.bin" http://192.168.4.1/update
+// A LittleFS image is flashed to the filesystem partition instead, selected by
+// ?target=fs or by the uploaded file being named littlefs.bin.
 class Ota {
 public:
   void Initialize(AsyncWebServer &server);

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&display=swap"
+    rel="stylesheet">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WiFi Setup</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header id="site-nav"><span class="brand"><img src="apreture_logo.png" alt="Portal Turret"></span></header>
+  <main>
+    <h1>WiFi Setup</h1>
+    <form id="wifi-form">
+      <div id="networks" class="networks">Scanning…</div>
+      <label class="network">
+        <input type="radio" name="network" value="" id="network-manual">
+        <span>Other network…</span>
+      </label>
+      <input type="text" id="manual-ssid" placeholder="Network name" maxlength="32" autocapitalize="none"
+        autocomplete="off" hidden>
+      <div class="field">
+        <label for="wifi-password">Password</label>
+        <input type="password" id="wifi-password" maxlength="63" autocomplete="new-password">
+      </div>
+      <div class="actions">
+        <button type="submit">Connect</button>
+        <button type="button" id="rescan">Rescan</button>
+      </div>
+      <span id="status" role="status"></span>
+    </form>
+  </main>
+  <div id="interlaced"></div>
+
+  <script src="nav.js"></script>
+  <script src="wifi.js"></script>
+</body>
+
+</html>

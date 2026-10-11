@@ -179,6 +179,7 @@ h1 {
 }
 
 .field input[type="text"],
+.field input[type="password"],
 .field input[type="number"] {
   padding: 6px 8px;
   font-size: 1rem;
@@ -196,6 +197,44 @@ h1 {
   grid-column: 1 / -1;
   font-size: 0.85rem;
   color: #666;
+}
+
+/* WiFi setup page: one row per network. */
+.network {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 4px;
+  border-bottom: 1px solid #2a313a;
+  cursor: pointer;
+}
+
+.network .hint {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: #888;
+}
+
+#manual-ssid {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  margin: 8px 0;
+  font-size: 1rem;
+  border-radius: 4px;
+}
+
+#wifi-form .field {
+  margin-top: 16px;
+}
+
+#wifi-form .field input {
+  grid-column: 1 / -1;
+}
+
+#wifi-form #status {
+  display: block;
+  line-height: 1.5;
 }
 
 button {

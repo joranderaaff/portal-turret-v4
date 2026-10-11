@@ -41,7 +41,10 @@ enum SettingId {
   AccelerationDamping,
 
   BlockStart,
-  
+
+  WifiSsid,
+  WifiPassword,
+
   COUNT
 };
 
@@ -50,7 +53,8 @@ enum class SettingType { Int,
                          Bool,
                          Str };
 
-constexpr size_t SETTING_STRING_MAX = 32;
+// Fits a WPA2 passphrase (63 chars) plus the terminator.
+constexpr size_t SETTING_STRING_MAX = 64;
 
 union SettingValue {
   int32_t valueInt;

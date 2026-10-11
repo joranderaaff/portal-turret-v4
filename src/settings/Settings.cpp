@@ -43,6 +43,9 @@ Settings::Settings()
           
           {"AccelDamp", "Acceleration Damping", SettingType::Float, 5.0f, 1.0f, 10.0f},
           {"BlockStart", "Block Automatic Start", SettingType::Bool, false},
+
+          {"WifiSsid", "WiFi SSID", SettingType::Str, ""},
+          {"WifiPass", "WiFi Password", SettingType::Str, ""},
       },
       prefsReady(false) {}
 
@@ -261,6 +264,10 @@ bool Settings::FindId(const char *key, SettingId &outId) const {
 
 void Settings::ResetToDefaults() {
   for (int i = 0; i < SettingId::COUNT; i++) {
+    // Keep the network credentials, otherwise a reset cuts the connection.
+    if (i == SettingId::WifiSsid || i == SettingId::WifiPassword) {
+      continue;
+    }
     entries[i].value = entries[i].defaultValue;
     Persist(entries[i]);
   }

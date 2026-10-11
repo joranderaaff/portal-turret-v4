@@ -14,7 +14,11 @@
     { key: 'TestString', label: 'Test string', type: 'string', value: 'hello', default: 'turret' }
   ];
 
+  const WIFI_KEYS = ['WifiSsid', 'WifiPass'];
+  const PASSWORD_KEY = 'WifiPass';
+
   let settings = [];
+  let loadedWifi = '';
 
   function setStatus(text, cls) {
     statusEl.textContent = text;
@@ -82,7 +86,9 @@
         input.type = 'checkbox';
         break;
       case 'string':
-        input.type = 'text';
+        // The password is stored as plain text; it is only masked here.
+        input.type = setting.key === PASSWORD_KEY ? 'password' : 'text';
+        if (input.type === 'password') input.autocomplete = 'new-password';
         break;
       default:
         return null;
@@ -113,6 +119,17 @@
     return wrapper;
   }
 
+  // Changing the network only takes effect after a restart.
+  function wifiSignature() {
+    return settings
+      .filter(function (setting) { return WIFI_KEYS.indexOf(setting.key) >= 0; })
+      .map(function (setting) {
+        const input = form.elements[setting.key];
+        return input ? input.value : setting.value;
+      })
+      .join('|');
+  }
+
   function render() {
     fieldsEl.textContent = '';
     settings.forEach(function (setting) {
@@ -136,6 +153,7 @@
       .then(function (data) {
         settings = data;
         render();
+        loadedWifi = wifiSignature();
       })
       .catch(function (err) {
         fieldsEl.textContent = '';
@@ -175,7 +193,9 @@
     })
       .then(function (res) {
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        setStatus('Saved', 'ok');
+        const wifiChanged = wifiSignature() !== loadedWifi;
+        loadedWifi = wifiSignature();
+        setStatus(wifiChanged ? 'Saved. Restart the turret to apply the WiFi change' : 'Saved', 'ok');
       })
       .catch(function (err) {
         setStatus('Failed to save: ' + err.message, 'error');
