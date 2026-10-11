@@ -42,6 +42,7 @@ Settings::Settings()
           {"ShotBri", "Shot Brightness", SettingType::Int, 127, 0, 255},
           
           {"AccelDamp", "Acceleration Damping", SettingType::Float, 5.0f, 1.0f, 10.0f},
+          {"BlockStart", "Block Automatic Start", SettingType::Bool, false},
       },
       prefsReady(false) {}
 

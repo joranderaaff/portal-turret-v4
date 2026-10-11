@@ -190,6 +190,11 @@ void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
     request->send(200, "application/json", "{\"status\":\"OK\"}");
   });
 
+  webServer.on("/start", HTTP_POST, [this](AsyncWebServerRequest *request) {
+    startRequested = true;
+    request->send(200, "application/json", "{\"status\":\"OK\"}");
+  });
+
   webServer.on("/settings/reset", HTTP_POST, [this](AsyncWebServerRequest *request) {
     settings->ResetToDefaults();
     request->send(200, "application/json", "{\"status\":\"OK\"}");

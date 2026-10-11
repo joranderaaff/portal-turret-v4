@@ -37,7 +37,7 @@ bool FiringState::CheckInterrupt(StateId &next) {
     turret->gantry.GetWingLeft().GetGun().StopFiring();
     turret->gantry.GetWingRight().GetGun().StopFiring();
   }
-  return
+  return interrupt;
 }
 
 void FiringState::OnRoutineDone() {

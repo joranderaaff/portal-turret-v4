@@ -66,5 +66,8 @@ void loop() {
   targetTracker.Update(deltaTime);
   light.Update(deltaTime);
 
+  if (server.ConsumeStartRequest()) {
+    stateMachine.RequestStart();
+  }
   stateMachine.Update(deltaTime);
 }

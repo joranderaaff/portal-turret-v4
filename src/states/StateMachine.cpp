@@ -19,10 +19,17 @@ void StateMachine::GoToState(StateId nextStateId) {
   }
 
   currentState = GetState(nextStateId);
+  currentStateId = nextStateId;
 
   if (currentState) {
     //turret->logger.Info("State %d", (int)nextStateId);
     currentState->OnActivate();
+  }
+}
+
+void StateMachine::RequestStart() {
+  if (currentStateId == StateId::Idle) {
+    GoToState(StateId::Activate);
   }
 }
 

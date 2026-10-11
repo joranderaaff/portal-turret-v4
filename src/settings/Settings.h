@@ -39,6 +39,8 @@ enum SettingId {
   ShotBrightness,
   
   AccelerationDamping,
+
+  BlockStart,
   
   COUNT
 };

@@ -18,11 +18,14 @@ class StateMachine {
 public:
   void Initialize(Turret &turret);
   void GoToState(StateId nextStateId);
+  // Starts the turret (Idle -> Activate), ignoring the BlockStart setting. No-op outside Idle.
+  void RequestStart();
   void Update(ulong deltaTime);
 
 private:
   BaseState *GetState(StateId nextStateId);
   BaseState *currentState = nullptr;
+  StateId currentStateId = StateId::Booting;
   Turret *turret = nullptr;
 
   BootState bootState;

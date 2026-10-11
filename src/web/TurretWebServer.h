@@ -1,6 +1,7 @@
 #pragma once
 
 #include "WiFi.h"
+#include <atomic>
 #include "settings/Settings.h"
 #include <ESPAsyncWebServer.h>
 #include <Turret.h>
@@ -44,6 +45,8 @@ public:
   void Update(ulong deltaTime);
   // Sends a finished log message to all websocket clients, see logging/Logger.h.
   void SendLog(LogLevel level, const char *message);
+  // True once after the web UI asked to start the turret.
+  bool ConsumeStartRequest() { return startRequested.exchange(false); }
   AsyncWebServer webServer;
 
 private:
@@ -55,4 +58,5 @@ private:
   Settings *settings;
   Turret *turret;
   ulong timeSinceRadarSend = 0;
+  std::atomic<bool> startRequested{false};
 };
