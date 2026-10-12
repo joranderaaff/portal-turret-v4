@@ -1,5 +1,7 @@
 #include "WifiManager.h"
 
+#include <ESPmDNS.h>
+
 namespace {
 
 const char *DEVICE_NAME = "portal-turret";
@@ -164,6 +166,13 @@ void WifiManager::Update(ulong deltaTime) {
   if (WiFi.status() == WL_CONNECTED) {
     connecting = false;
     Serial.printf("WiFi: connected, IP %s\n", WiFi.localIP().toString().c_str());
+    // Reachable as http://<DEVICE_NAME>.local
+    if (MDNS.begin(DEVICE_NAME)) {
+      MDNS.addService("http", "tcp", 80);
+      Serial.printf("WiFi: mDNS http://%s.local\n", DEVICE_NAME);
+    } else {
+      Serial.println("WiFi: mDNS failed to start");
+    }
     return;
   }
 
