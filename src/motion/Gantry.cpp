@@ -103,10 +103,10 @@ void Gantry::CloseWings() {
   if (closeWingsRequested) {
     return;
   }
-  SetRotationX(0, true);
-  SetRotationZ(0, true);
+  SetRotationX(0, false);
+  SetRotationZ(0, false);
   closeWingsRequested = true;
-  closeWingsTime = millis() + 500;
+  closeWingsTime = millis() + 750;
 }
 
 void Gantry::OpenWings() {
