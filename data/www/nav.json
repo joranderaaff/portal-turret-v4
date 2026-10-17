@@ -2,5 +2,6 @@
   { "label": "Home", "href": "index.html" },
   { "label": "Control", "href": "control.html" },
   { "label": "Settings", "href": "settings.html" },
-  { "label": "WiFi", "href": "wifi.html" }
+  { "label": "WiFi", "href": "wifi.html" },
+  { "label": "Diagnose", "href": "diagnose.html" }
 ]

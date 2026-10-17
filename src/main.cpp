@@ -69,5 +69,9 @@ void loop() {
   if (server.ConsumeStartRequest()) {
     stateMachine.RequestStart();
   }
+  DiagnoseCommand diagnoseCommand;
+  while (server.ConsumeDiagnoseCommand(diagnoseCommand)) {
+    stateMachine.RequestDiagnose(diagnoseCommand);
+  }
   stateMachine.Update(deltaTime);
 }

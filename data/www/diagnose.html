@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&display=swap"
+    rel="stylesheet">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagnose</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header id="site-nav"><span class="brand"><img src="apreture_logo.png" alt="Portal Turret"></span></header>
+  <main>
+    <h1>Diagnose</h1>
+    <p class="hint">Any action here stops all automatic behaviour. Power cycle the turret to reset it.</p>
+    <span id="status" role="status"></span>
+
+    <h2>Servos</h2>
+    <p class="hint">Raw angle 0-180, no gear ratio, offset or limit. Wing servos rotate continuously: 90 is stop.</p>
+    <div id="servos"></div>
+
+    <h2>LEDs</h2>
+    <div class="actions">
+      <button type="button" id="led-test">Test LEDs</button>
+    </div>
+
+    <h2>Audio</h2>
+    <form id="audio-form" class="field">
+      <label for="audio-type">Sound</label>
+      <select id="audio-type"></select>
+      <button type="submit">Play</button>
+    </form>
+  </main>
+  <div id="interlaced"></div>
+
+  <script src="nav.js"></script>
+  <script src="diagnose.js"></script>
+</body>
+
+</html>

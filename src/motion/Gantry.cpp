@@ -109,6 +109,38 @@ void Gantry::CloseWings() {
   closeWingsTime = millis() + 750;
 }
 
+void Gantry::Halt() {
+  closeWingsRequested = false;
+  servoRotateX.Stop();
+  servoRotateZ.Stop();
+  wingLeft.Halt();
+  wingRight.Halt();
+}
+
+void Gantry::SetServoRaw(GantryServo servo, int angle) {
+  angle = constrain(angle, 0, 180);
+  switch (servo) {
+  case GantryServo::RotateX:
+    servoRotateX.write(angle, true);
+    break;
+  case GantryServo::RotateZ:
+    servoRotateZ.write(angle, true);
+    break;
+  case GantryServo::WingLeft:
+    wingLeft.SetRaw(angle);
+    break;
+  case GantryServo::WingRight:
+    wingRight.SetRaw(angle);
+    break;
+  case GantryServo::GunLeft:
+    wingLeft.GetGun().SetRaw(angle);
+    break;
+  case GantryServo::GunRight:
+    wingRight.GetGun().SetRaw(angle);
+    break;
+  }
+}
+
 void Gantry::OpenWings() {
   wingLeft.Open();
   wingRight.Open();

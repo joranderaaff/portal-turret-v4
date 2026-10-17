@@ -12,6 +12,10 @@ public:
   void Open();
   void Close();
   void Update(ulong deltaTime);
+  // Stops any movement and the gun, leaving the wing where it is.
+  void Halt();
+  // Writes the servo directly (0..180), cancelling any open/close movement.
+  void SetRaw(int angle);
   bool IsOpen();
   bool IsClosing();
   Gun &GetGun();

@@ -20,6 +20,8 @@ public:
   void GoToState(StateId nextStateId);
   // Starts the turret (Idle -> Activate), ignoring the BlockStart setting. No-op outside Idle.
   void RequestStart();
+  // Runs a diagnose action. Switches to the manual state first, which stops all automatic behaviour.
+  void RequestDiagnose(const DiagnoseCommand &command);
   void Update(ulong deltaTime);
 
 private:

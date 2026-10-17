@@ -88,6 +88,11 @@ void Gun::StartFiring() {
   audio.QueueLayeredAudioCommand(LayeredAudioId::Trigger);
 }
 
+void Gun::SetRaw(int angle) {
+  firing = false;
+  servo.write(angle);
+}
+
 void Gun::StopFiring() {
   firing = false;
   if (servoPin == PIN_GUN_LEFT) {

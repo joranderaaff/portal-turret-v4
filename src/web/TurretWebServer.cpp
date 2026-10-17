@@ -59,6 +59,37 @@ bool ParseBool(const char *text) {
          strcmp(text, "1") == 0;
 }
 
+struct NamedId {
+  const char *name;
+  int id;
+};
+
+const NamedId SERVOS[] = {
+    {"rotate_x", (int)GantryServo::RotateX},   {"rotate_z", (int)GantryServo::RotateZ},
+    {"wing_left", (int)GantryServo::WingLeft}, {"wing_right", (int)GantryServo::WingRight},
+    {"gun_left", (int)GantryServo::GunLeft},   {"gun_right", (int)GantryServo::GunRight},
+};
+
+const NamedId AUDIO[] = {
+    {"activate", (int)AudioId::Activate}, {"searching", (int)AudioId::Searching},
+    {"pickup", (int)AudioId::Pickup},     {"tipped", (int)AudioId::Tipped},
+    {"retire", (int)AudioId::Retire},     {"alarm", (int)AudioId::Alarm},
+};
+
+// Looks up the id for a POST parameter holding one of the names, -1 if missing or unknown.
+template <size_t N> int FindId(AsyncWebServerRequest *request, const char *param, const NamedId (&table)[N]) {
+  if (!request->hasParam(param, true)) {
+    return -1;
+  }
+  const String name = request->getParam(param, true)->value();
+  for (const NamedId &entry : table) {
+    if (name == entry.name) {
+      return entry.id;
+    }
+  }
+  return -1;
+}
+
 } // namespace
 
 String ToJson(Settings *settings) {
@@ -173,9 +204,18 @@ void TurretWebServer::SendLog(LogLevel level, const char *message) {
   socket.binaryAll(buffer, sizeof(buffer));
 }
 
+void TurretWebServer::QueueDiagnose(AsyncWebServerRequest *request, const DiagnoseCommand &command) {
+  if (xQueueSend(diagnoseQueue, &command, 0) != pdTRUE) {
+    request->send(503, "application/json", "{\"status\":\"BUSY\"}");
+    return;
+  }
+  request->send(200, "application/json", "{\"status\":\"OK\"}");
+}
+
 void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
   settings = &settingsIn;
   turret = &turretIn;
+  diagnoseQueue = xQueueCreate(8, sizeof(DiagnoseCommand));
 
   webServer.addHandler(&socket);
 
@@ -193,6 +233,34 @@ void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
   webServer.on("/start", HTTP_POST, [this](AsyncWebServerRequest *request) {
     startRequested = true;
     request->send(200, "application/json", "{\"status\":\"OK\"}");
+  });
+
+  // Diagnose actions. The main loop runs them and switches the turret to manual mode.
+  webServer.on("/diagnose/servo", HTTP_POST, [this](AsyncWebServerRequest *request) {
+    const int id = FindId(request, "servo", SERVOS);
+    if (id < 0 || !request->hasParam("value", true)) {
+      request->send(400, "application/json", "{\"status\":\"BAD_REQUEST\"}");
+      return;
+    }
+    const int value = request->getParam("value", true)->value().toInt();
+    if (value < 0 || value > 180) {
+      request->send(400, "application/json", "{\"status\":\"BAD_REQUEST\"}");
+      return;
+    }
+    QueueDiagnose(request, {DiagnoseCommandType::SetServo, id, value});
+  });
+
+  webServer.on("/diagnose/leds", HTTP_POST, [this](AsyncWebServerRequest *request) {
+    QueueDiagnose(request, {DiagnoseCommandType::LedTest, 0, 0});
+  });
+
+  webServer.on("/diagnose/audio", HTTP_POST, [this](AsyncWebServerRequest *request) {
+    const int id = FindId(request, "audio", AUDIO);
+    if (id < 0) {
+      request->send(400, "application/json", "{\"status\":\"BAD_REQUEST\"}");
+      return;
+    }
+    QueueDiagnose(request, {DiagnoseCommandType::PlayAudio, id, 0});
   });
 
   webServer.on("/settings/reset", HTTP_POST, [this](AsyncWebServerRequest *request) {

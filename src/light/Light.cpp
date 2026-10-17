@@ -28,7 +28,17 @@ void Light::SetEyeColor(CRGB color) {
   fill_solid(centerLeds, 9, color);
 }
 
+void Light::SetOverrideColor(CRGB color) {
+  overrideActive = true;
+  overrideColor = color;
+}
+
 void Light::Update(ulong deltaTime) {
+  if (overrideActive) {
+    fill_solid(centerLeds, 9, overrideColor);
+    fill_solid(leftLeds, 2, overrideColor);
+    fill_solid(rightLeds, 2, overrideColor);
+  }
   std::swap(centerLeds[8].r, centerLeds[8].g);
   FastLED.show();
   std::swap(centerLeds[8].r, centerLeds[8].g);

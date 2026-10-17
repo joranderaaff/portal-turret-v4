@@ -9,6 +9,16 @@
 #include "sensors/ADXL.h"
 #include "settings/Settings.h"
 
+// Every servo in the turret, for raw access from the diagnose page.
+enum class GantryServo {
+  RotateX,
+  RotateZ,
+  WingLeft,
+  WingRight,
+  GunLeft,
+  GunRight
+};
+
 class Gantry {
 public:
   Gantry(Settings &settings, Light &light, Audio &audio, ADXL &motion);
@@ -18,6 +28,10 @@ public:
   void SetRotationZ(float angle, bool force);
   void OpenWings();
   void CloseWings();
+  // Stops all movement and firing, leaving everything where it is.
+  void Halt();
+  // Writes a servo directly (0..180), bypassing gear ratios, offsets and limits.
+  void SetServoRaw(GantryServo servo, int angle);
   Wing &GetWingLeft();
   Wing &GetWingRight();
   // Level checks on the smoothed acceleration (no hysteresis yet).

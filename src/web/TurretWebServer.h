@@ -5,6 +5,7 @@
 #include "settings/Settings.h"
 #include <ESPAsyncWebServer.h>
 #include <Turret.h>
+#include "states/DiagnoseCommand.h"
 
 enum WebSocketMessage : uint8_t {
   MESSAGE_RADAR = 0x01,
@@ -47,16 +48,20 @@ public:
   void SendLog(LogLevel level, const char *message);
   // True once after the web UI asked to start the turret.
   bool ConsumeStartRequest() { return startRequested.exchange(false); }
+  // Pops the next diagnose action requested by the web UI, if any.
+  bool ConsumeDiagnoseCommand(DiagnoseCommand &command) { return xQueueReceive(diagnoseQueue, &command, 0) == pdTRUE; }
   AsyncWebServer webServer;
 
 private:
   void SendRadar();
   void SendMotion();
   void SendOrientation();
+  void QueueDiagnose(AsyncWebServerRequest *request, const DiagnoseCommand &command);
 
   AsyncWebSocket socket;
   Settings *settings;
   Turret *turret;
   ulong timeSinceRadarSend = 0;
   std::atomic<bool> startRequested{false};
+  QueueHandle_t diagnoseQueue = NULL;
 };

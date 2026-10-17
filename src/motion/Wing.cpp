@@ -49,6 +49,19 @@ void Wing::Close() {
     servo.write(CENTER_ANGLE + SPEED);
 }
 
+void Wing::Halt() {
+  isOpening = false;
+  isClosing = false;
+  servo.write(CENTER_ANGLE);
+  gun.StopFiring();
+}
+
+void Wing::SetRaw(int angle) {
+  isOpening = false;
+  isClosing = false;
+  servo.write(angle);
+}
+
 Gun &Wing::GetGun() { return gun; }
 
 void Wing::Update(ulong deltaTime) {

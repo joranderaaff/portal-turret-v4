@@ -16,6 +16,8 @@ public:
   void Retract();
   void StartFiring();
   void StopFiring();
+  // Writes the servo directly (0..180), stopping any firing animation.
+  void SetRaw(int angle);
   void Update(ulong deltaTime);
 
 private:

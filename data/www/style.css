@@ -29,7 +29,7 @@ body {
   color: var(--text-color);
 }
 
-input, button {
+input, button, select {
   font-family: "Press Start 2P", system-ui;
   font-weight: 400;
   font-style: normal;
@@ -166,6 +166,11 @@ h1 {
   margin: 0 0 16px;
 }
 
+h2 {
+  font-size: 1rem;
+  margin: 24px 0 12px;
+}
+
 .field {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -180,11 +185,16 @@ h1 {
 
 .field input[type="text"],
 .field input[type="password"],
-.field input[type="number"] {
+.field input[type="number"],
+.field select {
   padding: 6px 8px;
   font-size: 1rem;
   border: 2px solid #aaa;
   border-radius: 4px;
+}
+
+select option {
+  color: black;
 }
 
 .field input[type="checkbox"] {

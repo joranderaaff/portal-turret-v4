@@ -18,6 +18,11 @@ void InertiaServo::write(int angle, bool instant) {
   }
 }
 
+void InertiaServo::Stop() {
+  targetAngle = currentAngle;
+  velocity = 0.0f;
+}
+
 void InertiaServo::Update(ulong dt) {
   if (dt <= 0) {
     return;

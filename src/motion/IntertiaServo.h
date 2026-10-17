@@ -7,6 +7,8 @@ public:
   void write(int angle);
   void write(int angle, bool instant);
   void Update(ulong deltaTime);
+  // Stops where it is, dropping the current target.
+  void Stop();
   float moveVelocityTowardZero(float velocity, float deceleration, float dt);
 
 private:

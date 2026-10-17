@@ -33,6 +33,13 @@ void StateMachine::RequestStart() {
   }
 }
 
+void StateMachine::RequestDiagnose(const DiagnoseCommand &command) {
+  if (currentStateId != StateId::Manual) {
+    GoToState(StateId::Manual);
+  }
+  manualState.Execute(command);
+}
+
 BaseState *StateMachine::GetState(StateId stateId) {
   switch (stateId) {
   case StateId::Booting:
