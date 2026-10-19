@@ -4,7 +4,7 @@
 
 namespace {
 
-const char *DEVICE_NAME = "portal-turret";
+const char *DEVICE_NAME = "turret";
 const ulong CONNECT_TIMEOUT_MS = 10000;
 const ulong REBOOT_DELAY_MS = 1000;
 
