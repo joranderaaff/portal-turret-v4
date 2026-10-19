@@ -2,7 +2,7 @@
 
 A Portal-style turret powered by an ESP32-S3 (Lolin S3 Mini). It detects people with a mmWave radar, opens its wings, extends its guns and tracks targets, complete with sound and lights.
 
-_Introduction and finished-turret photo go here._
+![Portal Turret](images/photo.jpg)
 
 ## Repository layout
 
