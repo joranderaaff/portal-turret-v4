@@ -49,24 +49,6 @@ Gerber files are included. Order from your favorite PCB manufacturer.
 
 Here's raw screenshots. Explicit information comes later.
 
-### Bottom
-
-<img src="images/bottom_001.png" alt="Bottom 1" width="500">
-
-<img src="images/bottom_002.png" alt="Bottom 2" width="500">
-
-### Leg
-
-<img src="images/leg_001.png" alt="Leg 1" width="500">
-
-### Gantry
-
-<img src="images/gantry_001.png" alt="Gantry 1" width="500">
-
-<img src="images/gantry_002.png" alt="Gantry 2" width="500">
-
-<img src="images/gantry_003.png" alt="Gantry 3" width="500">
-
 ### X axis
 
 <img src="images/x_axis_001.png" alt="X axis 1" width="500">
@@ -87,19 +69,23 @@ Here's raw screenshots. Explicit information comes later.
 
 <img src="images/z_axis_004.png" alt="Z axis 4" width="500">
 
+### Bottom
+
+<img src="images/bottom_001.png" alt="Bottom 1" width="500">
+
+<img src="images/bottom_002.png" alt="Bottom 2" width="500">
+
 ### Eye
 
 <img src="images/eye_001.png" alt="Eye 1" width="500">
 
-### Wings
+### Gantry
 
-<img src="images/wing_001.png" alt="Wing 1" width="500">
+<img src="images/gantry_001.png" alt="Gantry 1" width="500">
 
-<img src="images/wing_002.png" alt="Wing 2" width="500">
+<img src="images/gantry_002.png" alt="Gantry 2" width="500">
 
-<img src="images/wing_003.png" alt="Wing 3" width="500">
-
-<img src="images/wing_004.png" alt="Wing 4" width="500">
+<img src="images/gantry_003.png" alt="Gantry 3" width="500">
 
 ### Guns
 
@@ -120,6 +106,20 @@ Here's raw screenshots. Explicit information comes later.
 <img src="images/gun_008.png" alt="Gun 8" width="500">
 
 <img src="images/gun_009.png" alt="Gun 9" width="500">
+
+### Wings
+
+<img src="images/wing_001.png" alt="Wing 1" width="500">
+
+<img src="images/wing_002.png" alt="Wing 2" width="500">
+
+<img src="images/wing_003.png" alt="Wing 3" width="500">
+
+<img src="images/wing_004.png" alt="Wing 4" width="500">
+
+### Leg
+
+<img src="images/leg_001.png" alt="Leg 1" width="500">
 
 ## Firmware
 
