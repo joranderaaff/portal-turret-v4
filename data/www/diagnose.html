@@ -24,6 +24,14 @@
     <p class="hint">Raw angle 0-180, no gear ratio, offset or limit. Wing servos rotate continuously: 90 is stop.</p>
     <div id="servos"></div>
 
+    <h2>Hall sensors</h2>
+    <p class="hint">Raw ADC value, and open (at or above Gun Hall Max) or closed (at or below Gun Hall Min).</p>
+    <div id="hall">
+      <div class="hall-row"><span>Wing left</span><span id="hall-left">-</span></div>
+      <div class="hall-row"><span>Wing right</span><span id="hall-right">-</span></div>
+      <div class="hint" id="connection">Connecting…</div>
+    </div>
+
     <h2>LEDs</h2>
     <div class="actions">
       <button type="button" id="led-test">Test LEDs</button>

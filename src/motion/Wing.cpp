@@ -65,7 +65,7 @@ void Wing::SetRaw(int angle) {
 Gun &Wing::GetGun() { return gun; }
 
 void Wing::Update(ulong deltaTime) {
-  uint16_t hallValue = analogRead(hallSensorPin);
+  hallValue = analogRead(hallSensorPin);
 
   gun.Update(deltaTime);
 
@@ -96,6 +96,17 @@ void Wing::Update(ulong deltaTime) {
     servo.write(90);
     return;
   }
+}
+
+HallState Wing::GetHallState() const {
+  const uint16_t value = hallValue;
+  if (value >= settings.GetInt(SettingId::GunHallMax)) {
+    return HallState::Open;
+  }
+  if (value <= settings.GetInt(SettingId::GunHallMin)) {
+    return HallState::Closed;
+  }
+  return HallState::Between;
 }
 
 bool Wing::IsOpen() { return isOpen; }

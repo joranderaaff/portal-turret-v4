@@ -193,6 +193,12 @@ h2 {
   border-radius: 4px;
 }
 
+.hall-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
 select option {
   color: black;
 }

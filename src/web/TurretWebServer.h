@@ -13,6 +13,7 @@ enum WebSocketMessage : uint8_t {
   MESSAGE_ORIENTATION = 0x03,
   // 0x04 is the gantry message.
   MESSAGE_LOG = 0x05,
+  MESSAGE_HALL = 0x06,
 };
 
 // Log message layout:
@@ -39,6 +40,11 @@ constexpr size_t MOTION_MESSAGE_BYTES = 1 + 6 * sizeof(float);
 //   2 x f32 roll (-180..180), pitch (-90..90) in degrees
 constexpr size_t ORIENTATION_MESSAGE_BYTES = 1 + 2 * sizeof(float);
 
+// Hall message layout (little endian), sent when a value changes and at least once a second:
+//   u8  MESSAGE_HALL
+//   2 x { u16 raw ADC value, u8 HallState (0 closed, 1 between, 2 open) } for the left, then right wing
+constexpr size_t HALL_MESSAGE_BYTES = 1 + 2 * 3;
+
 class TurretWebServer {
 public:
   TurretWebServer();
@@ -56,12 +62,15 @@ private:
   void SendRadar();
   void SendMotion();
   void SendOrientation();
+  void SendHall();
   void QueueDiagnose(AsyncWebServerRequest *request, const DiagnoseCommand &command);
 
   AsyncWebSocket socket;
   Settings *settings;
   Turret *turret;
   ulong timeSinceRadarSend = 0;
+  ulong timeSinceHallSend = 0;
+  uint8_t lastHallMessage[HALL_MESSAGE_BYTES] = {};
   std::atomic<bool> startRequested{false};
   QueueHandle_t diagnoseQueue = NULL;
 };

@@ -5,6 +5,7 @@
 namespace {
 
 constexpr ulong RADAR_SEND_INTERVAL_MS = 50;
+constexpr ulong HALL_RESEND_INTERVAL_MS = 1000;
 
 const char *TypeName(SettingType type) {
   switch (type) {
@@ -127,6 +128,7 @@ void TurretWebServer::Update(ulong deltaTime) {
   socket.cleanupClients();
 
   timeSinceRadarSend += deltaTime;
+  timeSinceHallSend += deltaTime;
   if (timeSinceRadarSend < RADAR_SEND_INTERVAL_MS) {
     return;
   }
@@ -136,6 +138,7 @@ void TurretWebServer::Update(ulong deltaTime) {
     SendRadar();
     SendMotion();
     SendOrientation();
+    SendHall();
   }
 }
 
@@ -189,6 +192,26 @@ void TurretWebServer::SendOrientation() {
   const float values[2] = {turret->motion.GetRoll(), turret->motion.GetPitch()};
   memcpy(buffer + 1, values, sizeof(values));
 
+  socket.binaryAll(buffer, sizeof(buffer));
+}
+
+void TurretWebServer::SendHall() {
+  uint8_t buffer[HALL_MESSAGE_BYTES];
+  size_t offset = 0;
+  buffer[offset++] = MESSAGE_HALL;
+  for (const Wing *wing : {&turret->gantry.GetWingLeft(), &turret->gantry.GetWingRight()}) {
+    const uint16_t value = wing->GetHallValue();
+    buffer[offset++] = value & 0xFF;
+    buffer[offset++] = value >> 8;
+    buffer[offset++] = (uint8_t)wing->GetHallState();
+  }
+
+  // Only send changes, plus a slow resend so a client that just connected gets the current state.
+  if (memcmp(buffer, lastHallMessage, sizeof(buffer)) == 0 && timeSinceHallSend < HALL_RESEND_INTERVAL_MS) {
+    return;
+  }
+  memcpy(lastHallMessage, buffer, sizeof(buffer));
+  timeSinceHallSend = 0;
   socket.binaryAll(buffer, sizeof(buffer));
 }
 

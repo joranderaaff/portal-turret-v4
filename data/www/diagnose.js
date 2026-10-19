@@ -12,6 +12,9 @@
     { key: 'gun_left', label: 'Gun left' },
     { key: 'gun_right', label: 'Gun right' }
   ];
+  // Keep in sync with WebSocketMessage in src/web/TurretWebServer.h.
+  const MESSAGE_HALL = 0x06;
+  const HALL_STATES = ['Closed', 'Between', 'Open'];
   const AUDIO = [
     { key: 'activate', label: 'Activate' },
     { key: 'searching', label: 'Searching' },
@@ -45,6 +48,48 @@
       .catch(function (err) {
         setStatus('Failed: ' + err.message, 'error');
       });
+  }
+
+  const hallEls = [document.getElementById('hall-left'), document.getElementById('hall-right')];
+  const connectionEl = document.getElementById('connection');
+
+  function showHall(wing, value, state) {
+    hallEls[wing].textContent = value + ' ' + HALL_STATES[state];
+  }
+
+  function onMessage(event) {
+    const view = new DataView(event.data);
+    if (view.getUint8(0) !== MESSAGE_HALL) return;
+    for (let wing = 0; wing < 2; wing++) {
+      const offset = 1 + wing * 3;
+      showHall(wing, view.getUint16(offset, true), view.getUint8(offset + 2));
+    }
+  }
+
+  function connect() {
+    const protocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
+    const socket = new WebSocket(protocol + location.host + '/ws');
+    socket.binaryType = 'arraybuffer';
+    socket.onopen = function () { connectionEl.textContent = 'Connected'; };
+    socket.onmessage = onMessage;
+    socket.onclose = function () {
+      connectionEl.textContent = 'Disconnected, retrying…';
+      setTimeout(connect, 1000);
+    };
+  }
+
+  if (isLocalTest) {
+    connectionEl.textContent = 'Test mode (fake data)';
+    setInterval(function () {
+      const t = Date.now() / 1000;
+      const left = Math.round(2000 + 1500 * Math.sin(t));
+      const right = Math.round(2000 + 1500 * Math.sin(t + 1));
+      const state = function (v) { return v >= 2500 ? 2 : v <= 1500 ? 0 : 1; };
+      showHall(0, left, state(left));
+      showHall(1, right, state(right));
+    }, 100);
+  } else {
+    connect();
   }
 
   const servosEl = document.getElementById('servos');
