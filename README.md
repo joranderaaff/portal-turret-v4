@@ -51,75 +51,75 @@ Here's raw screenshots. Explicit information comes later.
 
 ### Bottom
 
-![Bottom 1](images/bottom_001.png)
+<img src="images/bottom_001.png" alt="Bottom 1" width="500">
 
-![Bottom 2](images/bottom_002.png)
+<img src="images/bottom_002.png" alt="Bottom 2" width="500">
 
 ### Leg
 
-![Leg 1](images/leg_001.png)
+<img src="images/leg_001.png" alt="Leg 1" width="500">
 
 ### Gantry
 
-![Gantry 1](images/gantry_001.png)
+<img src="images/gantry_001.png" alt="Gantry 1" width="500">
 
-![Gantry 2](images/gantry_002.png)
+<img src="images/gantry_002.png" alt="Gantry 2" width="500">
 
-![Gantry 3](images/gantry_003.png)
+<img src="images/gantry_003.png" alt="Gantry 3" width="500">
 
 ### X axis
 
-![X axis 1](images/x_axis_001.png)
+<img src="images/x_axis_001.png" alt="X axis 1" width="500">
 
-![X axis 2](images/x_axis_002.png)
+<img src="images/x_axis_002.png" alt="X axis 2" width="500">
 
-![X axis 3](images/x_axis_003.png)
+<img src="images/x_axis_003.png" alt="X axis 3" width="500">
 
-![X axis 4](images/x_axis_004.png)
+<img src="images/x_axis_004.png" alt="X axis 4" width="500">
 
 ### Z axis
 
-![Z axis 1](images/z_axis_001.png)
+<img src="images/z_axis_001.png" alt="Z axis 1" width="500">
 
-![Z axis 2](images/z_axis_002.png)
+<img src="images/z_axis_002.png" alt="Z axis 2" width="500">
 
-![Z axis 3](images/z_axis_003.png)
+<img src="images/z_axis_003.png" alt="Z axis 3" width="500">
 
-![Z axis 4](images/z_axis_004.png)
+<img src="images/z_axis_004.png" alt="Z axis 4" width="500">
 
 ### Eye
 
-![Eye 1](images/eye_001.png)
+<img src="images/eye_001.png" alt="Eye 1" width="500">
 
 ### Wings
 
-![Wing 1](images/wing_001.png)
+<img src="images/wing_001.png" alt="Wing 1" width="500">
 
-![Wing 2](images/wing_002.png)
+<img src="images/wing_002.png" alt="Wing 2" width="500">
 
-![Wing 3](images/wing_003.png)
+<img src="images/wing_003.png" alt="Wing 3" width="500">
 
-![Wing 4](images/wing_004.png)
+<img src="images/wing_004.png" alt="Wing 4" width="500">
 
 ### Guns
 
-![Gun 1](images/gun_001.png)
+<img src="images/gun_001.png" alt="Gun 1" width="500">
 
-![Gun 2](images/gun_002.png)
+<img src="images/gun_002.png" alt="Gun 2" width="500">
 
-![Gun 3](images/gun_003.png)
+<img src="images/gun_003.png" alt="Gun 3" width="500">
 
-![Gun 4](images/gun_004.png)
+<img src="images/gun_004.png" alt="Gun 4" width="500">
 
-![Gun 5](images/gun_005.png)
+<img src="images/gun_005.png" alt="Gun 5" width="500">
 
-![Gun 6](images/gun_006.png)
+<img src="images/gun_006.png" alt="Gun 6" width="500">
 
-![Gun 7](images/gun_007.png)
+<img src="images/gun_007.png" alt="Gun 7" width="500">
 
-![Gun 8](images/gun_008.png)
+<img src="images/gun_008.png" alt="Gun 8" width="500">
 
-![Gun 9](images/gun_009.png)
+<img src="images/gun_009.png" alt="Gun 9" width="500">
 
 ## Firmware
 
