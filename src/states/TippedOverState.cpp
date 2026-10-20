@@ -1,5 +1,6 @@
 #include "TippedOverState.h"
 #include "StateMachine.h"
+#include "FastLED.h"
 
 int TippedOverState::runCoroutine() {
   COROUTINE_BEGIN();

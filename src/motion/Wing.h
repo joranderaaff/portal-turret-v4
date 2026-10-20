@@ -18,6 +18,7 @@ public:
   void Initialize();
   void Open();
   void Close();
+  void Close(bool force);
   void Update(ulong deltaTime);
   // Stops any movement and the gun, leaving the wing where it is.
   void Halt();

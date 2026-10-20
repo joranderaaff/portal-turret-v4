@@ -1,9 +1,13 @@
 #pragma once
 
-#include "BaseState.h"
+#include "RoutineState.h"
+#include "StateId.h"
 
-class BootState : public BaseState {
+class BootState : public RoutineState {
 public:
-  void OnActivate() override;
-  void Update(ulong deltaTime) override;
+  int runCoroutine() override;
+  bool CheckInterrupt(StateId& next) override;
+
+protected:
+  void OnRoutineDone() override;
 };

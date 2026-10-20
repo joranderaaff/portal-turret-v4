@@ -35,7 +35,11 @@ void Wing::Open() {
 }
 
 void Wing::Close() {
-  if (!isOpen) {
+  Close(false);
+}
+
+void Wing::Close(bool force) {
+  if (!force && !isOpen) {
     return;
   }
   Serial.println("Closing Wing");
