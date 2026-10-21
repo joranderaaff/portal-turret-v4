@@ -74,6 +74,7 @@ Here's raw screenshots. Explicit information comes later.
 | Attach one side. | <img src="images/z_axis_002.png" alt="Z axis 2" class="step-img" width="400" height="400"> |
 | Slide a 4mm rod through the X axis. Add a 4mm shim on both sides. There is a slot in the frame where the rod should fit. | <img src="images/z_axis_003.png" alt="Z axis 3" class="step-img" width="400" height="400"> |
 | Scew on the bottom and the other side. | <img src="images/z_axis_004.png" alt="Z axis 4" class="step-img" width="400" height="400"> |
+| Use a ziptie to manage all cables. It should hold the following wires: 2 Hall sensors, 2 Wing servos, X Axis servo. | <img src="images/z_axis_005.png" alt="Z axis 4" class="step-img" width="400" height="400"> |
 
 ### Bottom
 | Notes | Images |
