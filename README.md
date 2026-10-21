@@ -1,3 +1,11 @@
+<style>
+    .step-img {
+        width: 400px;
+        height: 400px;
+        object-fit: contain;
+        background-color: #2e3440;
+    }
+</style>
 # Portal Turret v4
 
 A Portal-style turret powered by an ESP32-S3 (Lolin S3 Mini). It detects people with a mmWave radar, opens its wings, extends its guns and tracks targets, complete with sound and lights.
@@ -16,26 +24,27 @@ A Portal-style turret powered by an ESP32-S3 (Lolin S3 Mini). It detects people 
 
 ## Bill of materials
 
-Lolin Wemos S3
-LD2450 Radar Sensor
-OH49E Hall Effect Sensor - SS49E compatible
-ADXL345 Digital 3-axis Accelerometer Module
-MAX98357 Audio amp
-SN74AHCT125N 4-channel Level Converter
+- Lolin Wemos S3
+- LD2450 Radar Sensor
+- OH49E Hall Effect Sensor - SS49E compatible
+- ADXL345 Digital 3-axis Accelerometer Module
+- MAX98357 Audio amp
+- SN74AHCT125N 4-channel Level Converter
+- Small rocker switch
 
-SK6812 Digital 5050 RGB LED Ring
-4 SG90 180 servo
-2 SG90 360 servo
-5 WS2812 5mm LED
+- SK6812 Digital 5050 RGB LED Ring
+- 4 SG90 180 servo
+- 2 SG90 360 servo
+- 5 WS2812 5mm LED
 
-604ZZ Ball Bearing - 4x12x4mm
-MYT LM6LUU Linear Ball Bearing - 2 pieces (35mm length)
-4mm steel rod
-6mm steel rod
+- 604ZZ Ball Bearing - 4x12x4mm
+- MYT LM6LUU Linear Ball Bearing - 2 pieces (35mm length)
+- 4mm steel rod
+- 6mm steel rod
 
-JST PH crimp set OR JST PH headers and pre-crimped JST PH cables
-Pin headers
-2mm wood screws
+- JST PH crimp set OR JST PH headers and pre-crimped JST PH cables
+- Pin headers
+- 2mm wood screws
 
 ## 3D printing
 
@@ -51,75 +60,69 @@ Here's raw screenshots. Explicit information comes later.
 
 ### X axis
 
-<img src="images/x_axis_001.png" alt="X axis 1" width="500">
-
-<img src="images/x_axis_002.png" alt="X axis 2" width="500">
-
-<img src="images/x_axis_003.png" alt="X axis 3" width="500">
-
-<img src="images/x_axis_004.png" alt="X axis 4" width="500">
+| Notes | Images |
+| --- | --- |
+| Screw the two halves together. | <img src="images/x_axis_001.png" alt="X axis 2" class="step-img" width="400" height="400"> |
+| Insert the LM6LUU and 604ZZ bearings. Screw the gears on the two 360 servos. | <img src="images/x_axis_002.png" alt="X axis 2" class="step-img" width="400" height="400"> |
+| Solder the wires to the hall sensors. Use shrink tubing to protect the leads. Insert the hall sensors into the slots. The beveled face is the front and should point towards the space where the rack gears will slide. | <img src="images/x_axis_003.png" alt="X axis 3" class="step-img" width="400" height="400"> | 
+| Tuck the wires underneath the little lip. This should help with keeping the hall sensors in place. If they don't want to stay seated, a drop of superglue should help. | <img src="images/x_axis_004.png" alt="X axis 4" class="step-img" width="400" height="400"> | 
 
 ### Z axis
-
-<img src="images/z_axis_001.png" alt="Z axis 1" width="500">
-
-<img src="images/z_axis_002.png" alt="Z axis 2" width="500">
-
-<img src="images/z_axis_003.png" alt="Z axis 3" width="500">
-
-<img src="images/z_axis_004.png" alt="Z axis 4" width="500">
+| Notes | Images |
+| --- | --- |
+| Screw on the X Axis gear on a 180 servo. Slide it in place and use the channels to screw it down. | <img src="images/z_axis_001.png" alt="Z axis 1" class="step-img" width="400" height="400"> |
+| Attach one side. | <img src="images/z_axis_002.png" alt="Z axis 2" class="step-img" width="400" height="400"> |
+| Slide a 4mm rod through the X axis. Add a 4mm shim on both sides. There is a slot in the frame where the rod should fit. | <img src="images/z_axis_003.png" alt="Z axis 3" class="step-img" width="400" height="400"> |
+| Scew on the bottom and the other side. | <img src="images/z_axis_004.png" alt="Z axis 4" class="step-img" width="400" height="400"> |
 
 ### Bottom
-
-<img src="images/bottom_001.png" alt="Bottom 1" width="500">
-
-<img src="images/bottom_002.png" alt="Bottom 2" width="500">
+| Notes | Images |
+| --- | --- |
+| Screw the Z Axis gear on a 180 servo. Attach the servo to the Servo Mount. The USB-C board should be glued into place. If you can't get a solid connection with glue, a tiny screw with some heatshrink could be screwed through the D- slot. Make sure the screw does not short D- to ground, hence the heatshrink. | <img src="images/bottom_001.png" alt="Bottom 1" class="step-img" width="400" height="400"> |
+| The main board power wire should have the black wire soldered to the GND pad of the USB board. The red wire should slide to the bottom. Another red wire should be soldered to the 5V (Vcc) pad of the USB board. Slide those through the channels. Attach the two power wires by appropriate connectors or soldering to the switch and slide it in the bottom. Route the servo wire up through the same channels. | <img src="images/bottom_003.png" alt="Bottom 2" class="step-img" width="400" height="400"> |
+| Slide the switch in the slot on the bottom. | <img src="images/bottom_002.png" alt="Bottom 2" class="step-img" width="400" height="400"> |
+| The servo mount is attached to the bottom with 4 more screws. | <img src="images/bottom_004.png" alt="Bottom 2" class="step-img" width="400" height="400"> |
 
 ### Eye
-
-<img src="images/eye_001.png" alt="Eye 1" width="500">
+| Notes | Images |
+| --- | --- |
+|  | <img src="images/eye_001.png" alt="Eye 1" class="step-img" width="400" height="400"> |
 
 ### Gantry
 
-<img src="images/gantry_001.png" alt="Gantry 1" width="500">
-
-<img src="images/gantry_002.png" alt="Gantry 2" width="500">
-
-<img src="images/gantry_003.png" alt="Gantry 3" width="500">
+| Notes | Images |
+| --- | --- |
+|  | <img src="images/gantry_001.png" alt="Gantry 1" class="step-img" width="400" height="400"> |
+|  | <img src="images/gantry_002.png" alt="Gantry 2" class="step-img" width="400" height="400"> |
+|  | <img src="images/gantry_003.png" alt="Gantry 3" class="step-img" width="400" height="400"> |
 
 ### Guns
 
-<img src="images/gun_001.png" alt="Gun 1" width="500">
-
-<img src="images/gun_002.png" alt="Gun 2" width="500">
-
-<img src="images/gun_003.png" alt="Gun 3" width="500">
-
-<img src="images/gun_004.png" alt="Gun 4" width="500">
-
-<img src="images/gun_005.png" alt="Gun 5" width="500">
-
-<img src="images/gun_006.png" alt="Gun 6" width="500">
-
-<img src="images/gun_007.png" alt="Gun 7" width="500">
-
-<img src="images/gun_008.png" alt="Gun 8" width="500">
-
-<img src="images/gun_009.png" alt="Gun 9" width="500">
+| Notes | Images |
+| --- | --- |
+|  | <img src="images/gun_001.png" alt="Gun 1" class="step-img" width="400" height="400"> |
+|  | <img src="images/gun_002.png" alt="Gun 2" class="step-img" width="400" height="400"> |
+|  | <img src="images/gun_003.png" alt="Gun 3" class="step-img" width="400" height="400"> |
+|  | <img src="images/gun_004.png" alt="Gun 4" class="step-img" width="400" height="400"> |
+|  | <img src="images/gun_005.png" alt="Gun 5" class="step-img" width="400" height="400"> |
+|  | <img src="images/gun_006.png" alt="Gun 6" class="step-img" width="400" height="400"> |
+|  | <img src="images/gun_007.png" alt="Gun 7" class="step-img" width="400" height="400"> |
+|  | <img src="images/gun_008.png" alt="Gun 8" class="step-img" width="400" height="400"> |
+|  | <img src="images/gun_009.png" alt="Gun 9" class="step-img" width="400" height="400"> |
 
 ### Wings
 
-<img src="images/wing_001.png" alt="Wing 1" width="500">
-
-<img src="images/wing_002.png" alt="Wing 2" width="500">
-
-<img src="images/wing_003.png" alt="Wing 3" width="500">
-
-<img src="images/wing_004.png" alt="Wing 4" width="500">
+| Notes | Images |
+| --- | --- |
+|  | <img src="images/wing_001.png" alt="Wing 1" class="step-img" width="400" height="400"> |
+|  | <img src="images/wing_002.png" alt="Wing 2" class="step-img" width="400" height="400"> |
+|  | <img src="images/wing_003.png" alt="Wing 3" class="step-img" width="400" height="400"> |
+|  | <img src="images/wing_004.png" alt="Wing 4" class="step-img" width="400" height="400"> |
 
 ### Leg
-
-<img src="images/leg_001.png" alt="Leg 1" width="500">
+| Notes | Images |
+| --- | --- |
+|  | <img src="images/leg_001.png" alt="Leg 1" class="step-img" width="400" height="400"> |
 
 ## Firmware
 
