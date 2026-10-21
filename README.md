@@ -1,11 +1,3 @@
-<style>
-    .step-img {
-        width: 400px;
-        height: 400px;
-        object-fit: contain;
-        background-color: #2e3440;
-    }
-</style>
 # Portal Turret v4
 
 A Portal-style turret powered by an ESP32-S3 (Lolin S3 Mini). It detects people with a mmWave radar, opens its wings, extends its guns and tracks targets, complete with sound and lights.
