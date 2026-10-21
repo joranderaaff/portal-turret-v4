@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&display=swap"
+    rel="stylesheet">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Remote</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header id="site-nav"><span class="brand"><img src="apreture_logo.png" alt="Portal Turret"></span></header>
+  <main>
+    <h1>Remote</h1>
+    <p class="hint">Any action here stops all automatic behaviour. Power cycle the turret to reset it.</p>
+    <span id="status" role="status"></span>
+
+    <div id="joystick" aria-label="Aim joystick">
+      <div id="joystick-knob"></div>
+    </div>
+    <div class="hint" id="angles">X 0.0 Z 0.0</div>
+
+    <div class="actions remote-actions">
+      <button type="button" id="open-wings">Open wings</button>
+      <button type="button" id="close-wings">Close wings</button>
+    </div>
+    <button type="button" id="fire">Hold to fire</button>
+  </main>
+  <div id="interlaced"></div>
+
+  <script src="nav.js"></script>
+  <script src="remote.js"></script>
+</body>
+
+</html>

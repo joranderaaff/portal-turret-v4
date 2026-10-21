@@ -6,6 +6,7 @@
 #include <ESPAsyncWebServer.h>
 #include <Turret.h>
 #include "states/DiagnoseCommand.h"
+#include "states/RemoteCommand.h"
 
 enum WebSocketMessage : uint8_t {
   MESSAGE_RADAR = 0x01,
@@ -56,6 +57,8 @@ public:
   bool ConsumeStartRequest() { return startRequested.exchange(false); }
   // Pops the next diagnose action requested by the web UI, if any.
   bool ConsumeDiagnoseCommand(DiagnoseCommand &command) { return xQueueReceive(diagnoseQueue, &command, 0) == pdTRUE; }
+  // Pops the next remote control action requested by the web UI, if any.
+  bool ConsumeRemoteCommand(RemoteCommand &command) { return xQueueReceive(remoteQueue, &command, 0) == pdTRUE; }
   AsyncWebServer webServer;
 
 private:
@@ -64,6 +67,7 @@ private:
   void SendOrientation();
   void SendHall();
   void QueueDiagnose(AsyncWebServerRequest *request, const DiagnoseCommand &command);
+  void QueueRemote(AsyncWebServerRequest *request, const RemoteCommand &command);
 
   AsyncWebSocket socket;
   Settings *settings;
@@ -73,4 +77,5 @@ private:
   uint8_t lastHallMessage[HALL_MESSAGE_BYTES] = {};
   std::atomic<bool> startRequested{false};
   QueueHandle_t diagnoseQueue = NULL;
+  QueueHandle_t remoteQueue = NULL;
 };

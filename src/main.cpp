@@ -73,5 +73,9 @@ void loop() {
   while (server.ConsumeDiagnoseCommand(diagnoseCommand)) {
     stateMachine.RequestDiagnose(diagnoseCommand);
   }
+  RemoteCommand remoteCommand;
+  while (server.ConsumeRemoteCommand(remoteCommand)) {
+    stateMachine.RequestRemote(remoteCommand);
+  }
   stateMachine.Update(deltaTime);
 }

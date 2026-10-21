@@ -10,6 +10,7 @@
 #include "states/IdleState.h"
 #include "states/ManualState.h"
 #include "states/PanicState.h"
+#include "states/RemoteState.h"
 #include "states/TippedOverState.h"
 #include "states/SearchingState.h"
 #include "states/StateId.h"
@@ -22,6 +23,8 @@ public:
   void RequestStart();
   // Runs a diagnose action. Switches to the manual state first, which stops all automatic behaviour.
   void RequestDiagnose(const DiagnoseCommand &command);
+  // Runs a remote control action. Switches to the remote state first, which stops all automatic behaviour.
+  void RequestRemote(const RemoteCommand &command);
   void Update(ulong deltaTime);
 
 private:
@@ -37,6 +40,7 @@ private:
   SearchState searchState;
   DisengageState disengageState;
   ManualState manualState;
+  RemoteState remoteState;
   TippedOverState tippedOverState;
   PanicState panicState;
 };

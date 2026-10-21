@@ -235,10 +235,19 @@ void TurretWebServer::QueueDiagnose(AsyncWebServerRequest *request, const Diagno
   request->send(200, "application/json", "{\"status\":\"OK\"}");
 }
 
+void TurretWebServer::QueueRemote(AsyncWebServerRequest *request, const RemoteCommand &command) {
+  if (xQueueSend(remoteQueue, &command, 0) != pdTRUE) {
+    request->send(503, "application/json", "{\"status\":\"BUSY\"}");
+    return;
+  }
+  request->send(200, "application/json", "{\"status\":\"OK\"}");
+}
+
 void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
   settings = &settingsIn;
   turret = &turretIn;
   diagnoseQueue = xQueueCreate(8, sizeof(DiagnoseCommand));
+  remoteQueue = xQueueCreate(8, sizeof(RemoteCommand));
 
   webServer.addHandler(&socket);
 
@@ -284,6 +293,33 @@ void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
       return;
     }
     QueueDiagnose(request, {DiagnoseCommandType::PlayAudio, id, 0});
+  });
+
+  // Remote control actions. The main loop runs them and switches the turret to the remote state.
+  webServer.on("/remote/aim", HTTP_POST, [this](AsyncWebServerRequest *request) {
+    if (!request->hasParam("x", true) || !request->hasParam("z", true)) {
+      request->send(400, "application/json", "{\"status\":\"BAD_REQUEST\"}");
+      return;
+    }
+    const float x = request->getParam("x", true)->value().toFloat();
+    const float z = request->getParam("z", true)->value().toFloat();
+    QueueRemote(request, {RemoteCommandType::Aim, x, z});
+  });
+
+  webServer.on("/remote/wings", HTTP_POST, [this](AsyncWebServerRequest *request) {
+    const String action = request->hasParam("action", true) ? request->getParam("action", true)->value() : "";
+    if (action == "open") {
+      QueueRemote(request, {RemoteCommandType::OpenWings, 0, 0});
+    } else if (action == "close") {
+      QueueRemote(request, {RemoteCommandType::CloseWings, 0, 0});
+    } else {
+      request->send(400, "application/json", "{\"status\":\"BAD_REQUEST\"}");
+    }
+  });
+
+  webServer.on("/remote/fire", HTTP_POST, [this](AsyncWebServerRequest *request) {
+    const bool fire = request->hasParam("fire", true) && ParseBool(request->getParam("fire", true)->value().c_str());
+    QueueRemote(request, {fire ? RemoteCommandType::StartFiring : RemoteCommandType::StopFiring, 0, 0});
   });
 
   webServer.on("/settings/reset", HTTP_POST, [this](AsyncWebServerRequest *request) {

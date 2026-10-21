@@ -338,3 +338,52 @@ body {
   pointer-events: none;
   animation: lines 0.066666666s linear infinite;
 }
+/* Remote page: round joystick, wing buttons and a fire button. */
+#joystick {
+  position: relative;
+  width: min(100%, 320px);
+  aspect-ratio: 1;
+  margin: 16px auto;
+  border: 2px solid #aaa;
+  border-radius: 50%;
+  background: var(--graph-background);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#joystick-knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border-radius: 50%;
+  background: var(--text-color-error);
+  pointer-events: none;
+}
+
+#angles {
+  text-align: center;
+}
+
+.remote-actions {
+  margin: 16px 0;
+}
+
+.remote-actions button {
+  flex: 1;
+}
+
+#fire {
+  width: 100%;
+  padding: 28px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#fire.held {
+  background-color: var(--text-color-error);
+}

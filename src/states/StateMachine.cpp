@@ -7,6 +7,7 @@ void StateMachine::Initialize(Turret &turretIn) {
   activateState.Initialize(this, turretIn);
   disengageState.Initialize(this, turretIn);
   manualState.Initialize(this, turretIn);
+  remoteState.Initialize(this, turretIn);
   firingState.Initialize(this, turretIn);
   searchState.Initialize(this, turretIn);
   tippedOverState.Initialize(this, turretIn);
@@ -40,6 +41,13 @@ void StateMachine::RequestDiagnose(const DiagnoseCommand &command) {
   manualState.Execute(command);
 }
 
+void StateMachine::RequestRemote(const RemoteCommand &command) {
+  if (currentStateId != StateId::Remote) {
+    GoToState(StateId::Remote);
+  }
+  remoteState.Execute(command);
+}
+
 BaseState *StateMachine::GetState(StateId stateId) {
   switch (stateId) {
   case StateId::Booting:
@@ -63,6 +71,9 @@ BaseState *StateMachine::GetState(StateId stateId) {
   case StateId::Manual:
     Serial.println("ManualState");
     return &manualState;
+  case StateId::Remote:
+    Serial.println("RemoteState");
+    return &remoteState;
   case StateId::TippedOver:
     Serial.println("TippedOverState");
     return &tippedOverState;
