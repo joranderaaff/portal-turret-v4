@@ -9,7 +9,8 @@ enum class RemoteCommandType : uint8_t {
   OpenWings,
   CloseWings,
   StartFiring, // also acts as a keep-alive, see RemoteState
-  StopFiring
+  StopFiring,
+  PartyMode
 };
 
 struct RemoteCommand {

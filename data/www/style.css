@@ -384,6 +384,12 @@ body {
   -webkit-user-select: none;
 }
 
+#party-mode {
+  width: 100%;
+  margin-top: 16px;
+  padding: 16px;
+}
+
 #fire.held {
   background-color: var(--text-color-error);
 }

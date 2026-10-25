@@ -16,7 +16,11 @@ private:
   bool WingsOpen();
   void SetFiring(bool firing);
 
+  void UpdatePartyMode(ulong deltaTime);
+
   bool firing = false;
+  bool partyMode = false;
+  ulong partyTime = 0;
   // The page repeats StartFiring while the button is held, so a lost release can't leave the guns firing.
   ulong timeSinceFireRequest = 0;
 };
