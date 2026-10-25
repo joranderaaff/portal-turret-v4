@@ -98,12 +98,14 @@ Here's raw screenshots. Explicit information comes later.
 | --- | --- |
 | Attach the lever to a 180 servo. The lever should be a friction fit. Insert it into the gun casing and run the wire as shown. | <img src="images/gun_001.png" alt="Gun 1" height="400"> |
 | There's a hole in the bottom to fasten the servo with a screw. | <img src="images/gun_002.png" alt="Gun 2" height="400"> |
-| Insert the barrels into their housing. This should be a friction fit. The housing screws on the part with one screw. | <img src="images/gun_003.png" alt="Gun 3" height="400"> |
-| Rotate the lever so it points forward. | <img src="images/gun_004.png" alt="Gun 4" height="400"> |
-| Carefully slide the barrels over the lever. You might need to bend the housing to get it in place. | <img src="images/gun_005.png" alt="Gun 5" height="400"> |
-| Slide the barrels back into the housing. They should slide easily. If not, try to move the lever by hand. If the barrels don't move, check the clearance of your parts. | <img src="images/gun_006.png" alt="Gun 6" height="400"> |
-| The top can now be screwed on. | <img src="images/gun_007.png" alt="Gun 6" height="400"> |
-| The front plate should click in place. | <img src="images/gun_008.png" alt="Gun 6" height="400"> |
+| Insert the barrels into their housing. This should be a friction fit. The housing screws on the part with one screw. | <img src="images/gun_003.png" alt="Gun 2" height="400"> |
+| Run the wires from the bottom LED to the side and through the clamp in the front. | <img src="images/gun_004.png" alt="Gun 2" height="400"> |
+| Run the wires from the top LED out the top. | <img src="images/gun_005.png" alt="Gun 3" height="400"> |
+| Rotate the lever so it points forward. | <img src="images/gun_006.png" alt="Gun 4" height="400"> |
+| Carefully slide the barrels over the lever. You might need to bend the housing to get it in place. Note that the pictures shows the wires outside of the clamps, this is a render error. | <img src="images/gun_007.png" alt="Gun 5" height="400"> |
+| Slide the barrels back into the housing. They should slide easily. If not, try to move the lever by hand. If the barrels don't move, check the clearance of your parts. | <img src="images/gun_008.png" alt="Gun 6" height="400"> |
+| The top can now be screwed on. | <img src="images/gun_009.png" alt="Gun 6" height="400"> |
+| The front plate should click in place. | <img src="images/gun_010.png" alt="Gun 6" height="400"> |
 
 ### Wings
 
