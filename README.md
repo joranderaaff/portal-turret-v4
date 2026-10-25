@@ -71,51 +71,53 @@ Here's raw screenshots. Explicit information comes later.
 ### Bottom
 | Notes | Images |
 | --- | --- |
-| Screw the Z Axis gear on a 180 servo. Attach the servo to the Servo Mount. The USB-C board should be glued into place. If you can't get a solid connection with glue, a tiny screw with some heatshrink could be screwed through the D- slot. Make sure the screw does not short D- to ground, hence the heatshrink. | <img src="images/bottom_001.png" alt="Bottom 1" height="400"> |
-| The main board power wire should have the black wire soldered to the GND pad of the USB board. The red wire should slide to the bottom. Another red wire should be soldered to the 5V (Vcc) pad of the USB board. Slide those through the channels. Attach the two power wires by appropriate connectors or soldering to the switch and slide it in the bottom. Route the servo wire up through the same channels. | <img src="images/bottom_003.png" alt="Bottom 2" height="400"> |
-| Slide the switch in the slot on the bottom. | <img src="images/bottom_002.png" alt="Bottom 2" height="400"> |
-| The servo mount is attached to the bottom with 4 more screws. | <img src="images/bottom_004.png" alt="Bottom 2" height="400"> |
+| Slide a 180 servo in the mount and screw it secure | <img src="images/bottom_001.png" alt="Bottom 2" height="400"> |
+| Screw on the Z Axis gear. | <img src="images/bottom_002.png" alt="Bottom 2" height="400"> |
+| The USB-C board should be glued into place. If you can't get a solid connection with glue, a tiny screw with some heatshrink could be screwed through the D- slot. Make sure the screw does not short D- to ground, hence the heatshrink tubing. Run the wires through the bottom. Make sure to leave enough to route the wires and attach the JST connector. | <img src="images/bottom_003.png" alt="Bottom 2" height="400"> |
+| Route the two 5V wires to the bottom. One should come from the USB board, the other should go to your power connector. | <img src="images/bottom_004.png" alt="Bottom 2" height="400"> |
+| The servo wires should also be run through the same channel to go up in the back. | <img src="images/bottom_005.png" alt="Bottom 2" height="400"> |
+| Run both the servo and power wires through the gantry. Use the little brace to keep them out of the way from the gantry.  | <img src="images/bottom_006.png" alt="Bottom 2" height="400"> |
 
 ### Eye
 | Notes | Images |
 | --- | --- |
-|  | <img src="images/eye_001.png" alt="Eye 1" height="400"> |
+| Print the flat retina and mold. As PLA gets soft at relatively low temperatures, you can dunk it in boiling water and press it on the mold for the correct shape. Make sure to print the diffuser with very little top/bottom layers and walls, or use transparent filament. Glue in the LED ring and 5mm LED.| <img src="images/eye_001.png" alt="Eye 1" height="400"> |
 
 ### Gantry
 
 | Notes | Images |
 | --- | --- |
-|  | <img src="images/gantry_001.png" alt="Gantry 1" height="400"> |
-|  | <img src="images/gantry_002.png" alt="Gantry 2" height="400"> |
-|  | <img src="images/gantry_003.png" alt="Gantry 3" height="400"> |
+| The gantry consists of 5 different pieces. This is done so you can print with little to no support material. The eye should click in place and stay there without any glue. | <img src="images/gantry_001.png" alt="Gantry 1" height="400"> |
+| The whole gantry should screw together and give enough rigidity for the build. | <img src="images/gantry_002.png" alt="Gantry 2" height="400"> |
+| Slide in the gantry and bottom. Make sure to not rotate your servo when assembling, otherwise you'll risk a very big offset in angle. You can calibrate small offsets in the settings. | <img src="images/gantry_003.png" alt="Gantry 3" height="400"> |
+| Screw in the last screws on the front and back of the gantry to finish the motion system. | <img src="images/gantry_004.png" alt="Gantry 3" height="400"> |
 
 ### Guns
 
 | Notes | Images |
 | --- | --- |
-|  | <img src="images/gun_001.png" alt="Gun 1" height="400"> |
-|  | <img src="images/gun_002.png" alt="Gun 2" height="400"> |
-|  | <img src="images/gun_003.png" alt="Gun 3" height="400"> |
-|  | <img src="images/gun_004.png" alt="Gun 4" height="400"> |
-|  | <img src="images/gun_005.png" alt="Gun 5" height="400"> |
-|  | <img src="images/gun_006.png" alt="Gun 6" height="400"> |
-|  | <img src="images/gun_007.png" alt="Gun 7" height="400"> |
-|  | <img src="images/gun_008.png" alt="Gun 8" height="400"> |
-|  | <img src="images/gun_009.png" alt="Gun 9" height="400"> |
+| Attach the lever to a 180 servo. The lever should be a friction fit. | <img src="images/gun_001.png" alt="Gun 1" height="400"> |
+| The barrels should slide in place with a bit of friction. Use one screw to assemble the two parts. | <img src="images/gun_002.png" alt="Gun 2" height="400"> |
+| Move the lever so it points forwards. | <img src="images/gun_003.png" alt="Gun 3" height="400"> |
+| Slide the barrel mount over the lever an drotate it back | <img src="images/gun_004.png" alt="Gun 4" height="400"> |
+| Carefully slide the assembly in the housing.  | <img src="images/gun_005.png" alt="Gun 5" height="400"> |
+| Press the barrles back in the housing. | <img src="images/gun_006.png" alt="Gun 6" height="400"> |
+| The top can now be screwed on. | <img src="images/gun_007.png" alt="Gun 6" height="400"> |
+| The front plate should click in place. | <img src="images/gun_008.png" alt="Gun 6" height="400"> |
 
 ### Wings
 
 | Notes | Images |
 | --- | --- |
-|  | <img src="images/wing_001.png" alt="Wing 1" height="400"> |
-|  | <img src="images/wing_002.png" alt="Wing 2" height="400"> |
-|  | <img src="images/wing_003.png" alt="Wing 3" height="400"> |
-|  | <img src="images/wing_004.png" alt="Wing 4" height="400"> |
+| Add 1mm magnets to the slots of the wing. Mind the polarity! | <img src="images/wing_001.png" alt="Wing 1" height="400"> |
+| Add 1mm magnets to the slots of the the wing frame. Mind the polarity! | <img src="images/wing_002.png" alt="Wing 2" height="400"> |
+| The gun should slide in the designated slot. | <img src="images/wing_003.png" alt="Wing 3" height="400"> |
+| Attach the rack gear and secure it with a screw. Glue in the 4mm and 6mm steel rods. | <img src="images/wing_004.png" alt="Wing 4" height="400"> |
 
 ### Leg
 | Notes | Images |
 | --- | --- |
-|  | <img src="images/leg_001.png" alt="Leg 1" height="400"> |
+| The legs should be glued together. Use a piece of 4mm rod to strengthen the joint between the "leg" and the "knee" | <img src="images/leg_001.png" alt="Leg 1" height="400"> |
 
 ## Firmware
 
