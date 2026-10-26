@@ -38,6 +38,21 @@ A Portal-style turret powered by an ESP32-S3 (Lolin S3 Mini). It detects people 
 - Pin headers
 - 2mm wood screws
 
+## Steel Rod Sizes
+
+For the 4mm rods:
+- 1x 150mm (enforcing the rear leg)
+- 2x 55mm (enforcing the front legs)
+- 2x 60mm (wings)
+- 1x 43mm (x-axis axle)
+- 1x 20mm (z-axis bottom axle)
+- 1x 10mm (z-axis top axle)
+
+The bended rods for the legs do not have a very precise length. It's best to bend and cut to length after bending, as this makes the process of getting the correct shape a lot easier.
+
+For the 6mm rods:
+- 2x 60mm (wings)
+
 ## 3D printing
 
 STEP file contains all 3D printed parts. Separate parts in correct print orientation might come later.
