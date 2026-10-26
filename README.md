@@ -96,7 +96,7 @@ Here's raw screenshots. Explicit information comes later.
 ### Eye
 | Notes | Images |
 | --- | --- |
-| Print the flat retina and mold. As PLA gets soft at relatively low temperatures, you can dunk it in boiling water and press it on the mold for the correct shape. Make sure to print the diffuser with very little top/bottom layers and walls, or use transparent filament. Glue in the LED ring and 5mm LED.| <img src="images/eye_001.png" alt="Eye 1" height="400"> |
+| Print the flat retina and mold. As PLA gets soft at relatively low temperatures, you can dunk it in boiling water and press it on the mold for the correct shape. Make sure to print the diffuser with very little top/bottom layers and walls, or use transparent filament. Glue in the LED ring and 5mm LED. Bend the 5V and Gnd legs of the LED to the pads of the ring and solder them together. The `D-in` leg should go to the `D-out` pad. Run 3 wires to the `D-in` `5V` and `Gnd` pads of the LED Ring. Keep enough length to run it through the turret. Add a JST connector when you're sure you have enough length. | <img src="images/eye_001.png" alt="Eye 1" height="400"> |
 
 ### Gantry
 
