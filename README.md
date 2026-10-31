@@ -46,6 +46,13 @@ STEP file contains all 3D printed parts. Separate parts in correct print orienta
 
 Gerber files are included. Order from your favorite PCB manufacturer.
 
+## Preperation
+
+The 180 degree servos might not be centered when you purchase them. Make sure you to do this with a servo tester or writing a small Arduino sketch that centers your servos. If you don't have an Arduino board to do this, you could even use the Wemos in a breadboard and use some wires to hook up a servo to calibrate them.
+
+Use the hall sensor to find out what the north and south pole of your magnets are. You'll need to know this to make sure you insert them correctly later in the build.
+Again you can use the Wemos to test. Using a breadboard, hook up the sensor to 3.3V, Gnd and one of the analog pins. Read the analog value. When the north pole faces the sensor, the value should increase. If it's the south pole, it should decrease.
+
 ## Assembly guide
 
 Here's raw screenshots. Explicit information comes later.
@@ -112,7 +119,8 @@ Here's raw screenshots. Explicit information comes later.
 | Add 1mm magnets to the slots of the wing. Mind the polarity! | <img src="images/wing_001.png" alt="Wing 1" height="400"> |
 | Add 1mm magnets to the slots of the the wing frame. Mind the polarity! | <img src="images/wing_002.png" alt="Wing 2" height="400"> |
 | The gun should slide in the designated slot. | <img src="images/wing_003.png" alt="Wing 3" height="400"> |
-| Attach the rack gear and secure it with a screw. Glue in the 4mm and 6mm steel rods. | <img src="images/wing_004.png" alt="Wing 4" height="400"> |
+| Insert the magnets in the rack gear. They should click in place, but a drop of glue helps. Make sure to mind the polarity!| <img src="images/wing_004.png" alt="Wing 4" height="400"> |
+| Attach the rack gear and secure it with a screw. Glue in the 4mm and 6mm steel rods. | <img src="images/wing_005.png" alt="Wing 4" height="400"> |
 
 ### Leg
 | Notes | Images |
@@ -121,7 +129,13 @@ Here's raw screenshots. Explicit information comes later.
 
 ## Firmware
 
-Built with [PlatformIO](https://platformio.org/) (env `lolin_s3_mini`).
+You can build the firmware with <a href="https://code.visualstudio.com/">Visual Studio Code</a> together with the PlatformIO plugin.
+
+Use the following two commands to flash your Wemos:
+
+<img src="images/building.png">
+
+Or use these commands if you prefer working in the terminal.
 
 ```bash
 pio run                # build
@@ -131,8 +145,13 @@ pio run -t uploadfs    # flash LittleFS (audio + web UI)
 
 OTA updates are possible once the turret is on your network (`turret.local`) or in its own access point ("Portal Turret", `192.168.4.1`).
 
-More info coming soon
-
 ## Calibration
 
-More info coming soon
+When connecting to the web portal, there is a `Settings` page. Most of these settings are tweaked already, but you might need a few to get your turret to work perfectly:
+You can use the `Calibrate` page to find the exact values you want to use.
+
+- Angle offset X: Use this to make sure the wings are pointing forward when the turret is idle.
+- Angle offset Z: Use this to center the gantry when the turret is idle.
+- Gun Hall Min/Max: The treshold of the hall sensor that triggers the Open/Closed state of the wings.
+
+The other parameters are less important, but you can play around with them to suit your needs.
