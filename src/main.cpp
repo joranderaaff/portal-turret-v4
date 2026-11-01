@@ -64,7 +64,6 @@ void loop() {
   wifi.Update(deltaTime);
   server.Update(deltaTime);
   targetTracker.Update(deltaTime);
-  light.Update(deltaTime);
 
   if (server.ConsumeStartRequest()) {
     stateMachine.RequestStart();
@@ -78,4 +77,6 @@ void loop() {
     stateMachine.RequestRemote(remoteCommand);
   }
   stateMachine.Update(deltaTime);
+  // After the state machine, so a state can override the gun lights the guns just set.
+  light.Update(deltaTime);
 }

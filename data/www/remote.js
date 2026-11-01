@@ -155,6 +155,10 @@
     post('/remote/wings', { action: 'close' }, 'Closing wings');
   });
 
+  document.getElementById('party-mode').addEventListener('click', function () {
+    post('/remote/party', {}, 'Party mode');
+  });
+
   loadSettings();
   showStick();
 })();

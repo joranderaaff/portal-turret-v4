@@ -322,6 +322,10 @@ void TurretWebServer::Initialize(Turret &turretIn, Settings &settingsIn) {
     QueueRemote(request, {fire ? RemoteCommandType::StartFiring : RemoteCommandType::StopFiring, 0, 0});
   });
 
+  webServer.on("/remote/party", HTTP_POST, [this](AsyncWebServerRequest *request) {
+    QueueRemote(request, {RemoteCommandType::PartyMode, 0, 0});
+  });
+
   webServer.on("/settings/reset", HTTP_POST, [this](AsyncWebServerRequest *request) {
     settings->ResetToDefaults();
     request->send(200, "application/json", "{\"status\":\"OK\"}");
