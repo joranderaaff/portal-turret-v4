@@ -4,6 +4,8 @@ A Portal-style turret powered by an ESP32-S3 (Lolin S3 Mini). It detects people 
 
 ![Portal Turret](images/photo.jpg)
 
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?business=JUNX99Q7QHS9C&no_recurring=0&item_name=Support+my+3D+printing+adventures%21&currency_code=EUR)
+
 ## Repository layout
 
 | Folder | Contents |
