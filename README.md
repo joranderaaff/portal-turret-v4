@@ -58,7 +58,11 @@ For the 6mm rods:
 
 ## 3D printing
 
-STEP file contains all 3D printed parts. Separate parts in correct print orientation might come later.
+STEP file contains all 3D printed parts.
+
+[All STL files can be found here.](https://www.printables.com/model/1892132-portal-turret-mk-ii)
+
+
 
 ## Electronics
 
