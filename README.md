@@ -36,6 +36,7 @@ A Portal-style turret powered by an ESP32-S3 (Lolin S3 Mini). It detects people 
 - 6mm steel rod
 
 - JST PH crimp set OR JST PH headers and pre-crimped JST PH cables
+- USB C Breakout Board, 12 * 15 * 1.6mm
 - Pin headers
 - 2mm wood screws
 
@@ -61,6 +62,25 @@ STEP file contains all 3D printed parts. Separate parts in correct print orienta
 ## Electronics
 
 Gerber files are included. Order from your favorite PCB manufacturer.
+
+### Pinout
+
+ESP32-S3 GPIO numbers, defined in `src/pins.h`.
+
+| Function | GPIO |
+| --- | --- |
+| Left / right gun servo | 1 / 2 |
+| Left / right wing servo | 4 / 5 |
+| Rotate X / Z servo | 6 / 7 |
+| Left / right hall sensor (analog) | 8 / 9 |
+| Eye LED ring (center) / left gun LEDs / right gun LEDs | 14 / 15 / 16 |
+| Radar (ESP RX / ESP TX) | 17 / 18 |
+| ADXL345 I2C (SDA / SCL) | 35 / 36 |
+| Audio amp I2S (DIN / BCLK / LRCLK) | 10 / 11 / 12 |
+
+### Power
+
+The turret runs on 5 V, from the USB-C board or the power connector. The servos, LED ring, audio amp and radar all share it, so use a supply that can deliver at least 2 A. That figure is a rule of thumb for six SG90 servos plus the LEDs, not a measured value.
 
 ## Preperation
 
@@ -162,12 +182,38 @@ pio run -t upload      # flash firmware
 pio run -t uploadfs    # flash LittleFS (audio + web UI)
 ```
 
-OTA updates are possible once the turret is on your network (`turret.local`) or in its own access point ("Portal Turret", `192.168.4.1`).
+Flash both on a new turret: the firmware first, then the filesystem. Run `uploadfs` again whenever something in `data/` changes.
+
+OTA updates are possible once the turret is on your network (`turret.local`) or in its own access point ("Portal Turret", `192.168.4.1`). While an update runs the turret stops moving and the audio pauses.
+
+### First start and WiFi
+
+1. On the first start, and whenever the turret can't join its saved network, it opens the WiFi network "Portal Turret".
+2. Connect to it. The WiFi setup page opens by itself, or browse to `http://192.168.4.1`.
+3. Pick your network and enter the password. The turret restarts, joins your network and is reachable at `http://turret.local`.
+4. If the saved network is out of reach (for example the router is still booting after a power cut), the "Portal Turret" network returns. The turret tries the saved network again every minute, as long as nobody is connected to its access point, and closes the access point once it is back on your network.
+
+The access point is open by default. To protect it, enter 8 or more characters as "Access Point Password" on the Settings page and restart the turret. The access point keeps that password when you reset the settings to their defaults, so it can't fall back to open by accident.
+
+### Web interface
+
+| Page | What it does |
+| --- | --- |
+| Home | Live radar, accelerometer graphs and the turret's message log. |
+| Control | Start the turret by hand. |
+| Remote | Aim with a joystick, open/close the wings, fire, party mode. |
+| Settings | All settings, Restart, reset to defaults, enable multitarget on the radar. |
+| WiFi | Pick the network the turret joins. |
+| Diagnose | Move every servo raw, read the hall sensors, test LEDs and audio. |
+
+Settings take effect as soon as you save them. Only the network settings (WiFi, access point password) need a restart: use the Restart button on the Settings page.
+
+Remote and Diagnose stop all automatic behaviour. Press Resume on either page to hand control back: the turret centers the gantry, closes the wings and starts over. A power cycle does the same.
 
 ## Calibration
 
 When connecting to the web portal, there is a `Settings` page. Most of these settings are tweaked already, but you might need a few to get your turret to work perfectly:
-You can use the `Calibrate` page to find the exact values you want to use.
+You can use the `Diagnose` page to find the exact values you want to use (the hall sensor readings help with Gun Hall Min/Max).
 
 - Angle offset X: Use this to make sure the wings are pointing forward when the turret is idle.
 - Angle offset Z: Use this to center the gantry when the turret is idle.
