@@ -31,6 +31,8 @@ A Portal-style turret powered by an ESP32-S3 (Lolin S3 Mini). It detects people 
 - 4 SG90 180 servo
 - 2 SG90 360 servo
 - 5 WS2812 5mm LED
+- 2 100nF Ceramic Capacitor 
+- 1 100uF 25V Elektrolytic Capacitor
 
 - 604ZZ Ball Bearing - 4x12x4mm
 - MYT LM6LUU Linear Ball Bearing - 2 pieces (35mm length)
