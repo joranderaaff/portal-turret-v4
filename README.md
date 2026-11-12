@@ -19,7 +19,7 @@ A Portal-style turret powered by an ESP32-S3 (Lolin S3 Mini). It detects people 
 ## Bill of materials
 
 - PLA (Or other material) in white, black and optionally transparent.
-- Lolin Wemos S3
+- Lolin Wemos S3 Mini
 - LD2450 Radar Sensor
 - OH49E Hall Effect Sensor - SS49E compatible
 - ADXL345 Digital 3-axis Accelerometer Module
