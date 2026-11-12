@@ -169,6 +169,14 @@ Here's raw screenshots. Explicit information comes later.
 | Insert the magnets in the rack gear. They should click in place, but a drop of glue helps. Make sure to mind the polarity!| <img src="images/wing_004.png" alt="Wing 4" height="400"> |
 | Attach the rack gear and secure it with a screw. Glue in the 4mm and 6mm steel rods. | <img src="images/wing_005.png" alt="Wing 4" height="400"> |
 
+### PCB, Speaker and Radar
+
+| Notes | Images |
+| --- | --- |
+| PCB, Speaker and Radar should be mounted in the top. | <img src="images/top_001.png" height="400"> |
+| There are optional panels to cover the electronics. | <img src="images/top_002.png" height="400"> |
+
+
 ### Leg
 | Notes | Images |
 | --- | --- |
