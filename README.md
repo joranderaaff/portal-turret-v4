@@ -18,31 +18,38 @@ A Portal-style turret powered by an ESP32-S3 (Lolin S3 Mini). It detects people 
 
 ## Bill of materials
 
+### Printing
 - PLA (Or other material) in white, black and optionally transparent.
+
+### Electronics
 - Lolin Wemos S3 Mini
+- 4x SG90 180 servo
+- 2x SG90 360 servo
 - LD2450 Radar Sensor
-- OH49E Hall Effect Sensor - SS49E compatible
 - ADXL345 Digital 3-axis Accelerometer Module
 - MAX98357 Audio amp
+- 2x OH49E Hall Effect Sensor - SS49E compatible
 - SN74AHCT125N 4-channel Level Converter
-- Small rocker switch
-
 - SK6812 Digital 5050 RGB LED Ring
-- 4 SG90 180 servo
-- 2 SG90 360 servo
-- 5 WS2812 5mm LED
-- 2 100nF Ceramic Capacitor 
-- 1 100uF 25V Elektrolytic Capacitor
+- 5x WS2812 5mm LED
+- Small rocker switch
+- USB C Breakout Board, 12 * 15 * 1.6mm
+- 2x 100nF Ceramic Capacitor 
+- 1x 100uF 25V Elektrolytic Capacitor
 
+### Motion
 - 604ZZ Ball Bearing - 4x12x4mm
 - MYT LM6LUU Linear Ball Bearing - 2 pieces (35mm length)
 - 4mm steel rod
 - 6mm steel rod
 
+### Cables
 - JST PH crimp set OR JST PH headers and pre-crimped JST PH cables
-- USB C Breakout Board, 12 * 15 * 1.6mm
 - Pin headers
+
+### Fasteners
 - 2mm wood screws
+- Super Glue
 
 ## Steel Rod Sizes
 
