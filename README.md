@@ -173,7 +173,7 @@ Here's raw screenshots. Explicit information comes later.
 
 | Notes | Images |
 | --- | --- |
-| PCB, Speaker and Radar should be mounted in the top. | <img src="images/top_001.png" height="400"> |
+| PCB, Speaker and Radar should be mounted in the top. Note that the ADXL and Amplifier are missing in this picture. They should be soldered on the PCB. | <img src="images/top_001.png" height="400"> |
 | There are optional panels to cover the electronics. | <img src="images/top_002.png" height="400"> |
 
 
