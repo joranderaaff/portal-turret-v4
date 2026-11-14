@@ -36,6 +36,7 @@ A Portal-style turret powered by an ESP32-S3 (Lolin S3 Mini). It detects people 
 - USB C Breakout Board, 12 * 15 * 1.6mm
 - 2x 100nF Ceramic Capacitor 
 - 1x 100uF 25V Elektrolytic Capacitor
+- Speaker 40mm 4ohm 
 
 ### Motion
 - 604ZZ Ball Bearing - 4x12x4mm
@@ -77,6 +78,11 @@ STEP file contains all 3D printed parts.
 ## Electronics
 
 Gerber files are included. Order from your favorite PCB manufacturer.
+
+| Notes | Images |
+| --- | --- |
+| 1x Main Board | <img src="images/pcb_001.png" alt="PCB 1" height="400"> |
+| 2x Daughter Board | <img src="images/pcb_002.png" alt="PCB 2" height="400"> |
 
 ### Pinout
 
